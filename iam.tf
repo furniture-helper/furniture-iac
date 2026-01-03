@@ -68,7 +68,8 @@ data "aws_iam_policy_document" "ecr_push" {
       "ecr:UploadLayerPart",
       "ecr:CompleteLayerUpload",
       "ecr:DescribeRepositories",
-      "ecr:CreateRepository"
+      "ecr:CreateRepository",
+      "ecr:ListTagsForResource"
     ]
     resources = [
       "arn:aws:ecr:${var.region}:${data.aws_caller_identity.current.account_id}:repository/${var.ecr_repository_name}/*",

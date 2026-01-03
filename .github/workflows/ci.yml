@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
       - "main"
-  push:
-    branches:
-      - "main"
 
 permissions:
   id-token: write
@@ -14,7 +11,7 @@ permissions:
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
-  IAM_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+  IAM_ROLE_ARN: ${{ secrets.AWS_IAC_ROLE_ARN }}
 
 jobs:
   iac-checks:
@@ -27,12 +24,20 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.14.3"
 
       - name: Terraform Format
         run: terraform fmt -check -recursive
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.IAM_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
       - name: Terraform Init
-        run: terraform init -backend=false
+        run: terraform init
 
       - name: Terraform Validate
         run: terraform validate
@@ -55,12 +60,6 @@ jobs:
           soft_fail: false
           framework: terraform
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.IAM_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-
       - name: Terraform Plan
         run: terraform plan -out=tfplan -input=false
 
@@ -72,6 +71,9 @@ jobs:
         with:
           version: latest
 
+      - name: Run OPA Policy Check - Pretty Format
+        run: opa eval --input tfplan.json --data tags.rego "data.terraform.tags.deny" --format pretty
+
       - name: Run OPA Policy Check
-        run: |
-          opa eval --input tfplan.json --data tags.rego "data.terraform.tags.deny" --format json | jq -e '.result[0].expressions[0].value | length == 0'
+        run: opa eval --input tfplan.json --data tags.rego "data.terraform.tags.deny" --format json | jq -e '.result[0].expressions[0].value | length == 0'
+        continue-on-error: false

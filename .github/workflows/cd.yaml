@@ -1,0 +1,114 @@
+name: Terraform Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  IAM_ROLE_ARN: ${{ secrets.AWS_IAC_ROLE_ARN }}
+
+jobs:
+  plan:
+    name: "Terraform Plan"
+    runs-on: ubuntu-latest
+    outputs:
+      plan_outcome: ${{ steps.plan.outcome }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.14.3"
+          terraform_wrapper: "false"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.IAM_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color -out=tfplan
+        continue-on-error: true
+
+      - name: Publish Plan to PR
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Plan 📖 \`${{ steps.plan.outcome }}\`
+            <details><summary>Show Plan</summary>
+            
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+            
+            </details>`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      - name: Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Upload Plan Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: tfplan
+
+  apply:
+    name: "Terraform Apply"
+    needs: plan
+    runs-on: ubuntu-latest
+    environment: production
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.14.3"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.IAM_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Download Plan Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan

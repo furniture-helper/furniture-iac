@@ -9,18 +9,6 @@ resource "aws_vpc" "vpc" {
   }
 }
 
-resource "aws_flow_log" "vpc_flow_log" {
-  log_destination      = "arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/vpc/flow-logs"
-  log_destination_type = "cloud-watch-logs"
-  traffic_type         = "ALL"
-  vpc_id               = aws_vpc.vpc.id
-
-  tags = {
-    Name    = "${var.project}-vpc-flow-log"
-    Project = var.project
-  }
-}
-
 resource "aws_default_security_group" "default_sg" {
   vpc_id = aws_vpc.vpc.id
 
