@@ -15,9 +15,10 @@ ignored_resources := {
     "aws_lb_listener",
     "aws_lb_target_group_attachment",
     "aws_autoscaling_attachment",
+    "aws_iam_role_policy",
     "random_string",
     "random_password",
-    "tls_private_key"
+    "tls_private_key",
 }
 
 deny contains msg if {
