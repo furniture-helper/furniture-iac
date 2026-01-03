@@ -81,3 +81,26 @@ resource "aws_iam_role_policy" "ecr_push" {
   role   = aws_iam_role.github_actions_role.name
   policy = data.aws_iam_policy_document.ecr_push.json
 }
+
+data "aws_iam_policy_document" "terraform_backend_access" {
+
+  statement {
+    sid    = "AllowS3Access"
+    effect = "Allow"
+    actions = [
+      "s3:PutObject",
+      "s3:GetObject",
+      "s3:DeleteObject",
+      "s3:ListBucket"
+    ]
+    resources = [
+      "arn:aws:s3:::furniture-iac"
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "terraform_backend_access" {
+  name   = "github-actions-terraform-backend-access"
+  role   = aws_iam_role.github_actions_role.name
+  policy = data.aws_iam_policy_document.terraform_backend_access.json
+}
