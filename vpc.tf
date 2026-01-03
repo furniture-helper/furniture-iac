@@ -25,9 +25,9 @@ resource "aws_default_security_group" "default_sg" {
   vpc_id = aws_vpc.vpc.id
 
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
   }
 
   egress {
