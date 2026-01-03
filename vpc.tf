@@ -24,13 +24,6 @@ resource "aws_flow_log" "vpc_flow_log" {
 resource "aws_default_security_group" "default_sg" {
   vpc_id = aws_vpc.vpc.id
 
-  ingress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1"
-    self      = true
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
