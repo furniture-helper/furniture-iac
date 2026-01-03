@@ -20,7 +20,7 @@ ignored_resources := {
     "tls_private_key"
 }
 
-deny[msg] {
+deny contains msg if {
     # Loop through all resources in the plan
     resource := input.resource_changes[_]
 
@@ -48,7 +48,7 @@ deny[msg] {
     )
 }
 
-is_being_deleted(r) {
+is_being_deleted(r) if {
     r.change.actions[_] == "delete"
     count(r.change.actions) == 1
 }
