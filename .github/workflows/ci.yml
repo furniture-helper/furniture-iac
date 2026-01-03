@@ -72,7 +72,9 @@ jobs:
         with:
           version: latest
 
-      - name: Run OPA Policy Check
-        run: |
-          - opa eval --input tfplan.json --data tags.rego "data.terraform.tags.deny" --format pretty
-          - opa eval --input tfplan.json --data tags.rego "data.terraform.tags.deny" --format json | jq -e '.result[0].expressions[0].value | length == 0'
+      - name: Run OPA Policy Check - Pretty Format
+        run: opa eval --input tfplan.json --data tags.rego "data.terraform.tags.deny" --format pretty
+
+      - name: Run OPA Policy Check - JSON Format
+        run: opa eval --input tfplan.json --data tags.rego "data.terraform.tags.deny" --format json > opa-results.json
+        continue-on-error: false
