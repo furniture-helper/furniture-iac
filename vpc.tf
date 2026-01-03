@@ -75,8 +75,9 @@ resource "aws_subnet" "private_subnet" {
   }
 }
 
-# checkov:skip=CKV2_AWS_19: "EIP is attached to a NAT Gateway, not an EC2 instance"
 resource "aws_eip" "nat_eip" {
+  # checkov:skip=CKV2_AWS_19: "EIP is attached to a NAT Gateway, not an EC2 instance"
+
   tags = {
     Name    = "${var.project}-nat-eip"
     Project = var.project

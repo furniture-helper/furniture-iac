@@ -1,6 +1,7 @@
-# checkov:skip=CKV_AWS_136: "Using default encryption is acceptable for this repo"
-# checkov:skip=CKV_AWS_136: "Using default encryption is acceptable for this repo"
 resource "aws_ecr_repository" "furniture_crawler_ecr_repo" {
+  # checkov:skip=CKV_AWS_136: "Using default encryption is acceptable for this repo"
+  # checkov:skip=CKV_AWS_51: "Images are immutable except for latest"
+
   name                 = "${var.ecr_repository_name}/furniture-crawler"
   image_tag_mutability = "IMMUTABLE_WITH_EXCLUSION"
 
