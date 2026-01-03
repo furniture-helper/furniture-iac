@@ -138,7 +138,7 @@ data "aws_iam_policy_document" "github_actions_manage_iam" {
     actions = [
       "iam:CreateRole"
     ]
-    resources = ["*"]
+    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.project}-flow-logs-role"]
   }
 
   statement {
@@ -171,7 +171,7 @@ data "aws_iam_policy_document" "github_actions_manage_iam" {
     actions = [
       "iam:CreateOpenIDConnectProvider"
     ]
-    resources = ["*"]
+    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"]
   }
 }
 
