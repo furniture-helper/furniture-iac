@@ -94,7 +94,8 @@ data "aws_iam_policy_document" "terraform_backend_access" {
       "s3:ListBucket"
     ]
     resources = [
-      "arn:aws:s3:::furniture-iac"
+      "arn:aws:s3:::furniture-iac",
+      "arn:aws:s3:::furniture-iac/*"
     ]
   }
 }
