@@ -68,7 +68,8 @@ data "aws_iam_policy_document" "ecr_push" {
       "ecr:UploadLayerPart",
       "ecr:CompleteLayerUpload",
       "ecr:DescribeRepositories",
-      "ecr:CreateRepository"
+      "ecr:CreateRepository",
+      "ecr:ListTagsForResource"
     ]
     resources = [
       "arn:aws:ecr:${var.region}:${data.aws_caller_identity.current.account_id}:repository/${var.ecr_repository_name}/*",
@@ -104,4 +105,100 @@ resource "aws_iam_role_policy" "terraform_backend_access" {
   name   = "github-actions-terraform-backend-access"
   role   = aws_iam_role.github_actions_role.name
   policy = data.aws_iam_policy_document.terraform_backend_access.json
+}
+
+data "aws_iam_policy_document" "cloudwatch_logs_access" {
+
+  statement {
+    sid    = "AllowCloudWatchLogsAccess"
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams"
+    ]
+    resources = [
+      "arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/vpc/flow-logs*"
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "cloudwatch_logs_access" {
+  name   = "github-actions-cloudwatch-logs-access"
+  role   = aws_iam_role.github_actions_role.name
+  policy = data.aws_iam_policy_document.cloudwatch_logs_access.json
+}
+
+data "aws_iam_policy_document" "github_actions_manage_iam" {
+  statement {
+    sid    = "AllowCreateRole"
+    effect = "Allow"
+    actions = [
+      "iam:CreateRole"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "AllowManageSpecificFlowLogsRole"
+    effect = "Allow"
+    actions = [
+      "iam:GetRole",
+      "iam:PutRolePolicy",
+      "iam:PassRole"
+    ]
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.project}-flow-logs-role"
+    ]
+  }
+
+  statement {
+    sid    = "AllowGetOIDCProvider"
+    effect = "Allow"
+    actions = [
+      "iam:GetOpenIDConnectProvider"
+    ]
+    resources = [
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"
+    ]
+  }
+
+  statement {
+    sid    = "AllowCreateOIDCProvider"
+    effect = "Allow"
+    actions = [
+      "iam:CreateOpenIDConnectProvider"
+    ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "github_actions_manage_iam" {
+  name   = "github-actions-manage-iam-for-flow-logs"
+  role   = aws_iam_role.github_actions_role.name
+  policy = data.aws_iam_policy_document.github_actions_manage_iam.json
+}
+
+data "aws_iam_policy_document" "ec2_read" {
+  statement {
+    sid    = "AllowEC2Describe"
+    effect = "Allow"
+    actions = [
+      "ec2:DescribeVpcs",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeRouteTables",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeInternetGateways",
+      "ec2:DescribeAddresses"
+    ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "ec2_read" {
+  name   = "github-actions-ec2-read"
+  role   = aws_iam_role.github_actions_role.name
+  policy = data.aws_iam_policy_document.ec2_read.json
 }
