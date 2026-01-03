@@ -1,6 +1,5 @@
 # checkov:skip=CKV_AWS_136: "Using default encryption is acceptable for this repo"
-# tfsec:ignore:AVD-AWS-0031 "AWS ECR repository is set to use immutable tags with exclusion for 'latest' tag."
-# tfsec:ignore:AVD-AWS-0033 "For now, we are using AES256 encryption for ECR repository."
+# checkov:skip=CKV_AWS_136: "Using default encryption is acceptable for this repo"
 resource "aws_ecr_repository" "furniture_crawler_ecr_repo" {
   name                 = "${var.ecr_repository_name}/furniture-crawler"
   image_tag_mutability = "IMMUTABLE_WITH_EXCLUSION"

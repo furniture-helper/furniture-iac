@@ -21,6 +21,27 @@ resource "aws_flow_log" "vpc_flow_log" {
   }
 }
 
+resource "aws_default_security_group" "default_sg" {
+  vpc_id = aws_vpc.vpc.id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+  }
+
+  egress {
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
+  }
+
+  tags = {
+    Name    = "${var.project}-default-sg"
+    Project = var.project
+  }
+}
+
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
 
@@ -54,7 +75,8 @@ resource "aws_subnet" "private_subnet" {
   }
 }
 
-resource "aws_eip" "nat" {
+# checkov:skip=CKV2_AWS_19: "EIP is attached to a NAT Gateway, not an EC2 instance"
+resource "aws_eip" "nat_eip" {
   tags = {
     Name    = "${var.project}-nat-eip"
     Project = var.project
@@ -62,7 +84,7 @@ resource "aws_eip" "nat" {
 }
 
 resource "aws_nat_gateway" "nat_gw" {
-  allocation_id = aws_eip.nat.id
+  allocation_id = aws_eip.nat_eip.id
   subnet_id     = aws_subnet.public_subnet.id
 
   tags = {
