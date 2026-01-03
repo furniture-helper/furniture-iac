@@ -2,6 +2,11 @@ resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   # checkov:skip=CKV_AWS_158: "Will add KMS encryption later"
   name              = "/aws/vpc/flow-logs"
   retention_in_days = 365
+
+  tags = {
+    Name    = "${var.project}-vpc-flow-logs"
+    Project = var.project
+  }
 }
 
 resource "aws_iam_role" "flow_logs_role" {
@@ -15,6 +20,11 @@ resource "aws_iam_role" "flow_logs_role" {
       Action    = "sts:AssumeRole"
     }]
   })
+
+  tags = {
+    Name    = "${var.project}-flow-logs-role"
+    Project = var.project
+  }
 }
 
 resource "aws_iam_role_policy" "flow_logs_policy" {
