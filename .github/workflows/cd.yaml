@@ -16,7 +16,7 @@ permissions:
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}
-  IAM_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+  IAM_ROLE_ARN: ${{ secrets.AWS_IAC_ROLE_ARN }}
 
 jobs:
   plan:

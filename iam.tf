@@ -110,14 +110,22 @@ resource "aws_iam_role_policy" "terraform_backend_access" {
 data "aws_iam_policy_document" "cloudwatch_logs_access" {
 
   statement {
+    sid    = "AllowDescribeLogGroups"
+    effect = "Allow"
+    actions = [
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
     sid    = "AllowCloudWatchLogsAccess"
     effect = "Allow"
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
-      "logs:DescribeLogGroups",
-      "logs:DescribeLogStreams"
     ]
     resources = [
       "arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/vpc/flow-logs*"
@@ -147,10 +155,12 @@ data "aws_iam_policy_document" "github_actions_manage_iam" {
     actions = [
       "iam:GetRole",
       "iam:PutRolePolicy",
-      "iam:PassRole"
+      "iam:PassRole",
+      "iam:ListRolePolicies"
     ]
     resources = [
-      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.project}-flow-logs-role"
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.project}-flow-logs-role",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.project}-github-actions-role"
     ]
   }
 
@@ -191,7 +201,7 @@ data "aws_iam_policy_document" "ec2_read" {
       "ec2:DescribeRouteTables",
       "ec2:DescribeSecurityGroups",
       "ec2:DescribeInternetGateways",
-      "ec2:DescribeAddresses"
+      "ec2:DescribeAddresses",
     ]
     resources = ["*"]
   }
