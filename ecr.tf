@@ -1,3 +1,5 @@
+# tfsec:ignore:aws-ecr-enforce-immutable-repository "AWS ECR repository is set to use immutable tags with exclusion for 'latest' tag."
+# tfsec:ignore:AVD-AWS-0033 "For now, we are using AES256 encryption for ECR repository."
 resource "aws_ecr_repository" "furniture_crawler_ecr_repo" {
   name                 = "${var.ecr_repository_name}/furniture-crawler"
   image_tag_mutability = "IMMUTABLE_WITH_EXCLUSION"

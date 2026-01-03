@@ -9,6 +9,18 @@ resource "aws_vpc" "vpc" {
   }
 }
 
+resource "aws_flow_log" "vpc_flow_log" {
+  log_destination      = "arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/vpc/flow-logs"
+  log_destination_type = "cloud-watch-logs"
+  traffic_type         = "ALL"
+  vpc_id               = aws_vpc.vpc.id
+
+  tags = {
+    Name    = "${var.project}-vpc-flow-log"
+    Project = var.project
+  }
+}
+
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
 
@@ -22,7 +34,7 @@ resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = var.public_subnet_cidr
   availability_zone       = var.availability_zone
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 
   tags = {
     Name    = "${var.project}-public-subnet"
