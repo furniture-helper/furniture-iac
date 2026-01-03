@@ -17,7 +17,8 @@ ignored_resources := {
     "aws_autoscaling_attachment",
     "random_string",
     "random_password",
-    "tls_private_key"
+    "tls_private_key",
+    "aws_iam_role_policy"
 }
 
 deny contains msg if {
