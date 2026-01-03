@@ -42,7 +42,7 @@ resource "aws_iam_role_policy" "flow_logs_policy" {
         "logs:DescribeLogGroups",
         "logs:DescribeLogStreams"
       ]
-      Resource = aws_cloudwatch_log_group.vpc_flow_logs.arn
+      Resource = "${aws_cloudwatch_log_group.vpc_flow_logs.arn}:*"
     }]
   })
 }
