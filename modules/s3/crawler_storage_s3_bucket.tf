@@ -54,11 +54,17 @@ resource "aws_s3_bucket_lifecycle_configuration" "crawler_storage_lifecycle" {
   bucket = aws_s3_bucket.crawler_storage.id
 
   rule {
-    id     = "ExpireOldVersions"
+    id     = "TierAndExpire"
     status = "Enabled"
 
-    noncurrent_version_expiration {
+    transition {
+      days          = 30
+      storage_class = "STANDARD_IA"
+    }
+
+    noncurrent_version_transition {
       noncurrent_days = 30
+      storage_class   = "GLACIER"
     }
   }
 }
