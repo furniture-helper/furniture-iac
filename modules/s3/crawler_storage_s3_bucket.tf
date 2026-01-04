@@ -1,6 +1,7 @@
 resource "aws_s3_bucket" "crawler_storage" {
   # checkov:skip=CKV2_AWS_62: "Bucket event notifications are not required at the moment"
   # checkov:skip=CKV_AWS_144: "Cross region replication is not required for this bucket"
+  # checkov:skip=CKV_AWS_145: "KMS encryption is not required for this bucket"
   bucket = "furniture-crawler-storage"
 
   lifecycle {
@@ -67,6 +68,16 @@ resource "aws_s3_bucket_lifecycle_configuration" "crawler_storage_lifecycle" {
       storage_class   = "GLACIER"
     }
   }
+
+  rule {
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+    filter {}
+    id     = "AbortIncompleteMultipartUploads"
+    status = "Enabled"
+  }
+
 }
 
 output "crawler_storage_s3_bucket_arn" {
