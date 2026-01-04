@@ -44,13 +44,6 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "crawler_storage_e
   }
 }
 
-resource "aws_s3_bucket_logging" "crawler_storage_logging" {
-  bucket = aws_s3_bucket.crawler_storage.id
-
-  target_bucket = aws_s3_bucket.crawler_storage.id
-  target_prefix = "logs/"
-}
-
 resource "aws_s3_bucket_lifecycle_configuration" "crawler_storage_lifecycle" {
   bucket = aws_s3_bucket.crawler_storage.id
 
@@ -66,6 +59,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "crawler_storage_lifecycle" {
     noncurrent_version_transition {
       noncurrent_days = 30
       storage_class   = "GLACIER"
+    }
+
+    noncurrent_version_expiration {
+      noncurrent_days = 365
     }
   }
 

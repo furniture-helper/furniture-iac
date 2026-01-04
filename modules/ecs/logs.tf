@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 resource "aws_cloudwatch_log_group" "furniture_crawler_log_group" {
   # checkov:skip=CKV_AWS_338: "Log group retention is set to 14 days only for cost management"
   # checkov:skip=CKV_AWS_158: "KMS encryption is not required for this log group"
@@ -33,7 +35,7 @@ resource "aws_iam_role_policy" "ecs_logs_policy" {
           "logs:PutLogEvents",
           "logs:CreateLogGroup"
         ]
-        Resource = "arn:aws:logs:*:*:log-group:/aws/ecs/furniture-crawler:*"
+        Resource = "arn:aws:logs:${data.aws_caller_identity.current.account_id}:${var.region}:log-group:/aws/ecs/furniture-crawler:*"
       }
     ]
   })

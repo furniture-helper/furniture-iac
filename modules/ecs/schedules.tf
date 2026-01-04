@@ -1,7 +1,7 @@
 resource "aws_cloudwatch_event_rule" "daily_run" {
   name                = "${var.project}-daily-run"
   description         = "Run ECS task once per day"
-  schedule_expression = "rate(1 day)"
+  schedule_expression = "cron(0 2 * * ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "crawler_daily_run" {

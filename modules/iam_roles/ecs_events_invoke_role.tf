@@ -27,8 +27,12 @@ resource "aws_iam_role_policy" "events_invoke_ecs_policy" {
         ]
         Resource = [
           var.furniture_crawler_task_definition_arn,
-          var.ecs_cluster_arn
         ]
+        Condition = {
+          StringEquals = {
+            "ecs:cluster" = var.ecs_cluster_arn
+          }
+        }
       },
       {
         Sid    = "AllowPassRole"

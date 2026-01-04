@@ -43,3 +43,8 @@ variable "crawler_s3_bucket_name" {
   type        = string
   description = "The name of the S3 bucket used by the furniture crawler"
 }
+
+variable "region" {
+  description = "AWS region"
+  type        = string
+}

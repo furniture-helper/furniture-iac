@@ -53,4 +53,5 @@ module "ecs" {
   private_subnet_ids              = module.vpc.private_subnet_ids
   allow_all_egress_sg_id          = module.vpc.allow_all_egress_sg_id
   crawler_s3_bucket_name          = module.s3.crawler_storage_s3_bucket_name
+  region                          = var.region
 }
