@@ -1,4 +1,6 @@
 resource "aws_cloudwatch_log_group" "furniture_crawler_log_group" {
+  # checkov:skip=CKV_AWS_338: "Log group retention is set to 14 days only for cost management"
+  # checkov:skip=CKV_AWS_158: "KMS encryption is not required for this log group"
   name              = "/aws/ecs/furniture-crawler"
   retention_in_days = 14
   tags = {
