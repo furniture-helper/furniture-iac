@@ -10,3 +10,15 @@ variable "github_organization" {
 variable "ecr_repository_name" {
   type = string
 }
+
+variable "crawler_s3_bucker_arn" {
+  type = string
+}
+
+variable "furniture_crawler_task_definition_arn" {
+  type = string
+}
+
+variable "ecs_cluster_arn" {
+  type = string
+}
