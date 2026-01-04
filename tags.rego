@@ -20,7 +20,7 @@ ignored_resources := {
     "aws_s3_bucket_lifecycle_configuration",
     "aws_s3_bucket_public_access_block",
     "aws_s3_bucket_server_side_encryption_configuration",
-    "aws_s3_bucket_versioning"
+    "aws_s3_bucket_versioning",
     "random_string",
     "random_password",
     "tls_private_key",
