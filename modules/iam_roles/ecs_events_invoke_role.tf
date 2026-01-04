@@ -11,6 +11,11 @@ resource "aws_iam_role" "events_invoke_ecs" {
       }
     ]
   })
+
+  tags = {
+    Project = var.project
+    Name    = "${var.project}-events-invoke-ecs-role"
+  }
 }
 
 resource "aws_iam_role_policy" "events_invoke_ecs_policy" {
