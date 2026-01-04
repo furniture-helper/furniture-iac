@@ -111,6 +111,7 @@ resource "aws_route_table_association" "private_assoc" {
 }
 
 resource "aws_security_group" "allow_all_egress" {
+  # checkov:skip=CKV2_AWS_5: "This security group is attached via the output to resources that require all outbound traffic"
   name        = "${var.project}-allow-all-egress-sg"
   description = "Allow all outbound traffic"
   vpc_id      = aws_vpc.vpc.id
