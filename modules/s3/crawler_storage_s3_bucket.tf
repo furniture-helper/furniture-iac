@@ -1,5 +1,6 @@
 resource "aws_s3_bucket" "crawler_storage" {
   # checkov:skip=CKV2_AWS_62: "Bucket event notifications are not required at the moment"
+  # checkov:skip=CKV_AWS_144: "Cross region replication is not required for this bucket"
   bucket = "furniture-crawler-storage"
 
   lifecycle {
@@ -47,6 +48,19 @@ resource "aws_s3_bucket_logging" "crawler_storage_logging" {
 
   target_bucket = aws_s3_bucket.crawler_storage.id
   target_prefix = "logs/"
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "crawler_storage_lifecycle" {
+  bucket = aws_s3_bucket.crawler_storage.id
+
+  rule {
+    id     = "ExpireOldVersions"
+    status = "Enabled"
+
+    noncurrent_version_expiration {
+      noncurrent_days = 30
+    }
+  }
 }
 
 output "crawler_storage_s3_bucket_arn" {
