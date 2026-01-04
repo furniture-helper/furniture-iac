@@ -11,7 +11,7 @@ variable "ecr_repository_name" {
   type = string
 }
 
-variable "crawler_s3_bucker_arn" {
+variable "crawler_s3_bucket_arn" {
   type = string
 }
 

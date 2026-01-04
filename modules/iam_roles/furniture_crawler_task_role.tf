@@ -32,14 +32,13 @@ resource "aws_iam_role_policy" "s3_write_policy" {
         Effect = "Allow"
         Action = [
           "s3:PutObject",
-          "s3:PutObjectAcl",
           "s3:DeleteObject",
           "s3:GetObject",
           "s3:ListBucket"
         ]
         Resource = [
-          "arn:aws:s3:::${var.crawler_s3_bucker_arn}",
-          "arn:aws:s3:::${var.crawler_s3_bucker_arn}/*"
+          var.crawler_s3_bucket_arn,
+          "${var.crawler_s3_bucket_arn}/*"
         ]
       }
     ]

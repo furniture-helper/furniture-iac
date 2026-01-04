@@ -23,7 +23,7 @@ module "iam_roles" {
   github_organization                   = var.github_organization
   ecr_repository_name                   = var.ecr_repository_name
   region                                = var.region
-  crawler_s3_bucker_arn                 = module.s3.crawler_storage_s3_bucket_arn
+  crawler_s3_bucket_arn                 = module.s3.crawler_storage_s3_bucket_arn
   furniture_crawler_task_definition_arn = module.ecs.furniture_crawler_task_definition_arn
   ecs_cluster_arn                       = module.ecs.ecs_cluster_arn
 }

@@ -10,7 +10,7 @@ resource "aws_cloudwatch_log_group" "furniture_crawler_log_group" {
 }
 
 locals {
-  derived_ecs_task_execution_role_name = length(var.ecs_task_execution_role_arn) == 0 ? var.ecs_task_execution_role_arn : split("/", var.ecs_task_execution_role_arn)[1]
+  derived_ecs_task_execution_role_name = length(var.ecs_task_execution_role_arn) > 0 ? split("/", var.ecs_task_execution_role_arn)[1] : ""
 }
 
 data "aws_iam_role" "exec" {

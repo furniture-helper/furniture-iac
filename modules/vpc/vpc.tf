@@ -126,7 +126,7 @@ resource "aws_security_group" "allow_all_egress" {
   }
 
   tags = {
-    Name    = "${var.project}-allow-all-egress-sg",
+    Name    = "${var.project}-allow-all-egress-sg"
     Project = var.project
   }
 }
