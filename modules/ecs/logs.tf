@@ -35,7 +35,7 @@ resource "aws_iam_role_policy" "ecs_logs_policy" {
           "logs:PutLogEvents",
           "logs:CreateLogGroup"
         ]
-        Resource = "arn:aws:logs:${data.aws_caller_identity.current.account_id}:${var.region}:log-group:/aws/ecs/furniture-crawler:*"
+        Resource = "arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/ecs/furniture-crawler:*"
       }
     ]
   })
