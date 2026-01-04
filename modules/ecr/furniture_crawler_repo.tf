@@ -23,3 +23,8 @@ resource "aws_ecr_repository" "furniture_crawler_ecr_repo" {
     Project = var.project
   }
 }
+
+output "furniture_crawler_ecr_repository_uri" {
+  description = "URI of the ECR repository for the furniture crawler"
+  value       = aws_ecr_repository.furniture_crawler_ecr_repo.repository_url
+}

@@ -82,3 +82,8 @@ resource "aws_iam_role_policy" "ecr_push" {
   role   = aws_iam_role.github_actions_role.name
   policy = data.aws_iam_policy_document.ecr_push.json
 }
+
+output "github_actions_role_arn" {
+  description = "ARN of the IAM role for GitHub Actions"
+  value       = aws_iam_role.github_actions_role.arn
+}
