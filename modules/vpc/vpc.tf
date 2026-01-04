@@ -116,11 +116,12 @@ resource "aws_security_group" "allow_all_egress" {
   vpc_id      = aws_vpc.vpc.id
 
   egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
+    description      = "All outbound HTTPS traffic"
   }
 
   tags = {
