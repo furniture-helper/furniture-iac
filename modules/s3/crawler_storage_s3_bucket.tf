@@ -1,4 +1,5 @@
 resource "aws_s3_bucket" "crawler_storage" {
+  # checkov:skip=CKV2_AWS_62: "Bucket event notifications are not required at the moment"
   bucket = "furniture-crawler-storage"
 
   lifecycle {
@@ -29,6 +30,23 @@ resource "aws_s3_bucket_versioning" "crawler_storage_versioning" {
   versioning_configuration {
     status = "Enabled"
   }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "crawler_storage_encryption" {
+  bucket = aws_s3_bucket.crawler_storage.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_logging" "crawler_storage_logging" {
+  bucket = aws_s3_bucket.crawler_storage.id
+
+  target_bucket = aws_s3_bucket.crawler_storage.id
+  target_prefix = "logs/"
 }
 
 output "crawler_storage_s3_bucket_arn" {
