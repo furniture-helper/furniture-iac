@@ -50,7 +50,7 @@ module "ecs" {
   events_invoke_ecs_role_arn      = module.iam_roles.events_invoke_ecs_role_arn
   ecs_task_execution_role_arn     = module.iam_roles.ecs_task_execution_role_arn
   furniture_crawler_task_role_arn = module.iam_roles.furniture_crawler_task_role_arn
-  private_subnet_ids              = module.vpc.private_subnet_ids
+  subnet_id                       = module.vpc.public_subnet_id
   allow_all_egress_sg_id          = module.vpc.allow_all_egress_sg_id
   crawler_s3_bucket_name          = module.s3.crawler_storage_s3_bucket_name
   region                          = var.region

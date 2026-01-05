@@ -29,9 +29,9 @@ variable "furniture_crawler_task_role_arn" {
   type        = string
 }
 
-variable "private_subnet_ids" {
-  description = "List of private subnet IDs for the ECS tasks"
-  type        = list(string)
+variable "subnet_id" {
+  description = "Subnet ID where the ECS tasks will be launched"
+  type        = string
 }
 
 variable "allow_all_egress_sg_id" {
