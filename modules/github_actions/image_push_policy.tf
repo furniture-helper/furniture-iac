@@ -1,5 +1,5 @@
 variable "crawler_repo_arn" {
-  description = "ECR repository URL for the furniture crawler"
+  description = "ECR repository ARN for the furniture crawler"
   type        = string
 }
 
