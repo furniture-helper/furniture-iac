@@ -39,22 +39,10 @@ locals {
     }
 
     environment = [
-      {
-        name  = "AWS_S3_BUCKET"
-        value = var.s3_bucket_name
-      },
-      {
-        name  = "AWS_REGION"
-        value = data.aws_region.current.region
-      },
-      {
-        name  = "PAGE_STORAGE"
-        value = "LocalStorage"
-      },
-      {
-        name  = "MAX_REQUESTS_PER_CRAWL"
-        value = "100"
-      }
+      { name = "AWS_S3_BUCKET", value = var.s3_bucket_name },
+      { name = "AWS_REGION", value = data.aws_region.current.region },
+      { name = "PAGE_STORAGE", value = "LocalStorage" },
+      { name = "MAX_REQUESTS_PER_CRAWL", value = "100" }
     ]
 
   }
