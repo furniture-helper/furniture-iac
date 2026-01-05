@@ -1,9 +1,30 @@
+variable "ecr_repo_url" {
+  description = "ECR repository URL for the furniture crawler container image"
+  type        = string
+}
+
+variable "image_tag" {
+  description = "Image tag for the furniture crawler container"
+  type        = string
+  default     = "latest"
+}
+
+variable "s3_bucket_name" {
+  description = "Name of the S3 bucket for the furniture crawler"
+  type        = string
+}
+
+variable "task_execution_role_arn" {
+  description = "ARN of the ECS task execution role"
+  type        = string
+}
+
 data "aws_region" "current" {}
 
 locals {
   container = {
     name      = "furniture-crawler"
-    image     = "${var.furniture_crawler_ecr_repo_url}:${var.furniture_crawler_image_tag}"
+    image     = "${var.ecr_repo_url}:${var.image_tag}"
     cpu       = 1024
     memory    = 2048
     essential = true
@@ -20,7 +41,7 @@ locals {
     environment = [
       {
         name  = "AWS_S3_BUCKET"
-        value = var.crawler_s3_bucket_name
+        value = var.s3_bucket_name
       },
       {
         name  = "AWS_REGION"
@@ -48,8 +69,8 @@ resource "aws_ecs_task_definition" "furniture_crawler_task_definition" {
   cpu                      = 1024
   memory                   = 2048
 
-  execution_role_arn = var.ecs_task_execution_role_arn
-  task_role_arn      = var.furniture_crawler_task_role_arn
+  execution_role_arn = var.task_execution_role_arn
+  task_role_arn      = aws_iam_role.furniture_crawler_task_role.arn
 
   container_definitions = jsonencode(local.container_definitions)
 

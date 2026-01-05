@@ -17,14 +17,6 @@ module "s3" {
   project = var.project
 }
 
-module "iam_roles" {
-  source                                = "./modules/iam_roles"
-  project                               = var.project
-  crawler_s3_bucket_arn                 = module.s3.crawler_storage_s3_bucket_arn
-  furniture_crawler_task_definition_arn = module.ecs.furniture_crawler_task_definition_arn
-  ecs_cluster_arn                       = module.ecs.ecs_cluster_arn
-}
-
 module "ecr" {
   source  = "./modules/ecr"
   project = var.project
@@ -40,16 +32,13 @@ module "vpc" {
 }
 
 module "ecs" {
-  source                          = "./modules/ecs"
-  project                         = var.project
-  furniture_crawler_ecr_repo_url  = module.ecr.furniture_crawler_ecr_repo_uri
-  events_invoke_ecs_role_arn      = module.iam_roles.events_invoke_ecs_role_arn
-  ecs_task_execution_role_arn     = module.iam_roles.ecs_task_execution_role_arn
-  furniture_crawler_task_role_arn = module.iam_roles.furniture_crawler_task_role_arn
-  subnet_id                       = module.vpc.public_subnet_id
-  allow_all_egress_sg_id          = module.vpc.allow_all_egress_sg_id
-  crawler_s3_bucket_name          = module.s3.crawler_storage_s3_bucket_name
-  region                          = var.region
+  source                 = "./modules/ecs"
+  project                = var.project
+  subnet_id              = module.vpc.public_subnet_id
+  allow_all_egress_sg_id = module.vpc.allow_all_egress_sg_id
+  crawler_s3_bucket_name = module.s3.crawler_storage_s3_bucket_name
+  crawler_ecr_repo_url   = module.ecr.furniture_crawler_ecr_repo_uri
+  crawler_s3_bucket_arn  = module.s3.crawler_storage_s3_bucket_arn
 }
 
 module "github_actions" {

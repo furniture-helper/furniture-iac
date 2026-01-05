@@ -1,4 +1,4 @@
-resource "aws_iam_role" "events_invoke_ecs" {
+resource "aws_iam_role" "events_invoke_ecs_role" {
   name = "${var.project}-events-invoke-ecs"
 
   assume_role_policy = jsonencode({
@@ -19,7 +19,7 @@ resource "aws_iam_role" "events_invoke_ecs" {
 }
 
 resource "aws_iam_role_policy" "events_invoke_ecs_policy" {
-  role = aws_iam_role.events_invoke_ecs.id
+  role = aws_iam_role.events_invoke_ecs_role.id
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -31,11 +31,11 @@ resource "aws_iam_role_policy" "events_invoke_ecs_policy" {
           "ecs:RunTask"
         ]
         Resource = [
-          var.furniture_crawler_task_definition_arn,
+          module.furniture_crawler_task.furniture_crawler_task_definition_arn,
         ]
         Condition = {
           StringEquals = {
-            "ecs:cluster" = var.ecs_cluster_arn
+            "ecs:cluster" = aws_ecs_cluster.furniture_cluster.arn
           }
         }
       },
@@ -47,7 +47,7 @@ resource "aws_iam_role_policy" "events_invoke_ecs_policy" {
         ]
         Resource = [
           aws_iam_role.ecs_task_execution_role.arn,
-          aws_iam_role.furniture_crawler_task_role.arn
+          module.furniture_crawler_task.furniture_crawler_task_role_arn
         ]
       }
     ]
@@ -55,6 +55,6 @@ resource "aws_iam_role_policy" "events_invoke_ecs_policy" {
 }
 
 output "events_invoke_ecs_role_arn" {
-  value       = aws_iam_role.events_invoke_ecs.arn
+  value       = aws_iam_role.events_invoke_ecs_role.arn
   description = "ARN of the IAM role that allows EventBridge to invoke ECS tasks"
 }
