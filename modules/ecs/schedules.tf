@@ -40,6 +40,7 @@ resource "aws_cloudwatch_event_target" "crawler_daily_run" {
       capacity_provider = "FARGATE_SPOT"
       weight            = 1
     }
+
     network_configuration {
       subnets          = [var.subnet_id]
       security_groups  = [var.allow_all_egress_sg_id]
