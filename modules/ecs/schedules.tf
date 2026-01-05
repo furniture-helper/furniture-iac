@@ -35,7 +35,11 @@ resource "aws_cloudwatch_event_target" "crawler_daily_run" {
   ecs_target {
     task_definition_arn = module.furniture_crawler_task.furniture_crawler_task_definition_arn
     task_count          = 1
-    launch_type         = "FARGATE"
+
+    capacity_provider_strategy {
+      capacity_provider = "FARGATE_SPOT"
+      weight            = 1
+    }
 
     network_configuration {
       subnets          = [var.subnet_id]

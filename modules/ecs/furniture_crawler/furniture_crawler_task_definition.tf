@@ -25,8 +25,8 @@ locals {
   container = {
     name      = "furniture-crawler"
     image     = "${var.ecr_repo_url}:${var.image_tag}"
-    cpu       = 1024
-    memory    = 2048
+    cpu       = 2048
+    memory    = 8192
     essential = true
 
     logConfiguration = {
@@ -54,8 +54,13 @@ resource "aws_ecs_task_definition" "furniture_crawler_task_definition" {
   family                   = "furniture_crawler"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = 1024
-  memory                   = 2048
+  cpu                      = 2048
+  memory                   = 8192
+
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture        = "ARM64"
+  }
 
   execution_role_arn = var.task_execution_role_arn
   task_role_arn      = aws_iam_role.furniture_crawler_task_role.arn
