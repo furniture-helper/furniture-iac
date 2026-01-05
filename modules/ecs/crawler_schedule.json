@@ -1,0 +1,10 @@
+{
+    "abans": {
+        "url": "https://buyabans.com",
+        "schedule": "cron(0 2 * * ? *)"
+    },
+    "singer": {
+        "url": "https://www.singersl.com/",
+        "schedule": "cron(0 3 * * ? *)"
+    }
+}

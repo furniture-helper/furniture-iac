@@ -1,3 +1,13 @@
+variable "project" {
+  description = "Project name"
+  type        = string
+}
+
+variable "s3_bucket_arn" {
+  description = "ARN of the S3 bucket used by the furniture crawler"
+  type        = string
+}
+
 resource "aws_iam_role" "furniture_crawler_task_role" {
   name = "${var.project}-crawler-task-role"
 
@@ -37,8 +47,8 @@ resource "aws_iam_role_policy" "s3_write_policy" {
           "s3:ListBucket"
         ]
         Resource = [
-          var.crawler_s3_bucket_arn,
-          "${var.crawler_s3_bucket_arn}/*"
+          var.s3_bucket_arn,
+          "${var.s3_bucket_arn}/*"
         ]
       }
     ]

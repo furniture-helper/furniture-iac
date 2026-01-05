@@ -1,3 +1,8 @@
+variable "project" {
+  type        = string
+  description = "Project name"
+}
+
 resource "aws_s3_bucket" "crawler_storage" {
   # checkov:skip=CKV2_AWS_62: "Bucket event notifications are not required at the moment"
   # checkov:skip=CKV_AWS_144: "Cross region replication is not required for this bucket"

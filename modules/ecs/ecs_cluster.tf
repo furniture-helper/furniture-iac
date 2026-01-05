@@ -1,3 +1,7 @@
+variable "project" {
+  description = "Project name"
+  type        = string
+}
 
 resource "aws_ecs_cluster" "furniture_cluster" {
   name = "${var.project}-cluster"
