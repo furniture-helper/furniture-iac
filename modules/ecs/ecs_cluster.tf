@@ -21,3 +21,15 @@ output "ecs_cluster_arn" {
   value       = aws_ecs_cluster.furniture_cluster.arn
   description = "ARN of the ECS cluster"
 }
+
+resource "aws_ecs_cluster_capacity_providers" "furniture_cluster_capacity_providers" {
+  cluster_name = aws_ecs_cluster.furniture_cluster.name
+
+  capacity_providers = ["FARGATE", "FARGATE_SPOT"]
+
+  default_capacity_provider_strategy {
+    base              = 1
+    weight            = 100
+    capacity_provider = "FARGATE"
+  }
+}
