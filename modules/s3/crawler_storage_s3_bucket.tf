@@ -3,7 +3,7 @@ resource "aws_s3_bucket" "crawler_storage" {
   # checkov:skip=CKV_AWS_144: "Cross region replication is not required for this bucket"
   # checkov:skip=CKV_AWS_145: "KMS encryption is not required for this bucket"
   # checkov:skip=CKV_AWS_18: "Access logging is not required for this bucket"
-  bucket = "furniture-crawler-storage"
+  bucket = "furniture-crawler-storage-new"
 
   lifecycle {
     prevent_destroy = true
