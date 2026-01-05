@@ -1,8 +1,12 @@
+variable "project" {
+  type = string
+}
+
 resource "aws_ecr_repository" "furniture_crawler_ecr_repo" {
   # checkov:skip=CKV_AWS_136: "Using default encryption is acceptable for this repo"
   # checkov:skip=CKV_AWS_51: "Images are immutable except for latest"
 
-  name                 = "${var.ecr_repository_name}/furniture-crawler"
+  name                 = "furniture-helper/furniture-crawler"
   image_tag_mutability = "IMMUTABLE_WITH_EXCLUSION"
 
   image_tag_mutability_exclusion_filter {
@@ -24,7 +28,12 @@ resource "aws_ecr_repository" "furniture_crawler_ecr_repo" {
   }
 }
 
-output "furniture_crawler_ecr_repository_uri" {
-  description = "URI of the ECR repository for the furniture crawler"
+output "furniture_crawler_ecr_repo_uri" {
   value       = aws_ecr_repository.furniture_crawler_ecr_repo.repository_url
+  description = "URL of the ECR repository for the furniture crawler"
+}
+
+output "furniture_crawler_ecr_repo_arn" {
+  value       = aws_ecr_repository.furniture_crawler_ecr_repo.arn
+  description = "ARN of the ECR repository for the furniture crawler"
 }

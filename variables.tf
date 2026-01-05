@@ -34,12 +34,6 @@ variable "private_subnet_cidr" {
   default     = "10.0.2.0/24"
 }
 
-variable "ecr_repository_name" {
-  description = "Name of the ECR repository"
-  type        = string
-  default     = "furniture-helper"
-}
-
 variable "github_organization" {
   type    = string
   default = "furniture-helper"
