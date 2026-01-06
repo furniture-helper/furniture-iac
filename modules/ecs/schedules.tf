@@ -3,10 +3,6 @@ variable "subnet_id" {
   type        = string
 }
 
-variable "allow_all_egress_sg_id" {
-  description = "Security group ID that allows all egress traffic"
-  type        = string
-}
 
 locals {
   crawler_targets = jsondecode(file("./${path.module}/crawler_schedule.json"))
@@ -43,7 +39,7 @@ resource "aws_cloudwatch_event_target" "crawler_daily_run" {
 
     network_configuration {
       subnets          = [var.subnet_id]
-      security_groups  = [var.allow_all_egress_sg_id]
+      security_groups  = [aws_security_group.ecs_tasks_sg.id]
       assign_public_ip = true
     }
   }

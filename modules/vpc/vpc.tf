@@ -58,30 +58,9 @@ resource "aws_route_table_association" "public_assoc" {
   route_table_id = aws_route_table.public_rt.id
 }
 
-resource "aws_security_group" "allow_all_egress" {
-  # checkov:skip=CKV2_AWS_5: "This security group is attached via the output to resources that require all outbound traffic"
-  name        = "${var.project}-allow-all-egress-sg"
-  description = "Allow all outbound traffic"
-  vpc_id      = aws_vpc.vpc.id
-
-  egress {
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-    description      = "All outbound HTTPS traffic"
-  }
-
-  tags = {
-    Name    = "${var.project}-allow-all-egress-sg"
-    Project = var.project
-  }
-}
-
-output "allow_all_egress_sg_id" {
-  value       = aws_security_group.allow_all_egress.id
-  description = "ID of the security group that allows all outbound traffic"
+output "vpc_id" {
+  value       = aws_vpc.vpc.id
+  description = "ID of the VPC"
 }
 
 output "public_subnet_id" {
