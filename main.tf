@@ -35,7 +35,7 @@ module "ecs" {
   source                 = "./modules/ecs"
   project                = var.project
   subnet_id              = module.vpc.public_subnet_id
-  allow_all_egress_sg_id = module.vpc.allow_all_egress_sg_id
+  vpc_id                 = module.vpc.vpc_id
   crawler_s3_bucket_name = module.s3.crawler_storage_s3_bucket_name
   crawler_ecr_repo_url   = module.ecr.furniture_crawler_ecr_repo_uri
   crawler_s3_bucket_arn  = module.s3.crawler_storage_s3_bucket_arn
