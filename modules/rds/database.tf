@@ -30,7 +30,7 @@ resource "aws_rds_cluster" "db_cluster" {
   # checkov:skip=CKV2_AWS_8: "I don't know what AWS backups are"
   cluster_identifier                  = "${var.project}-rds-cluster"
   engine                              = "aurora-postgresql"
-  engine_version                      = 17.4
+  engine_version                      = "17.4"
   database_name                       = local.db_creds.database_name
   master_username                     = local.db_creds.username
   master_password                     = local.db_creds.password
