@@ -64,6 +64,7 @@ resource "aws_rds_cluster_instance" "db_instance" {
   engine_version             = aws_rds_cluster.db_cluster.engine_version
   publicly_accessible        = var.allow_public_connections
   auto_minor_version_upgrade = true
+  monitoring_interval        = 5
 
   tags = {
     Name    = "${var.project}-db-instance-${count.index + 1}"
