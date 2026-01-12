@@ -5,7 +5,7 @@ variable "project" {
 }
 
 variable "availability_zone_1" {
-  description = "Availability Zone to create subnets in (single-AZ setup)"
+  description = "First Availability Zone to create subnets in (for multi-AZ setup)"
   type        = string
 }
 
