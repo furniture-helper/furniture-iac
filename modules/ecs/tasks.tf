@@ -13,11 +13,23 @@ variable "crawler_s3_bucket_arn" {
   type        = string
 }
 
+variable "database_credentials_secret_arn" {
+  description = "ARN of the Secrets Manager secret containing the database credentials"
+  type        = string
+}
+
+variable "rds_cluster_endpoint" {
+  description = "Endpoint of the RDS cluster"
+  type        = string
+}
+
 module "furniture_crawler_task" {
-  source                  = "./furniture_crawler"
-  project                 = var.project
-  ecr_repo_url            = var.crawler_ecr_repo_url
-  s3_bucket_arn           = var.crawler_s3_bucket_arn
-  s3_bucket_name          = var.crawler_s3_bucket_name
-  task_execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
+  source                          = "./furniture_crawler"
+  project                         = var.project
+  ecr_repo_url                    = var.crawler_ecr_repo_url
+  s3_bucket_arn                   = var.crawler_s3_bucket_arn
+  s3_bucket_name                  = var.crawler_s3_bucket_name
+  task_execution_role_arn         = aws_iam_role.ecs_task_execution_role.arn
+  database_credentials_secret_arn = var.database_credentials_secret_arn
+  rds_cluster_endpoint            = var.rds_cluster_endpoint
 }

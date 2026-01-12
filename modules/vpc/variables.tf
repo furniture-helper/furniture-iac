@@ -4,23 +4,12 @@ variable "project" {
   default     = "furniture"
 }
 
-variable "availability_zone" {
-  description = "Availability Zone to create subnets in (single-AZ setup)"
+variable "availability_zone_1" {
+  description = "First Availability Zone to create subnets in (for multi-AZ setup)"
   type        = string
 }
 
-variable "vpc_cidr" {
-  description = "CIDR block for the VPC"
+variable "availability_zone_2" {
+  description = "Second Availability Zone to create subnets in (for multi-AZ setup)"
   type        = string
-}
-
-variable "public_subnet_cidr" {
-  description = "CIDR block for the public subnet"
-  type        = string
-}
-
-variable "private_subnet_cidr" {
-  description = "CIDR block for the private subnet"
-  type        = string
-  default     = "10.0.2.0/24"
 }

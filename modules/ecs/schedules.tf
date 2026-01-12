@@ -1,8 +1,7 @@
-variable "subnet_id" {
-  description = "Subnet ID where the ECS tasks will be launched"
-  type        = string
+variable "subnet_ids" {
+  description = "Subnet IDs where the ECS tasks will run"
+  type        = list(string)
 }
-
 
 locals {
   crawler_targets = jsondecode(file("./${path.module}/crawler_schedule.json"))
@@ -38,7 +37,7 @@ resource "aws_cloudwatch_event_target" "crawler_daily_run" {
     }
 
     network_configuration {
-      subnets          = [var.subnet_id]
+      subnets          = var.subnet_ids
       security_groups  = [aws_security_group.ecs_tasks_sg.id]
       assign_public_ip = true
     }

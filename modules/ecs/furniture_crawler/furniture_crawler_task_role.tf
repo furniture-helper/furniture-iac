@@ -8,6 +8,11 @@ variable "s3_bucket_arn" {
   type        = string
 }
 
+variable "database_credentials_secret_arn" {
+  description = "ARN of the Secrets Manager secret containing the database credentials"
+  type        = string
+}
+
 resource "aws_iam_role" "furniture_crawler_task_role" {
   name = "${var.project}-crawler-task-role"
 
@@ -54,6 +59,7 @@ resource "aws_iam_role_policy" "s3_write_policy" {
     ]
   })
 }
+
 
 output "furniture_crawler_task_role_arn" {
   value       = aws_iam_role.furniture_crawler_task_role.arn

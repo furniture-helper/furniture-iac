@@ -19,6 +19,11 @@ variable "task_execution_role_arn" {
   type        = string
 }
 
+variable "rds_cluster_endpoint" {
+  description = "Endpoint of the RDS cluster"
+  type        = string
+}
+
 data "aws_region" "current" {}
 
 locals {
@@ -41,10 +46,25 @@ locals {
     environment = [
       { name = "AWS_S3_BUCKET", value = var.s3_bucket_name },
       { name = "AWS_REGION", value = data.aws_region.current.region },
-      { name = "PAGE_STORAGE", value = "LocalStorage" },
-      { name = "MAX_REQUESTS_PER_CRAWL", value = "100" }
+      { name = "PAGE_STORAGE", value = "AWSStorage" },
+      { name = "MAX_REQUESTS_PER_CRAWL", value = "99999" },
+      { name = "PG_HOST", value = var.rds_cluster_endpoint },
+      { name = "PG_PORT", value = "5432" },
     ]
-
+    secrets = [
+      {
+        name      = "PG_USER"
+        valueFrom = "${var.database_credentials_secret_arn}:username::"
+      },
+      {
+        name      = "PG_PASSWORD"
+        valueFrom = "${var.database_credentials_secret_arn}:password::"
+      },
+      {
+        name      = "PG_DATABASE"
+        valueFrom = "${var.database_credentials_secret_arn}:database_name::"
+      }
+    ]
   }
 
   container_definitions = [local.container]
