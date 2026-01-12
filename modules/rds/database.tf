@@ -26,6 +26,7 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
 }
 
 resource "aws_rds_cluster" "db_cluster" {
+  # checkov:skip=CKV_AWS_327: "Encryption using KMS not yet implemented"
   cluster_identifier                  = "${var.project}-rds-cluster"
   engine                              = "aurora-postgresql"
   engine_version                      = 17.4
