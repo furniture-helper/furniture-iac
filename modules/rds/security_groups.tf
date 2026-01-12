@@ -21,6 +21,7 @@ resource "aws_security_group" "rds_sg" {
 }
 
 resource "aws_security_group_rule" "allow_db_inbound_from_ecs_tasks" {
+  description              = "Allow inbound traffic on port 5432 from ECS tasks security group"
   security_group_id        = aws_security_group.rds_sg.id
   type                     = "ingress"
   from_port                = 5432
@@ -30,6 +31,7 @@ resource "aws_security_group_rule" "allow_db_inbound_from_ecs_tasks" {
 }
 
 resource "aws_security_group_rule" "allow_all_inbound_on_5432" {
+  description       = "Allow all inbound traffic on port 5432 if allow_public_connections is true"
   count             = var.allow_public_connections ? 1 : 0
   security_group_id = aws_security_group.rds_sg.id
   type              = "ingress"
