@@ -10,28 +10,16 @@ variable "region" {
   default     = "eu-west-1"
 }
 
-variable "availability_zone" {
+variable "availability_zone_1" {
   description = "Availability Zone to create subnets in (single-AZ setup)"
   type        = string
   default     = "eu-west-1a"
 }
 
-variable "vpc_cidr" {
-  description = "CIDR block for the VPC"
+variable "availability_zone_2" {
+  description = "Second Availability Zone to create subnets in (for multi-AZ setup)"
   type        = string
-  default     = "10.0.0.0/16"
-}
-
-variable "public_subnet_cidr" {
-  description = "CIDR block for the public subnet"
-  type        = string
-  default     = "10.0.1.0/24"
-}
-
-variable "private_subnet_cidr" {
-  description = "CIDR block for the private subnet"
-  type        = string
-  default     = "10.0.2.0/24"
+  default     = "eu-west-1b"
 }
 
 variable "github_organization" {
