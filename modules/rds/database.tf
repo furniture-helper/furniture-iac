@@ -45,6 +45,7 @@ resource "aws_rds_cluster" "db_cluster" {
   enabled_cloudwatch_logs_exports     = ["audit", "error", "general", "slowquery", "postgresql"]
   db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.rds_parameter_group.name
   db_instance_parameter_group_name    = aws_rds_cluster_parameter_group.rds_parameter_group.name
+  final_snapshot_identifier           = "${var.project}-rds-final-snapshot"
 
   serverlessv2_scaling_configuration {
     min_capacity             = 0
