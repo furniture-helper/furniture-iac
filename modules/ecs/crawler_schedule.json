@@ -7,7 +7,7 @@
     "url": "https://www.singersl.com",
     "schedule": "cron(0 2 * * ? *)"
   },
-  "sinhagiri": {
+  "singhagiri": {
     "url": "https://singhagiri.lk",
     "schedule": "cron(0 2 * * ? *)"
   },
