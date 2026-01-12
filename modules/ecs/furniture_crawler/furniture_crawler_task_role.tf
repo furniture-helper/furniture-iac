@@ -60,25 +60,6 @@ resource "aws_iam_role_policy" "s3_write_policy" {
   })
 }
 
-resource "aws_iam_role_policy" "read_db_credentials_policy" {
-  name = "${var.project}-crawler-read-db-credentials"
-  role = aws_iam_role.furniture_crawler_task_role.name
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid    = "AllowReadDBCredentials"
-        Effect = "Allow"
-        Action = [
-          "secretsmanager:GetSecretValue",
-          "secretsmanager:DescribeSecret"
-        ]
-        Resource = var.database_credentials_secret_arn
-      }
-    ]
-  })
-}
 
 output "furniture_crawler_task_role_arn" {
   value       = aws_iam_role.furniture_crawler_task_role.arn

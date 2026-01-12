@@ -1,10 +1,22 @@
 {
-    "abans": {
-        "url": "https://buyabans.com",
-        "schedule": "cron(0 2 * * ? *)"
-    },
-    "singer": {
-        "url": "https://www.singersl.com/",
-        "schedule": "cron(0 3 * * ? *)"
-    }
+  "abans": {
+    "url": "https://buyabans.com",
+    "schedule": "cron(0 2 * * ? *)"
+  },
+  "singer": {
+    "url": "https://www.singersl.com",
+    "schedule": "cron(0 3 * * ? *)"
+  },
+  "sinhagiri": {
+    "url": "https://singhagiri.lk",
+    "schedule": "cron(0 4 * * ? *)"
+  },
+  "damro": {
+    "url": "https://www.damro.lk",
+    "schedule": "cron(0 5 * * ? *)"
+  },
+  "softlogic": {
+    "url": "https://mysoftlogic.lk",
+    "schedule": "cron(0 6 * * ? *)"
+  }
 }
