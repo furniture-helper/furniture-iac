@@ -56,15 +56,16 @@ resource "aws_rds_cluster" "db_cluster" {
 }
 
 resource "aws_rds_cluster_instance" "db_instance" {
-  count                      = 1
-  identifier                 = "${var.project}-rds-instance-${count.index + 1}"
-  cluster_identifier         = aws_rds_cluster.db_cluster.id
-  instance_class             = "db.serverless"
-  engine                     = aws_rds_cluster.db_cluster.engine
-  engine_version             = aws_rds_cluster.db_cluster.engine_version
-  publicly_accessible        = var.allow_public_connections
-  auto_minor_version_upgrade = true
-  monitoring_interval        = 5
+  count                        = 1
+  identifier                   = "${var.project}-rds-instance-${count.index + 1}"
+  cluster_identifier           = aws_rds_cluster.db_cluster.id
+  instance_class               = "db.serverless"
+  engine                       = aws_rds_cluster.db_cluster.engine
+  engine_version               = aws_rds_cluster.db_cluster.engine_version
+  publicly_accessible          = var.allow_public_connections
+  auto_minor_version_upgrade   = true
+  monitoring_interval          = 5
+  performance_insights_enabled = true
 
   tags = {
     Name    = "${var.project}-db-instance-${count.index + 1}"
