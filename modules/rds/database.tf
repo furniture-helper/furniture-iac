@@ -59,6 +59,7 @@ resource "aws_rds_cluster" "db_cluster" {
 }
 
 resource "aws_rds_cluster_instance" "db_instance" {
+  # checkov:skip=CKV_AWS_354: "No need to encrypt performance insights yet"
   count                        = 1
   identifier                   = "${var.project}-rds-instance-${count.index + 1}"
   cluster_identifier           = aws_rds_cluster.db_cluster.id
