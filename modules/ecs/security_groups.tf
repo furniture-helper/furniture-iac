@@ -31,6 +31,7 @@ resource "aws_security_group" "ecs_tasks_sg" {
 
 resource "aws_security_group_rule" "allow_5432_outbound_to_rds" {
   security_group_id        = aws_security_group.ecs_tasks_sg.id
+  description              = "Allow outbound Postgres traffic to RDS"
   type                     = "egress"
   from_port                = 5432
   to_port                  = 5432
