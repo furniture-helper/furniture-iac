@@ -81,7 +81,7 @@ resource "aws_rds_cluster_instance" "db_instance" {
 
 resource "aws_rds_cluster_parameter_group" "rds_parameter_group" {
   name        = "rds-cluster-pg"
-  family      = "aurora17.4"
+  family      = "aurora-postgresql17"
   description = "RDS default cluster parameter group"
 
   parameter {
