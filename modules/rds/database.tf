@@ -27,6 +27,7 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
 
 resource "aws_rds_cluster" "db_cluster" {
   # checkov:skip=CKV_AWS_327: "Encryption using KMS not yet implemented"
+  # checkov:skip=CKV2_AWS_8: "I don't know what AWS backups are"
   cluster_identifier                  = "${var.project}-rds-cluster"
   engine                              = "aurora-postgresql"
   engine_version                      = 17.4
@@ -42,6 +43,8 @@ resource "aws_rds_cluster" "db_cluster" {
   copy_tags_to_snapshot               = true
   storage_encrypted                   = true
   enabled_cloudwatch_logs_exports     = ["audit", "error", "general", "slowquery", "postgresql"]
+  db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.rds_parameter_group.name
+  db_instance_parameter_group_name    = aws_rds_cluster_parameter_group.rds_parameter_group.name
 
   serverlessv2_scaling_configuration {
     min_capacity             = 0
@@ -66,6 +69,7 @@ resource "aws_rds_cluster_instance" "db_instance" {
   auto_minor_version_upgrade   = true
   monitoring_interval          = 5
   performance_insights_enabled = true
+  db_parameter_group_name      = aws_rds_cluster_parameter_group.rds_parameter_group.name
 
   tags = {
     Name    = "${var.project}-db-instance-${count.index + 1}"
@@ -73,6 +77,21 @@ resource "aws_rds_cluster_instance" "db_instance" {
   }
 }
 
+resource "aws_rds_cluster_parameter_group" "rds_parameter_group" {
+  name        = "rds-cluster-pg"
+  family      = "aurora17.4"
+  description = "RDS default cluster parameter group"
+
+  parameter {
+    name  = "log_statement"
+    value = "all"
+  }
+
+  parameter {
+    name  = "log_min_duration_statement"
+    value = "1"
+  }
+}
 
 output "cluster_endpoint" {
   value = aws_rds_cluster.db_cluster.endpoint
