@@ -5,18 +5,18 @@
   },
   "singer": {
     "url": "https://www.singersl.com",
-    "schedule": "cron(0 3 * * ? *)"
+    "schedule": "cron(0 2 * * ? *)"
   },
   "sinhagiri": {
     "url": "https://singhagiri.lk",
-    "schedule": "cron(0 4 * * ? *)"
+    "schedule": "cron(0 2 * * ? *)"
   },
   "damro": {
     "url": "https://www.damro.lk",
-    "schedule": "cron(0 5 * * ? *)"
+    "schedule": "cron(0 2 * * ? *)"
   },
   "softlogic": {
     "url": "https://mysoftlogic.lk",
-    "schedule": "cron(0 6 * * ? *)"
+    "schedule": "cron(0 2 * * ? *)"
   }
 }
