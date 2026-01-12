@@ -40,6 +40,7 @@ resource "aws_rds_cluster" "db_cluster" {
   iam_database_authentication_enabled = true
   copy_tags_to_snapshot               = true
   storage_encrypted                   = true
+  enabled_cloudwatch_logs_exports     = ["audit", "error", "general", "slowquery", "postgresql"]
 
   serverlessv2_scaling_configuration {
     min_capacity             = 0
