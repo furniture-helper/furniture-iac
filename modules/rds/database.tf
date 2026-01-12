@@ -92,6 +92,11 @@ resource "aws_rds_cluster_parameter_group" "rds_parameter_group" {
     name  = "log_min_duration_statement"
     value = "1"
   }
+
+  tags = {
+    Name    = "${var.project}-rds-cluster-pg"
+    Project = var.project
+  }
 }
 
 output "cluster_endpoint" {
