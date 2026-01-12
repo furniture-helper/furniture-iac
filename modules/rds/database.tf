@@ -39,7 +39,7 @@ resource "aws_rds_cluster" "db_cluster" {
   deletion_protection                 = true
   iam_database_authentication_enabled = true
   copy_tags_to_snapshot               = true
-
+  storage_encrypted                   = true
 
   serverlessv2_scaling_configuration {
     min_capacity             = 0
