@@ -1,5 +1,5 @@
 resource "aws_iam_role" "rds_enhanced_monitoring" {
-  name = "rds-enhanced-monitoring-role"
+  name = "${var.project}-rds-enhanced-monitoring-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
