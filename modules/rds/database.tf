@@ -101,6 +101,21 @@ resource "aws_rds_cluster_parameter_group" "rds_parameter_group" {
     value = "1"
   }
 
+  parameter {
+    name  = "idle_session_timeout"
+    value = "60000"
+  }
+
+  parameter {
+    name  = "idle_in_transaction_session_timeout"
+    value = "60000"
+  }
+
+  parameter {
+    name  = "statement_timeout"
+    value = "120000"
+  }
+
   tags = {
     Name    = "${var.project}-rds-cluster-pg"
     Project = var.project
