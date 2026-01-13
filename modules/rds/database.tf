@@ -42,9 +42,13 @@ resource "aws_rds_cluster" "db_cluster" {
   iam_database_authentication_enabled = true
   copy_tags_to_snapshot               = true
   storage_encrypted                   = true
-  enabled_cloudwatch_logs_exports     = ["audit", "error", "general", "slowquery", "postgresql"]
+  enabled_cloudwatch_logs_exports     = ["postgresql"]
   db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.rds_parameter_group.name
   final_snapshot_identifier           = "${var.project}-rds-final-snapshot"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 
   serverlessv2_scaling_configuration {
     min_capacity             = 0
@@ -69,8 +73,12 @@ resource "aws_rds_cluster_instance" "db_instance" {
   publicly_accessible          = var.allow_public_connections
   auto_minor_version_upgrade   = true
   monitoring_interval          = 5
+  monitoring_role_arn          = aws_iam_role.rds_enhanced_monitoring.arn
   performance_insights_enabled = true
-  db_parameter_group_name      = aws_rds_cluster_parameter_group.rds_parameter_group.name
+
+  lifecycle {
+    prevent_destroy = true
+  }
 
   tags = {
     Name    = "${var.project}-db-instance-${count.index + 1}"
@@ -91,6 +99,21 @@ resource "aws_rds_cluster_parameter_group" "rds_parameter_group" {
   parameter {
     name  = "log_min_duration_statement"
     value = "1"
+  }
+
+  parameter {
+    name  = "idle_session_timeout"
+    value = "60000"
+  }
+
+  parameter {
+    name  = "idle_in_transaction_session_timeout"
+    value = "60000"
+  }
+
+  parameter {
+    name  = "statement_timeout"
+    value = "120000"
   }
 
   tags = {
