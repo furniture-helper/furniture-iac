@@ -41,6 +41,11 @@ resource "aws_cloudwatch_event_target" "crawler_daily_run" {
       security_groups  = [aws_security_group.ecs_tasks_sg.id]
       assign_public_ip = true
     }
+
+    tags = {
+      Name    = "${var.project}-${each.key}-crawler-task-scheduled"
+      Project = var.project
+    }
   }
 
   input = jsonencode({
