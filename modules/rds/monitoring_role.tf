@@ -13,6 +13,11 @@ resource "aws_iam_role" "rds_enhanced_monitoring" {
       }
     ]
   })
+
+  tags = {
+    Project = var.project
+    Name    = "${var.project}-rds-enhanced-monitoring-role"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring_attachment" {
