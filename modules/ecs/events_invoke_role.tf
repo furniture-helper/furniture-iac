@@ -49,6 +49,16 @@ resource "aws_iam_role_policy" "events_invoke_ecs_policy" {
           aws_iam_role.ecs_task_execution_role.arn,
           module.furniture_crawler_task.furniture_crawler_task_role_arn
         ]
+      },
+      {
+        Sid    = "AllowTaggingTasks"
+        Effect = "Allow"
+        Action = [
+          "ecs:TagResource"
+        ]
+        Resource = [
+          "arn:aws:ecs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:task/${aws_ecs_cluster.furniture_cluster.name}/*"
+        ]
       }
     ]
   })
