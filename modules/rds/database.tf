@@ -53,7 +53,7 @@ resource "aws_rds_cluster" "db_cluster" {
   serverlessv2_scaling_configuration {
     min_capacity             = 0
     max_capacity             = 1
-    seconds_until_auto_pause = 60
+    seconds_until_auto_pause = 300
   }
 
   tags = {
