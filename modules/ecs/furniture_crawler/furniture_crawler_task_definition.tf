@@ -47,9 +47,11 @@ locals {
       { name = "AWS_S3_BUCKET", value = var.s3_bucket_name },
       { name = "AWS_REGION", value = data.aws_region.current.region },
       { name = "PAGE_STORAGE", value = "AWSStorage" },
-      { name = "MAX_REQUESTS_PER_CRAWL", value = "10000" },
       { name = "PG_HOST", value = var.rds_cluster_endpoint },
       { name = "PG_PORT", value = "5432" },
+      { name = "DB_UPSERT_CHUNK_SIZE", value = "100" },
+      { name = "DB_UPSERT_MAX_QUEUE_SIZE", value = "1000" },
+      { name = "MAX_REQUESTS_PER_CRAWL", value = "10000" }
     ]
     secrets = [
       {
