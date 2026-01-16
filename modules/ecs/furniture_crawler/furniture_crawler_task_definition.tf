@@ -31,7 +31,7 @@ locals {
     name      = "furniture-crawler"
     image     = "${var.ecr_repo_url}:${var.image_tag}"
     cpu       = 4096
-    memory    = 16384
+    memory    = 8192
     essential = true
 
     logConfiguration = {
@@ -49,9 +49,12 @@ locals {
       { name = "PAGE_STORAGE", value = "AWSStorage" },
       { name = "PG_HOST", value = var.rds_cluster_endpoint },
       { name = "PG_PORT", value = "5432" },
-      { name = "DB_UPSERT_CHUNK_SIZE", value = "100" },
-      { name = "DB_UPSERT_MAX_QUEUE_SIZE", value = "1000" },
-      { name = "MAX_REQUESTS_PER_CRAWL", value = "10000" }
+      { name = "MAX_CONCURRENCY", value = "5" },
+      { name = "MAX_REQUESTS_PER_MINUTE", value = "50" },
+      { name = "MAX_REQUESTS_PER_CRAWL", value = "1000" },
+      { name = "NODE_OPTIONS", value = "--max-old-space-size=8192" },
+      { name = "CRAWLEE_AVAILABLE_MEMORY_RATIO", value = "0.8" },
+      { name = "LOG_LEVEL", value = "debug" }
     ]
     secrets = [
       {
@@ -77,7 +80,7 @@ resource "aws_ecs_task_definition" "furniture_crawler_task_definition" {
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = 4096
-  memory                   = 16384
+  memory                   = 8192
 
   runtime_platform {
     operating_system_family = "LINUX"
