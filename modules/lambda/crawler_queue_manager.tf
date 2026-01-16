@@ -52,7 +52,7 @@ module "crawler_queue_manager" {
   source                           = "./crawler_queue_manager"
   crawler_sqs_queue_arn            = var.crawler_sqs_queue_arn
   ecr_repo_url                     = var.crawler_ecr_repo_url
-  image_tag                        = "latest"
+  image_tag                        = "d9b789c2df02a6f60aa21a2035cc79b3042f5410"
   project                          = var.project
   public_subnet_ids                = var.public_subnet_ids
   rds_sg_id                        = var.rds_sg_id
