@@ -19,7 +19,7 @@ resource "aws_ecr_repository" "furniture_crawler_queue_manager_ecr_repo" {
   }
 
   tags = {
-    Name    = "${var.project}-crawler-queue-manger-ecr"
+    Name    = "${var.project}-crawler-queue-manager-ecr"
     Project = var.project
   }
 }
@@ -48,10 +48,10 @@ resource "aws_ecr_repository_policy" "lambda_ecr_policy" {
 
 output "furniture_crawler_queue_manager_ecr_repo_uri" {
   value       = aws_ecr_repository.furniture_crawler_queue_manager_ecr_repo.repository_url
-  description = "URL of the ECR repository for the furniture crawler"
+  description = "URL of the ECR repository for the furniture crawler queue manager"
 }
 
 output "furniture_crawler_queue_manager_ecr_repo_arn" {
   value       = aws_ecr_repository.furniture_crawler_queue_manager_ecr_repo.arn
-  description = "ARN of the ECR repository for the furniture crawler"
+  description = "ARN of the ECR repository for the furniture crawler queue manager"
 }
