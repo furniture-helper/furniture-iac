@@ -29,15 +29,18 @@ resource "aws_iam_role_policy_attachment" "crawler_queue_manager_lambda_basic_ex
 }
 
 resource "aws_iam_policy" "crawler_queue_manager_lambda_sqs_write_policy" {
-  name        = "${var.project}-crawler-queue-manager-lambda-sqs-write-policy"
+  name        = "${var.project}-crawler-queue-manager-lambda-sqs-policy"
   description = "Allows Lambda to send messages to SQS"
 
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Effect   = "Allow"
-        Action   = "sqs:SendMessage"
+        Effect = "Allow"
+        Action = [
+          "sqs:SendMessage",
+          "sqs:GetQueueAttributes"
+        ]
         Resource = var.crawler_sqs_queue_arn
       }
     ]
@@ -47,11 +50,6 @@ resource "aws_iam_policy" "crawler_queue_manager_lambda_sqs_write_policy" {
 resource "aws_iam_role_policy_attachment" "crawler_queue_manager_lambda_sqs_write" {
   role       = aws_iam_role.crawler_queue_manager_lambda_role.name
   policy_arn = aws_iam_policy.crawler_queue_manager_lambda_sqs_write_policy.arn
-}
-
-resource "aws_iam_role_policy_attachment" "crawler_queue_manager_lambda_vpc_access" {
-  role       = aws_iam_role.crawler_queue_manager_lambda_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
 resource "aws_iam_policy" "crawler_queue_manager_database_credentials_policy" {

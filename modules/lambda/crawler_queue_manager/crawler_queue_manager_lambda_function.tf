@@ -3,10 +3,6 @@ variable "project" {
   type        = string
 }
 
-variable "public_subnet_ids" {
-  description = "List of public subnet IDs for the Lambda function"
-  type        = list(string)
-}
 
 variable "ecr_repo_url" {
   description = "ECR repository URL for the crawler queue manager container image"
@@ -40,11 +36,6 @@ resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
   image_uri     = "${var.ecr_repo_url}:${var.image_tag}"
   architectures = ["arm64"]
 
-  vpc_config {
-    subnet_ids         = var.public_subnet_ids
-    security_group_ids = [aws_security_group.crawler_queue_manager_lambda_sg.id]
-  }
-
   environment {
     variables = {
       PG_HOST                          = var.rds_cluster_endpoint
@@ -53,10 +44,9 @@ resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
       FETCH_AMOUNT                     = "5"
       DATABASE_CREDENTIALS_TYPE        = "secrets_manager"
       DATABASE_CREDENTIALS_SECRET_NAME = var.database_credentials_secret_name
+      SQS_QUEUE_THRESHOLD              = "10"
     }
   }
-
-  depends_on = [aws_iam_role_policy_attachment.crawler_queue_manager_lambda_vpc_access]
 
   timeout     = 300
   memory_size = 128
