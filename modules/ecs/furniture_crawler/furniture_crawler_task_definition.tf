@@ -23,6 +23,11 @@ variable "rds_cluster_endpoint" {
   type        = string
 }
 
+variable "crawler_sqs_queue_url" {
+  description = "URL of the SQS queue for the crawler tasks"
+  type        = string
+}
+
 data "aws_region" "current" {}
 
 locals {
@@ -50,10 +55,11 @@ locals {
       { name = "PG_PORT", value = "5432" },
       { name = "MAX_CONCURRENCY", value = "5" },
       { name = "MAX_REQUESTS_PER_MINUTE", value = "50" },
-      { name = "MAX_REQUESTS_PER_CRAWL", value = "1000" },
+      { name = "MAX_REQUESTS_PER_CRAWL", value = "100" },
       { name = "NODE_OPTIONS", value = "--max-old-space-size=8192" },
       { name = "CRAWLEE_AVAILABLE_MEMORY_RATIO", value = "0.8" },
-      { name = "LOG_LEVEL", value = "debug" }
+      { name = "LOG_LEVEL", value = "debug" },
+      { name = "SQS_QUEUE_URL", value = var.crawler_sqs_queue_url }
     ]
     secrets = [
       {

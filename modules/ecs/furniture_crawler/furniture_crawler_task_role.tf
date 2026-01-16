@@ -13,6 +13,11 @@ variable "database_credentials_secret_arn" {
   type        = string
 }
 
+variable "crawler_sqs_queue_arn" {
+  description = "ARN of the SQS queue for the crawler tasks"
+  type        = string
+}
+
 resource "aws_iam_role" "furniture_crawler_task_role" {
   name = "${var.project}-crawler-task-role"
 
@@ -55,6 +60,26 @@ resource "aws_iam_role_policy" "s3_write_policy" {
           var.s3_bucket_arn,
           "${var.s3_bucket_arn}/*"
         ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "sqs_crawler_receive_policy" {
+  name = "${var.project}-crawler-sqs-receive"
+  role = aws_iam_role.furniture_crawler_task_role.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowSQSReceive"
+        Effect = "Allow"
+        Action = [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+        ]
+        Resource = var.crawler_sqs_queue_arn
       }
     ]
   })

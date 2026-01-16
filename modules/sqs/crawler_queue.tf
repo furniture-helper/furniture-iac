@@ -10,11 +10,11 @@ resource "aws_sqs_queue" "crawler_queue" {
   max_message_size           = 2048
   message_retention_seconds  = 3600
   receive_wait_time_seconds  = 10
-  visibility_timeout_seconds = 240
+  visibility_timeout_seconds = 43200
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.crawler_dlq.arn
-    maxReceiveCount     = 3
+    maxReceiveCount     = 1
   })
 
   tags = {
