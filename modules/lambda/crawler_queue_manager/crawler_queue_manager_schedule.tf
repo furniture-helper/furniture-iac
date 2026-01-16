@@ -2,6 +2,11 @@ resource "aws_cloudwatch_event_rule" "crawler_queue_manager_hourly" {
   name                = "${var.project}-crawler-queue-manager-hourly"
   description         = "Triggers lambda function every hour"
   schedule_expression = "cron(0 * * * ? *)"
+
+  tags = {
+    Project = var.project
+    Name    = "${var.project}-crawler-queue-manager-hourly-event-rule"
+  }
 }
 
 resource "aws_cloudwatch_event_target" "check_every_hour" {

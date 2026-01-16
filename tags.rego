@@ -24,6 +24,7 @@ ignored_resources := {
     "aws_ecs_cluster_capacity_providers",
     "aws_ecr_repository_policy",
     "aws_sqs_queue_policy",
+    "aws_lambda_permission",
     "random_string",
     "random_password",
     "tls_private_key",
