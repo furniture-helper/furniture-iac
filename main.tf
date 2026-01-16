@@ -43,10 +43,11 @@ module "ecs" {
 }
 
 module "github_actions" {
-  source              = "./modules/github_actions"
-  project             = var.project
-  github_organization = var.github_organization
-  crawler_repo_arn    = module.ecr.furniture_crawler_ecr_repo_arn
+  source                         = "./modules/github_actions"
+  project                        = var.project
+  github_organization            = var.github_organization
+  crawler_repo_arn               = module.ecr.furniture_crawler_ecr_repo_arn
+  crawler_queue_manager_repo_arn = module.ecr.furniture_crawler_queue_manager_ecr_repo_arn
 }
 
 module "rds" {
@@ -59,7 +60,17 @@ module "rds" {
   allow_public_connections = true
 }
 
+module "sqs" {
+  source  = "./modules/sqs"
+  project = var.project
+}
+
 output "database_writer_endpoint" {
   description = "RDS Cluster Writer Endpoint"
   value       = module.rds.cluster_endpoint
+}
+
+output "crawler_queue_url" {
+  description = "URL of the crawler SQS queue"
+  value       = module.sqs.crawler_queue_url
 }
