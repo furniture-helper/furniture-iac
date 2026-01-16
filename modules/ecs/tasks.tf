@@ -32,4 +32,5 @@ module "furniture_crawler_task" {
   task_execution_role_arn         = aws_iam_role.ecs_task_execution_role.arn
   database_credentials_secret_arn = var.database_credentials_secret_arn
   rds_cluster_endpoint            = var.rds_cluster_endpoint
+  image_tag                       = "latest"
 }

@@ -65,6 +65,20 @@ module "sqs" {
   project = var.project
 }
 
+module "lambda" {
+  source                          = "./modules/lambda"
+  crawler_sqs_queue_arn           = module.sqs.crawler_queue_arn
+  crawler_ecr_repo_url            = module.ecr.furniture_crawler_queue_manager_ecr_repo_uri
+  project                         = var.project
+  public_subnet_ids               = module.vpc.public_subnet_ids
+  rds_sg_id                       = module.rds.rds_sg_id
+  vpc_id                          = module.vpc.vpc_id
+  database_credentials_secret_arn = module.rds.database_credentials_secret_arn
+  crawler_sqs_queue_url           = module.sqs.crawler_queue_url
+  database_credentials_name       = module.rds.database_credentials_secret_name
+  rds_cluster_endpoint            = module.rds.cluster_endpoint
+}
+
 output "database_writer_endpoint" {
   description = "RDS Cluster Writer Endpoint"
   value       = module.rds.cluster_endpoint

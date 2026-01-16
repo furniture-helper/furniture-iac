@@ -24,8 +24,30 @@ resource "aws_ecr_repository" "furniture_crawler_queue_manager_ecr_repo" {
   }
 }
 
+resource "aws_ecr_repository_policy" "lambda_ecr_policy" {
+  repository = aws_ecr_repository.furniture_crawler_queue_manager_ecr_repo.name
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Sid    = "LambdaECRImageRetrievalPolicy",
+        Effect = "Allow",
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        },
+        Action = [
+          "ecr:BatchGetImage",
+          "ecr:GetDownloadUrlForLayer"
+        ]
+      }
+    ]
+  })
+}
+
+
 output "furniture_crawler_queue_manager_ecr_repo_uri" {
-  value       = aws_ecr_repository.furniture_crawler_ecr_repo.repository_url
+  value       = aws_ecr_repository.furniture_crawler_queue_manager_ecr_repo.repository_url
   description = "URL of the ECR repository for the furniture crawler"
 }
 

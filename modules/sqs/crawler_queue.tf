@@ -58,6 +58,11 @@ resource "aws_sqs_queue_policy" "crawler_dlq_policy" {
   })
 }
 
+output "crawler_queue_arn" {
+  description = "ARN of the crawler SQS queue"
+  value       = aws_sqs_queue.crawler_queue.arn
+}
+
 output "crawler_queue_url" {
   description = "URL of the crawler SQS queue"
   value       = aws_sqs_queue.crawler_queue.url
