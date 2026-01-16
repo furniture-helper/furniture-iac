@@ -40,6 +40,8 @@ module "ecs" {
   rds_sg_id                       = module.rds.rds_sg_id
   database_credentials_secret_arn = module.rds.database_credentials_secret_arn
   rds_cluster_endpoint            = module.rds.cluster_endpoint
+  crawler_sqs_queue_url           = module.sqs.crawler_queue_url
+  crawler_sqs_queue_arn           = module.sqs.crawler_queue_arn
 }
 
 module "github_actions" {

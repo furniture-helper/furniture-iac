@@ -23,6 +23,16 @@ variable "rds_cluster_endpoint" {
   type        = string
 }
 
+variable "crawler_sqs_queue_url" {
+  description = "URL of the SQS queue for the crawler tasks"
+  type        = string
+}
+
+variable "crawler_sqs_queue_arn" {
+  description = "ARN of the SQS queue for the crawler tasks"
+  type        = string
+}
+
 module "furniture_crawler_task" {
   source                          = "./furniture_crawler"
   project                         = var.project
@@ -33,4 +43,6 @@ module "furniture_crawler_task" {
   database_credentials_secret_arn = var.database_credentials_secret_arn
   rds_cluster_endpoint            = var.rds_cluster_endpoint
   image_tag                       = "latest"
+  crawler_sqs_queue_url           = var.crawler_sqs_queue_url
+  crawler_sqs_queue_arn           = var.crawler_sqs_queue_arn
 }
