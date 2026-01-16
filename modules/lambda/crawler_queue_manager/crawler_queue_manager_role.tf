@@ -21,6 +21,11 @@ resource "aws_iam_role" "crawler_queue_manager_lambda_role" {
       }
     }]
   })
+
+  tags = {
+    Project = var.project
+    Name    = "${var.project}-crawler-queue-manager-lambda-role"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "crawler_queue_manager_lambda_basic_execution" {
@@ -45,6 +50,11 @@ resource "aws_iam_policy" "crawler_queue_manager_lambda_sqs_write_policy" {
       }
     ]
   })
+
+  tags = {
+    Project = var.project
+    Name    = "${var.project}-crawler-queue-manager-lambda-sqs-policy"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "crawler_queue_manager_lambda_sqs_write" {
@@ -63,6 +73,11 @@ resource "aws_iam_policy" "crawler_queue_manager_database_credentials_policy" {
       Resource = var.database_credentials_secret_arn
     }]
   })
+
+  tags = {
+    Project = var.project
+    Name    = "${var.project}-crawler-queue-manager-db-credentials-policy"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "attach_secrets" {

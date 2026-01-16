@@ -50,4 +50,9 @@ resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
 
   timeout     = 300
   memory_size = 128
+
+  tags = {
+    Project = var.project
+    Name    = "${var.project}-crawler-queue-manager-lambda"
+  }
 }
