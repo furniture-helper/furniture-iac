@@ -3,6 +3,11 @@ variable "crawler_repo_arn" {
   type        = string
 }
 
+variable "crawler_queue_manager_repo_arn" {
+  description = "ECR repository ARN for the furniture crawler queue manager"
+  type        = string
+}
+
 data "aws_iam_policy_document" "ecr_push" {
   statement {
     sid    = "GetAuthorization"
@@ -29,7 +34,8 @@ data "aws_iam_policy_document" "ecr_push" {
       "ecr:ListTagsForResource"
     ]
     resources = [
-      var.crawler_repo_arn
+      var.crawler_repo_arn,
+      var.crawler_queue_manager_repo_arn
     ]
   }
 }

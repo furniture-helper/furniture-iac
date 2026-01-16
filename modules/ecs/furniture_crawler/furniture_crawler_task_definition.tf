@@ -6,7 +6,6 @@ variable "ecr_repo_url" {
 variable "image_tag" {
   description = "Image tag for the furniture crawler container"
   type        = string
-  default     = "latest"
 }
 
 variable "s3_bucket_name" {
