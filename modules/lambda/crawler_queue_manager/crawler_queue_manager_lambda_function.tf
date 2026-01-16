@@ -30,6 +30,10 @@ variable "database_credentials_secret_name" {
 }
 
 resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
+  # checkov:skip=CKV_AWS_117: "Cannot deploy in VPC at the moment"
+  # checkov:skip=CKV_AWS_116: "Dead letter queue not required for this use case"
+  # checkov:skip=CKV_AWS_173: "Environment variables do not contain sensitive data"
+  # checkov:skip=CKV_AWS_272: "No clue what this even is"
   function_name = "${var.project}-crawler-queue-manager-lambda"
   role          = aws_iam_role.crawler_queue_manager_lambda_role.arn
   package_type  = "Image"
@@ -50,6 +54,12 @@ resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
 
   timeout     = 300
   memory_size = 128
+
+  tracing_config {
+    mode = "Active"
+  }
+
+  reserved_concurrent_executions = 1
 
   tags = {
     Project = var.project

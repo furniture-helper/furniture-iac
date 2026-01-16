@@ -13,21 +13,6 @@ variable "project" {
   type        = string
 }
 
-variable "public_subnet_ids" {
-  description = "List of public subnet IDs for the Lambda function"
-  type        = list(string)
-}
-
-variable "rds_sg_id" {
-  description = "Security Group ID for RDS access"
-  type        = string
-}
-
-variable "vpc_id" {
-  description = "VPC ID where the Lambda function will run"
-  type        = string
-}
-
 variable "database_credentials_secret_arn" {
   description = "ARN of the Secrets Manager secret containing the database credentials"
   type        = string

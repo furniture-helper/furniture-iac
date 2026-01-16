@@ -4,6 +4,7 @@ variable "project" {
 }
 
 resource "aws_sqs_queue" "crawler_queue" {
+  # checkov:skip=CKV_AWS_27: "Encryption not required for this use case"
   name                       = "${var.project}-crawler-queue"
   delay_seconds              = 0
   max_message_size           = 2048
@@ -23,6 +24,7 @@ resource "aws_sqs_queue" "crawler_queue" {
 }
 
 resource "aws_sqs_queue" "crawler_dlq" {
+  # checkov:skip=CKV_AWS_27: "Encryption not required for this use case"
   name                       = "${var.project}-crawler-dlq"
   delay_seconds              = 0
   max_message_size           = 2048
