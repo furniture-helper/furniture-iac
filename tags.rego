@@ -22,6 +22,8 @@ ignored_resources := {
     "aws_s3_bucket_server_side_encryption_configuration",
     "aws_s3_bucket_versioning",
     "aws_ecs_cluster_capacity_providers",
+    "aws_ecr_repository_policy",
+    "aws_sqs_queue_policy",
     "random_string",
     "random_password",
     "tls_private_key",
