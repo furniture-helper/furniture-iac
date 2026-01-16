@@ -14,19 +14,20 @@ resource "aws_security_group" "ecs_tasks_sg" {
   description = "Allow all outbound HTTPS traffic for ECS tasks"
   vpc_id      = var.vpc_id
 
-  egress {
-    description      = "Allow outbound HTTPS"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
   tags = {
     Name    = "${var.project}-ecs-tasks-sg"
     Project = var.project
   }
+}
+
+resource "aws_security_group_rule" "allow_https_outbound" {
+  security_group_id = aws_security_group.ecs_tasks_sg.id
+  description       = "Allow outbound HTTPS traffic"
+  type              = "egress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
 }
 
 resource "aws_security_group_rule" "allow_5432_outbound_to_rds" {
