@@ -46,12 +46,14 @@ resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
   }
 
   environment {
-    PG_HOST                          = var.rds_cluster_endpoint
-    PG_PORT                          = "5432"
-    SQS_QUEUE_URL                    = var.crawler_sqs_queue_url
-    FETCH_AMOUNT                     = "5"
-    DATABASE_CREDENTIALS_TYPE        = "secrets_manager"
-    DATABASE_CREDENTIALS_SECRET_NAME = var.database_credentials_secret_name
+    variables = {
+      PG_HOST                          = var.rds_cluster_endpoint
+      PG_PORT                          = "5432"
+      SQS_QUEUE_URL                    = var.crawler_sqs_queue_url
+      FETCH_AMOUNT                     = "5"
+      DATABASE_CREDENTIALS_TYPE        = "secrets_manager"
+      DATABASE_CREDENTIALS_SECRET_NAME = var.database_credentials_secret_name
+    }
   }
 
   depends_on = [aws_iam_role_policy_attachment.crawler_queue_manager_lambda_vpc_access]
