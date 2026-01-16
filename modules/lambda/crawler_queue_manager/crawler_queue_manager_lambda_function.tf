@@ -29,8 +29,8 @@ variable "crawler_sqs_queue_url" {
 }
 
 variable "database_credentials_secret_name" {
-    description = "Name of the Secrets Manager secret containing the database credentials"
-    type        = string
+  description = "Name of the Secrets Manager secret containing the database credentials"
+  type        = string
 }
 
 resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
@@ -46,11 +46,11 @@ resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
   }
 
   environment {
-    PG_HOST = var.rds_cluster_endpoint,
-    PG_PORT = "5432",
-    SQS_QUEUE_URL = var.crawler_sqs_queue_url,
-    FETCH_AMOUNT = "5"
-    DATABASE_CREDENTIALS_TYPE = "secrets_manager"
+    PG_HOST                          = var.rds_cluster_endpoint
+    PG_PORT                          = "5432"
+    SQS_QUEUE_URL                    = var.crawler_sqs_queue_url
+    FETCH_AMOUNT                     = "5"
+    DATABASE_CREDENTIALS_TYPE        = "secrets_manager"
     DATABASE_CREDENTIALS_SECRET_NAME = var.database_credentials_secret_name
   }
 
