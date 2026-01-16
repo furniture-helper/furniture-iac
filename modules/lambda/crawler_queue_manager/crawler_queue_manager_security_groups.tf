@@ -33,3 +33,8 @@ resource "aws_security_group_rule" "crawler_queue_manager_allow_rds_egress" {
   protocol                 = "tcp"
   source_security_group_id = var.rds_sg_id
 }
+
+output "crawler_queue_manager_lambda_sg_id" {
+  description = "Security group ID for the Crawler Queue Manager Lambda function"
+  value       = aws_security_group.crawler_queue_manager_lambda_sg.id
+}

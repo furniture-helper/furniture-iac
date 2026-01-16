@@ -51,13 +51,14 @@ module "github_actions" {
 }
 
 module "rds" {
-  source                   = "./modules/rds"
-  project                  = var.project
-  vpc_id                   = module.vpc.vpc_id
-  ecs_tasks_sg_id          = module.ecs.ecs_tasks_sg_id
-  private_subnet_ids       = module.vpc.private_subnet_ids
-  public_subnet_ids        = module.vpc.public_subnet_ids
-  allow_public_connections = true
+  source                             = "./modules/rds"
+  project                            = var.project
+  vpc_id                             = module.vpc.vpc_id
+  ecs_tasks_sg_id                    = module.ecs.ecs_tasks_sg_id
+  private_subnet_ids                 = module.vpc.private_subnet_ids
+  public_subnet_ids                  = module.vpc.public_subnet_ids
+  allow_public_connections           = true
+  crawler_queue_manager_lambda_sg_id = module.lambda.crawler_queue_manager_sg_id
 }
 
 module "sqs" {

@@ -62,3 +62,8 @@ module "crawler_queue_manager" {
   database_credentials_secret_name = var.database_credentials_name
   rds_cluster_endpoint             = var.rds_cluster_endpoint
 }
+
+output "crawler_queue_manager_sg_id" {
+  description = "Security group ID for the Crawler Queue Manager Lambda function"
+  value       = module.crawler_queue_manager.crawler_queue_manager_lambda_sg_id
+}
