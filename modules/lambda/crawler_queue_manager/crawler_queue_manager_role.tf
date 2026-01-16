@@ -58,7 +58,6 @@ resource "aws_iam_policy" "crawler_queue_manager_database_credentials_policy" {
   name = "${var.project}-crawler-queue-manager-db-credentials-policy"
 
   policy = jsonencode({
-    Sid     = "AllowReadDBCredentials"
     Version = "2012-10-17"
     Statement = [{
       Effect   = "Allow"
