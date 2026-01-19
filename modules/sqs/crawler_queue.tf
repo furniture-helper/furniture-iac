@@ -8,9 +8,9 @@ resource "aws_sqs_queue" "crawler_queue" {
   name                       = "${var.project}-crawler-queue"
   delay_seconds              = 0
   max_message_size           = 2048
-  message_retention_seconds  = 3600
+  message_retention_seconds  = 1800
   receive_wait_time_seconds  = 10
-  visibility_timeout_seconds = 240
+  visibility_timeout_seconds = 1800
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.crawler_dlq.arn
