@@ -26,6 +26,8 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
 }
 
 resource "aws_db_instance" "db_instance" {
+  # checkov:skip=CKV_AWS_354 "Not required to encrypt performance insights at this time"
+  # checkov:skip=CKV_AWS_157 "I cannot afford multi-AZ at this time"
   identifier                          = "${var.project}-db-instance"
   engine                              = "postgres"
   engine_version                      = "17.4"
@@ -48,10 +50,15 @@ resource "aws_db_instance" "db_instance" {
   final_snapshot_identifier           = "${var.project}-rds-final-snapshot"
   apply_immediately                   = true
   iam_database_authentication_enabled = true
+  auto_minor_version_upgrade          = true
+  deletion_protection                 = true
+  enabled_cloudwatch_logs_exports     = ["postgresql"]
+  copy_tags_to_snapshot               = true
 
   lifecycle {
     prevent_destroy = true
   }
+
 
   tags = {
     Name    = "${var.project}-db-instance"
@@ -89,6 +96,11 @@ resource "aws_db_parameter_group" "rds_parameter_group" {
   parameter {
     name  = "statement_timeout"
     value = "120000"
+  }
+
+  parameter {
+    name  = "rds.force_ssl"
+    value = "1"
   }
 
   tags = {
