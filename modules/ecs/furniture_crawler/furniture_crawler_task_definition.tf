@@ -18,8 +18,8 @@ variable "task_execution_role_arn" {
   type        = string
 }
 
-variable "rds_cluster_endpoint" {
-  description = "Endpoint of the RDS cluster"
+variable "rds_db_endpoint" {
+  description = "Endpoint of the RDS database"
   type        = string
 }
 
@@ -51,7 +51,7 @@ locals {
       { name = "AWS_S3_BUCKET", value = var.s3_bucket_name },
       { name = "AWS_REGION", value = data.aws_region.current.region },
       { name = "PAGE_STORAGE", value = "AWSStorage" },
-      { name = "PG_HOST", value = var.rds_cluster_endpoint },
+      { name = "PG_HOST", value = var.rds_db_endpoint },
       { name = "PG_PORT", value = "5432" },
       { name = "MAX_CONCURRENCY", value = "10" },
       { name = "MAX_REQUESTS_PER_MINUTE", value = "150" },

@@ -13,7 +13,7 @@ variable "image_tag" {
   type        = string
 }
 
-variable "rds_cluster_endpoint" {
+variable "rds_db_endpoint" {
   description = "Endpoint of the RDS cluster"
   type        = string
 }
@@ -41,7 +41,7 @@ resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
 
   environment {
     variables = {
-      PG_HOST                          = var.rds_cluster_endpoint
+      PG_HOST                          = var.rds_db_endpoint
       PG_PORT                          = "5432"
       SQS_QUEUE_URL                    = var.crawler_sqs_queue_url
       FETCH_AMOUNT                     = "10000"

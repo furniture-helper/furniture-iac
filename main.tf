@@ -39,7 +39,7 @@ module "ecs" {
   crawler_s3_bucket_arn           = module.s3.crawler_storage_s3_bucket_arn
   rds_sg_id                       = module.rds.rds_sg_id
   database_credentials_secret_arn = module.rds.database_credentials_secret_arn
-  rds_cluster_endpoint            = module.rds.cluster_endpoint
+  rds_db_endpoint                 = module.rds.db_endpoint
   crawler_sqs_queue_url           = module.sqs.crawler_queue_url
   crawler_sqs_queue_arn           = module.sqs.crawler_queue_arn
 }
@@ -75,15 +75,20 @@ module "lambda" {
   database_credentials_secret_arn = module.rds.database_credentials_secret_arn
   crawler_sqs_queue_url           = module.sqs.crawler_queue_url
   database_credentials_name       = module.rds.database_credentials_secret_name
-  rds_cluster_endpoint            = module.rds.cluster_endpoint
-}
-
-output "database_writer_endpoint" {
-  description = "RDS Cluster Writer Endpoint"
-  value       = module.rds.cluster_endpoint
+  rds_db_endpoint                 = module.rds.db_endpoint
 }
 
 output "crawler_queue_url" {
   description = "URL of the crawler SQS queue"
   value       = module.sqs.crawler_queue_url
+}
+
+output "db_endpoint" {
+  description = "RDS Database Endpoint"
+  value       = module.rds.db_endpoint
+}
+
+output "db_instance_id" {
+  description = "RDS Database Instance ID"
+  value       = module.rds.db_instance_id
 }
