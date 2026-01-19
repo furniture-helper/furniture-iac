@@ -23,14 +23,19 @@ variable "rds_cluster_endpoint" {
   type        = string
 }
 
+variable "crawler_sqs_queue_url" {
+  description = "URL of the SQS queue for the crawler tasks"
+  type        = string
+}
+
 data "aws_region" "current" {}
 
 locals {
   container = {
     name      = "furniture-crawler"
     image     = "${var.ecr_repo_url}:${var.image_tag}"
-    cpu       = 4096
-    memory    = 8192
+    cpu       = 2048
+    memory    = 4096
     essential = true
 
     logConfiguration = {
@@ -48,12 +53,14 @@ locals {
       { name = "PAGE_STORAGE", value = "AWSStorage" },
       { name = "PG_HOST", value = var.rds_cluster_endpoint },
       { name = "PG_PORT", value = "5432" },
-      { name = "MAX_CONCURRENCY", value = "5" },
-      { name = "MAX_REQUESTS_PER_MINUTE", value = "50" },
+      { name = "MAX_CONCURRENCY", value = "10" },
+      { name = "MAX_REQUESTS_PER_MINUTE", value = "150" },
       { name = "MAX_REQUESTS_PER_CRAWL", value = "1000" },
       { name = "NODE_OPTIONS", value = "--max-old-space-size=8192" },
       { name = "CRAWLEE_AVAILABLE_MEMORY_RATIO", value = "0.8" },
-      { name = "LOG_LEVEL", value = "debug" }
+      { name = "LOG_LEVEL", value = "info" },
+      { name = "SQS_QUEUE_URL", value = var.crawler_sqs_queue_url },
+      { name = "TIMEOUT_MINS", value = "30" }
     ]
     secrets = [
       {
@@ -78,8 +85,8 @@ resource "aws_ecs_task_definition" "furniture_crawler_task_definition" {
   family                   = "furniture_crawler"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = 4096
-  memory                   = 8192
+  cpu                      = 2048
+  memory                   = 4096
 
   runtime_platform {
     operating_system_family = "LINUX"

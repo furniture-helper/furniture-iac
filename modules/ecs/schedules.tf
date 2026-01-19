@@ -3,29 +3,22 @@ variable "subnet_ids" {
   type        = list(string)
 }
 
-locals {
-  crawler_targets = jsondecode(file("./${path.module}/crawler_schedule.json"))
-}
-
 resource "aws_cloudwatch_event_rule" "crawler" {
-  for_each            = local.crawler_targets
-  name                = "${var.project}-${each.key}-crawl"
-  description         = "Run crawler for ${each.value.url}"
-  schedule_expression = each.value.schedule
+  name                = "${var.project}-crawler-event-rule"
+  description         = "Run crawler"
+  schedule_expression = "cron(30 * * * ? *)"
 
   tags = {
     Project = var.project
-    Name    = "${var.project}-${each.key}-event-rule"
+    Name    = "${var.project}-crawler-event-rule"
   }
 }
 
 resource "aws_cloudwatch_event_target" "crawler_daily_run" {
-  for_each = local.crawler_targets
-
-  rule      = aws_cloudwatch_event_rule.crawler[each.key].name
+  rule      = aws_cloudwatch_event_rule.crawler.name
   arn       = aws_ecs_cluster.furniture_cluster.arn
   role_arn  = aws_iam_role.events_invoke_ecs_role.arn
-  target_id = each.key
+  target_id = "${var.project}-crawler-ecs-target"
 
   ecs_target {
     task_definition_arn = module.furniture_crawler_task.furniture_crawler_task_definition_arn
@@ -43,19 +36,8 @@ resource "aws_cloudwatch_event_target" "crawler_daily_run" {
     }
 
     tags = {
-      Name    = "${var.project}-${each.key}-crawler-task-scheduled"
+      Name    = "${var.project}-crawler-task-scheduled"
       Project = var.project
     }
   }
-
-  input = jsonencode({
-    containerOverrides = [
-      {
-        name = "furniture-crawler",
-        environment = [
-          { name = "START_URL", value = each.value.url },
-        ]
-      }
-    ]
-  })
 }
