@@ -28,8 +28,8 @@ variable "database_credentials_name" {
   type        = string
 }
 
-variable "rds_cluster_endpoint" {
-  description = "Endpoint of the RDS cluster"
+variable "rds_db_endpoint" {
+  description = "Endpoint of the RDS database"
   type        = string
 }
 
@@ -42,6 +42,6 @@ module "crawler_queue_manager" {
   database_credentials_secret_arn  = var.database_credentials_secret_arn
   crawler_sqs_queue_url            = var.crawler_sqs_queue_url
   database_credentials_secret_name = var.database_credentials_name
-  rds_cluster_endpoint             = var.rds_cluster_endpoint
+  rds_db_endpoint                  = var.rds_db_endpoint
 }
 

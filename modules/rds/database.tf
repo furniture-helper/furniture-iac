@@ -25,71 +25,46 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
   }
 }
 
-resource "aws_rds_cluster" "db_cluster" {
-  # checkov:skip=CKV_AWS_327: "Encryption using KMS not yet implemented"
-  # checkov:skip=CKV2_AWS_8: "I don't know what AWS backups are"
-  cluster_identifier                  = "${var.project}-rds-cluster"
-  engine                              = "aurora-postgresql"
+resource "aws_db_instance" "db_instance" {
+  identifier                          = "${var.project}-db-instance"
+  engine                              = "postgres"
   engine_version                      = "17.4"
-  database_name                       = local.db_creds.database_name
-  master_username                     = local.db_creds.username
-  master_password                     = local.db_creds.password
+  instance_class                      = "db.t4g.micro"
+  db_name                             = local.db_creds.database_name
+  username                            = local.db_creds.username
+  password                            = local.db_creds.password
   db_subnet_group_name                = aws_db_subnet_group.rds_subnet_group.name
   vpc_security_group_ids              = [aws_security_group.rds_sg.id]
-  skip_final_snapshot                 = false
-  apply_immediately                   = true
-  deletion_protection                 = true
-  iam_database_authentication_enabled = true
-  copy_tags_to_snapshot               = true
+  allocated_storage                   = 20
+  storage_type                        = "gp3"
   storage_encrypted                   = true
-  enabled_cloudwatch_logs_exports     = ["postgresql"]
-  db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.rds_parameter_group.name
+  backup_retention_period             = 7
+  publicly_accessible                 = var.allow_public_connections
+  monitoring_interval                 = 5
+  monitoring_role_arn                 = aws_iam_role.rds_enhanced_monitoring.arn
+  performance_insights_enabled        = true
+  parameter_group_name                = aws_db_parameter_group.rds_parameter_group.name
+  skip_final_snapshot                 = false
   final_snapshot_identifier           = "${var.project}-rds-final-snapshot"
-
-  lifecycle {
-    prevent_destroy = true
-  }
-
-  serverlessv2_scaling_configuration {
-    min_capacity             = 0
-    max_capacity             = 1
-    seconds_until_auto_pause = 300
-  }
-
-  tags = {
-    Name    = "${var.project}-db-cluster"
-    Project = var.project
-  }
-}
-
-resource "aws_rds_cluster_instance" "db_instance" {
-  # checkov:skip=CKV_AWS_354: "No need to encrypt performance insights yet"
-  count                        = 1
-  identifier                   = "${var.project}-rds-instance-${count.index + 1}"
-  cluster_identifier           = aws_rds_cluster.db_cluster.id
-  instance_class               = "db.serverless"
-  engine                       = aws_rds_cluster.db_cluster.engine
-  engine_version               = aws_rds_cluster.db_cluster.engine_version
-  publicly_accessible          = var.allow_public_connections
-  auto_minor_version_upgrade   = true
-  monitoring_interval          = 5
-  monitoring_role_arn          = aws_iam_role.rds_enhanced_monitoring.arn
-  performance_insights_enabled = true
+  apply_immediately                   = true
+  iam_database_authentication_enabled = true
 
   lifecycle {
     prevent_destroy = true
   }
 
   tags = {
-    Name    = "${var.project}-db-instance-${count.index + 1}"
+    Name    = "${var.project}-db-instance"
     Project = var.project
   }
 }
 
-resource "aws_rds_cluster_parameter_group" "rds_parameter_group" {
-  name        = "${var.project}-rds-cluster-pg"
-  family      = "aurora-postgresql17"
-  description = "RDS default cluster parameter group"
+
+
+resource "aws_db_parameter_group" "rds_parameter_group" {
+  name        = "${var.project}-rds-pg"
+  family      = "postgres17"
+  description = "RDS default parameter group"
 
   parameter {
     name  = "log_statement"
@@ -117,19 +92,15 @@ resource "aws_rds_cluster_parameter_group" "rds_parameter_group" {
   }
 
   tags = {
-    Name    = "${var.project}-rds-cluster-pg"
+    Name    = "${var.project}-rds-pg"
     Project = var.project
   }
 }
 
-output "cluster_endpoint" {
-  value = aws_rds_cluster.db_cluster.endpoint
+output "db_endpoint" {
+  value = aws_db_instance.db_instance.address
 }
 
-output "reader_endpoint" {
-  value = aws_rds_cluster.db_cluster.reader_endpoint
-}
-
-output "cluster_id" {
-  value = aws_rds_cluster.db_cluster.id
+output "db_instance_id" {
+  value = aws_db_instance.db_instance.id
 }
