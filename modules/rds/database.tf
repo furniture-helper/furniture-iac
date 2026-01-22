@@ -99,7 +99,7 @@ resource "aws_db_parameter_group" "rds_parameter_group" {
   }
 
   parameter {
-    apply_method = "immediate"
+    apply_method = "pending-reboot"
     name         = "rds.force_ssl"
     value        = "1"
   }
