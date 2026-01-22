@@ -48,25 +48,23 @@ resource "aws_ecr_repository_policy" "lambda_ecr_policy" {
 resource "aws_ecr_lifecycle_policy" "furniture_crawler_queue_manager_lifecycle" {
   repository = aws_ecr_repository.furniture_crawler_queue_manager_ecr_repo.name
 
-  policy = <<POLICY
-{
-  "rules": [
-    {
-      "rulePriority": 1,
-      "description": "Keep the most recent `latest` tag",
-      "selection": {
-        "tagStatus": "tagged",
-        "tagPrefixList": ["latest"],
-        "countType": "imageCountMoreThan",
-        "countNumber": 1
-      },
-      "action": {
-        "type": "expire"
+  policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1
+        description  = "Keep the most recent `latest` tag"
+        selection = {
+          tagStatus     = "tagged"
+          tagPrefixList = ["latest"]
+          countType     = "imageCountMoreThan"
+          countNumber   = 1
+        }
+        action = {
+          type = "expire"
+        }
       }
-    }
-  ]
-}
-POLICY
+    ]
+  })
 }
 
 

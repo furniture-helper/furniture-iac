@@ -41,23 +41,21 @@ output "furniture_crawler_ecr_repo_arn" {
 resource "aws_ecr_lifecycle_policy" "furniture_crawler_lifecycle" {
   repository = aws_ecr_repository.furniture_crawler_ecr_repo.name
 
-  policy = <<POLICY
-{
-  "rules": [
-    {
-      "rulePriority": 1,
-      "description": "Keep the most recent `latest` tag",
-      "selection": {
-        "tagStatus": "tagged",
-        "tagPrefixList": ["latest"],
-        "countType": "imageCountMoreThan",
-        "countNumber": 1
-      },
-      "action": {
-        "type": "expire"
+  policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1
+        description  = "Keep the most recent `latest` tag"
+        selection = {
+          tagStatus     = "tagged"
+          tagPrefixList = ["latest"]
+          countType     = "imageCountMoreThan"
+          countNumber   = 1
+        }
+        action = {
+          type = "expire"
+        }
       }
-    }
-  ]
-}
-POLICY
+    ]
+  })
 }
