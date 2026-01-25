@@ -73,7 +73,7 @@ resource "aws_ecr_lifecycle_policy" "furniture_crawler_queue_manager_lifecycle" 
       },
       {
         rulePriority = 3
-        description = "Expire untagged images older than 7 days"
+        description  = "Expire untagged images older than 7 days"
         selection = {
           tagStatus   = "untagged"
           countType   = "sinceImagePushed"
@@ -83,7 +83,8 @@ resource "aws_ecr_lifecycle_policy" "furniture_crawler_queue_manager_lifecycle" 
         action = { type = "expire" }
       }
     ]
-  })}
+  })
+}
 
 
 output "furniture_crawler_queue_manager_ecr_repo_uri" {
