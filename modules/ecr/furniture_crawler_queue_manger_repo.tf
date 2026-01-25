@@ -52,7 +52,7 @@ resource "aws_ecr_lifecycle_policy" "furniture_crawler_queue_manager_lifecycle" 
     rules = [
       {
         rulePriority = 1
-        description  = "Keep the most recent `latest` tag"
+        description  = "Keep only the 'latest' tag, expire all other tagged images"
         selection = {
           tagStatus     = "tagged"
           tagPrefixList = ["latest"]
@@ -63,22 +63,12 @@ resource "aws_ecr_lifecycle_policy" "furniture_crawler_queue_manager_lifecycle" 
       },
       {
         rulePriority = 2
-        description  = "Expire all other tagged images"
-        selection = {
-          tagStatus   = "tagged"
-          countType   = "imageCountMoreThan"
-          countNumber = 0
-        }
-        action = { type = "expire" }
-      },
-      {
-        rulePriority = 3
-        description  = "Expire untagged images older than 7 days"
+        description  = "Expire all untagged images (and any images that lost their 'latest' tag)"
         selection = {
           tagStatus   = "untagged"
           countType   = "sinceImagePushed"
           countUnit   = "days"
-          countNumber = 7
+          countNumber = 1
         }
         action = { type = "expire" }
       }
