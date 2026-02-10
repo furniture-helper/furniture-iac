@@ -62,13 +62,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "crawler_storage_lifecycle" {
       storage_class = "STANDARD_IA"
     }
 
-    noncurrent_version_transition {
-      noncurrent_days = 30
-      storage_class   = "GLACIER"
-    }
-
     noncurrent_version_expiration {
-      noncurrent_days = 365
+      noncurrent_days = 1
     }
   }
 
