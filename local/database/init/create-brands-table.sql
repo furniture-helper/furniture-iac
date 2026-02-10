@@ -1,0 +1,24 @@
+CREATE TABLE IF NOT EXISTS brands
+(
+    id         INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    name       VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_brands_name ON brands (name);
+
+CREATE OR REPLACE FUNCTION brands_update_updated_at()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_set_updated_at
+    BEFORE UPDATE
+    ON brands
+    FOR EACH ROW
+EXECUTE FUNCTION brands_update_updated_at();
