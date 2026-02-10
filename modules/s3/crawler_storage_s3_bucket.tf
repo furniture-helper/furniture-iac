@@ -63,7 +63,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "crawler_storage_lifecycle" {
     }
 
     noncurrent_version_expiration {
-      noncurrent_days = 3
+      noncurrent_days = 1
     }
   }
 
