@@ -29,6 +29,9 @@ ignored_resources := {
     "random_string",
     "random_password",
     "tls_private_key",
+    "aws_amplify_domain_association",
+    "aws_route53_hosted_zone_dnssec",
+    "aws_route53_record"
 }
 
 deny contains msg if {

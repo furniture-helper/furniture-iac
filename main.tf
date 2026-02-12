@@ -78,6 +78,20 @@ module "lambda" {
   rds_db_endpoint                 = module.rds.db_endpoint
 }
 
+module "r53" {
+  source  = "./modules/r53"
+  project = var.project
+}
+
+module "amplify" {
+  source                           = "./modules/amplify"
+  project                          = var.project
+  database_credentials_secret_arn  = module.rds.database_credentials_secret_arn
+  database_credentials_secret_name = module.rds.database_credentials_secret_name
+  db_endpoint                      = module.rds.db_endpoint
+  s3_bucket_name                   = module.s3.crawler_storage_s3_bucket_name
+}
+
 output "crawler_queue_url" {
   description = "URL of the crawler SQS queue"
   value       = module.sqs.crawler_queue_url
@@ -91,4 +105,9 @@ output "db_endpoint" {
 output "db_instance_id" {
   description = "RDS Database Instance ID"
   value       = module.rds.db_instance_id
+}
+
+output "furniture_kaneel_xyz_nameservers" {
+  description = "Nameservers for furniture.kaneel.xyz (copy these to Namecheap Custom DNS)"
+  value       = module.r53.namecheap_nameservers
 }
