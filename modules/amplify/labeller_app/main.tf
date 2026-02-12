@@ -6,6 +6,11 @@ data "aws_secretsmanager_secret_version" "labeller_github_token_value" {
   secret_id = data.aws_secretsmanager_secret.labeller_github_token.id
 }
 
+variable "project" {
+  description = "Project name for tagging"
+  type        = string
+}
+
 variable "database_credentials_secret_name" {
   description = "Name of the Secrets Manager secret containing the database credentials"
   type        = string

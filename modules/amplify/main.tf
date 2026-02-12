@@ -1,3 +1,8 @@
+variable "project" {
+  description = "Project name for tagging"
+  type        = string
+}
+
 variable "database_credentials_secret_arn" {
   description = "ARN of the Secrets Manager secret containing the database credentials"
   type        = string

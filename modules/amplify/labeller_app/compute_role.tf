@@ -16,6 +16,11 @@ resource "aws_iam_role" "amplify_labeller_compute_role" {
       }
     ]
   })
+
+  tags = {
+    Project = var.project
+    Name    = "amplify_labeller_compute_role"
+  }
 }
 
 resource "aws_iam_policy" "s3_access_policy" {
@@ -47,6 +52,11 @@ resource "aws_iam_policy" "s3_access_policy" {
       }
     ]
   })
+
+  tags = {
+    Project = var.project
+    Name    = "amplify_labeller_s3_access_policy"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "s3_access_attach" {

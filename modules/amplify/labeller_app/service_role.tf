@@ -32,6 +32,11 @@ resource "aws_iam_role" "amplify_service_role" {
       }
     ]
   })
+
+  tags = {
+    Project = var.project
+    Name    = "amplify_service_role"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "amplify_ssr_policy_attachment" {
@@ -57,6 +62,11 @@ resource "aws_iam_policy" "ssr_logging_policy" {
       }
     ]
   })
+
+  tags = {
+    Project = var.project
+    Name    = "amplify_ssr_logging_policy"
+  }
 }
 resource "aws_iam_role_policy_attachment" "ssr_logging_attach" {
   role       = aws_iam_role.amplify_service_role.name
@@ -79,6 +89,11 @@ resource "aws_iam_policy" "read_secrets_policy" {
       }
     ]
   })
+
+  tags = {
+    Project = var.project
+    Name    = "amplify_read_secrets_policy"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "read_secrets_attach" {

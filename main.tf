@@ -85,6 +85,7 @@ module "r53" {
 
 module "amplify" {
   source                           = "./modules/amplify"
+  project                          = var.project
   database_credentials_secret_arn  = module.rds.database_credentials_secret_arn
   database_credentials_secret_name = module.rds.database_credentials_secret_name
   db_endpoint                      = module.rds.db_endpoint
