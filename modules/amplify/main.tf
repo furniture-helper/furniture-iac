@@ -25,6 +25,7 @@ variable "s3_bucket_name" {
 
 module "labeller_app" {
   source                           = "./labeller_app"
+  project                          = var.project
   database_credentials_secret_arn  = var.database_credentials_secret_arn
   database_credentials_secret_name = var.database_credentials_secret_name
   db_endpoint                      = var.db_endpoint
