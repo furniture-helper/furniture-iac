@@ -34,6 +34,16 @@ resource "aws_iam_policy" "s3_access_policy" {
         "Resource" : [
           "arn:aws:s3:::${var.s3_bucket_name}/*"
         ]
+      },
+      {
+        "Sid" : "AllowListBucket",
+        "Effect" : "Allow",
+        "Action" : [
+          "s3:ListBucket"
+        ],
+        "Resource" : [
+          "arn:aws:s3:::${var.s3_bucket_name}"
+        ]
       }
     ]
   })
