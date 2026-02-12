@@ -97,6 +97,11 @@ resource "aws_amplify_app" "furniture_labeller_app" {
           - '**/*'
           - '../.env.production'
   EOT
+
+  tags = {
+    Project = var.project
+    Name    = "labeller_amplify_app"
+  }
 }
 
 resource "aws_amplify_branch" "main" {
@@ -107,6 +112,11 @@ resource "aws_amplify_branch" "main" {
   stage     = "PRODUCTION"
 
   enable_auto_build = true
+
+  tags = {
+    Project = var.project
+    Name    = "labeller_amplify_branch_main"
+  }
 }
 
 resource "aws_amplify_domain_association" "this" {
