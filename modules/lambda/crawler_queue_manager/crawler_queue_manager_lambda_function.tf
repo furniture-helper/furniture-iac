@@ -44,10 +44,10 @@ resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
       PG_HOST                          = var.rds_db_endpoint
       PG_PORT                          = "5432"
       SQS_QUEUE_URL                    = var.crawler_sqs_queue_url
-      FETCH_AMOUNT                     = "10000"
+      FETCH_AMOUNT                     = "500"
       DATABASE_CREDENTIALS_TYPE        = "secrets_manager"
       DATABASE_CREDENTIALS_SECRET_NAME = var.database_credentials_secret_name
-      SQS_QUEUE_THRESHOLD              = "1"
+      SQS_QUEUE_THRESHOLD              = "99999"
       DELETION_INTERVAL_DAYS           = "3"
     }
   }
