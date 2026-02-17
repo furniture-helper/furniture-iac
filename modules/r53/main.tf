@@ -5,6 +5,7 @@ variable "project" {
 
 resource "aws_route53_zone" "furniture_kaneel_xyz" {
   # checkov:skip=CKV2_AWS_39: "Will havw to enable DNS query logging later."
+  # checkov:skip=CKV2_AWS_38: "Ignoring DNSSEC for now."
   name = "furniture.kaneel.xyz"
 
   tags = {

@@ -22,7 +22,7 @@ resource "aws_cloudwatch_event_target" "crawler_daily_run" {
 
   ecs_target {
     task_definition_arn = module.furniture_crawler_task.furniture_crawler_task_definition_arn
-    task_count          = 3
+    task_count          = 4
 
     capacity_provider_strategy {
       capacity_provider = "FARGATE_SPOT"
