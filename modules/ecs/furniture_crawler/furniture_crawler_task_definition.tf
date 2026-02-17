@@ -55,12 +55,13 @@ locals {
       { name = "PG_PORT", value = "5432" },
       { name = "MAX_CONCURRENCY", value = "10" },
       { name = "MAX_REQUESTS_PER_MINUTE", value = "150" },
-      { name = "MAX_REQUESTS_PER_CRAWL", value = "1000" },
+      { name = "MAX_REQUESTS_PER_CRAWL", value = "500" },
       { name = "NODE_OPTIONS", value = "--max-old-space-size=8192" },
       { name = "CRAWLEE_AVAILABLE_MEMORY_RATIO", value = "0.8" },
       { name = "LOG_LEVEL", value = "info" },
       { name = "SQS_QUEUE_URL", value = var.crawler_sqs_queue_url },
-      { name = "TIMEOUT_MINS", value = "30" }
+      { name = "TIMEOUT_MINS", value = "30" },
+      { name = "REQUEST_HANDLER_TIMEOUT_S", value = "60" }
     ]
     secrets = [
       {
