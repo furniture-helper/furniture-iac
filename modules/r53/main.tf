@@ -5,6 +5,7 @@ variable "project" {
 
 resource "aws_route53_zone" "furniture_kaneel_xyz" {
   # checkov:skip=CKV2_AWS_39: "Will havw to enable DNS query logging later."
+  # checkov:skip=CKV2_AWS_38: "Ignoring DNSSEC for now."
   name = "furniture.kaneel.xyz"
 
   tags = {
@@ -21,9 +22,9 @@ resource "aws_route53_record" "label_to_www" {
   records = ["www.label.furniture.kaneel.xyz."]
 }
 
-resource "aws_route53_hosted_zone_dnssec" "example" {
-  hosted_zone_id = aws_route53_zone.furniture_kaneel_xyz.zone_id
-}
+# resource "aws_route53_hosted_zone_dnssec" "example" {
+#   hosted_zone_id = aws_route53_zone.furniture_kaneel_xyz.zone_id
+# }
 
 output "namecheap_nameservers" {
   value       = aws_route53_zone.furniture_kaneel_xyz.name_servers

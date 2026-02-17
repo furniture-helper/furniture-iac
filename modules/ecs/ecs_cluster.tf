@@ -4,11 +4,12 @@ variable "project" {
 }
 
 resource "aws_ecs_cluster" "furniture_cluster" {
+  # checkov:skip=CKV_AWS_65: "Container insights is disabled to avoid additional costs."
   name = "${var.project}-cluster"
 
   setting {
     name  = "containerInsights"
-    value = "enhanced"
+    value = "disabled"
   }
 
   tags = {

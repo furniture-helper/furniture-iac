@@ -34,8 +34,8 @@ locals {
   container = {
     name      = "furniture-crawler"
     image     = "${var.ecr_repo_url}:${var.image_tag}"
-    cpu       = 2048
-    memory    = 4096
+    cpu       = 1024
+    memory    = 2048
     essential = true
 
     logConfiguration = {
@@ -85,8 +85,8 @@ resource "aws_ecs_task_definition" "furniture_crawler_task_definition" {
   family                   = "furniture_crawler"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = 2048
-  memory                   = 4096
+  cpu                      = 1024
+  memory                   = 2048
 
   runtime_platform {
     operating_system_family = "LINUX"

@@ -1,7 +1,8 @@
 resource "aws_vpc" "vpc" {
-  cidr_block           = "10.0.0.0/16"
-  enable_dns_support   = true
-  enable_dns_hostnames = true
+  cidr_block                       = "10.0.0.0/16"
+  enable_dns_support               = true
+  enable_dns_hostnames             = true
+  assign_generated_ipv6_cidr_block = true
 
   tags = {
     Name    = "${var.project}-vpc"
@@ -33,6 +34,9 @@ resource "aws_subnet" "public_subnet_1" {
   availability_zone       = var.availability_zone_1
   map_public_ip_on_launch = false
 
+  ipv6_cidr_block                 = cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 8, 1)
+  assign_ipv6_address_on_creation = true
+
   tags = {
     Name    = "${var.project}-public-subnet-1"
     Project = var.project
@@ -44,6 +48,9 @@ resource "aws_subnet" "public_subnet_2" {
   cidr_block              = "10.0.1.0/24"
   availability_zone       = var.availability_zone_2
   map_public_ip_on_launch = false
+
+  ipv6_cidr_block                 = cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 8, 2)
+  assign_ipv6_address_on_creation = true
 
   tags = {
     Name    = "${var.project}-public-subnet-2"
@@ -58,6 +65,11 @@ resource "aws_route_table" "public_rt" {
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igw.id
+  }
+
+  route {
+    ipv6_cidr_block = "::/0"
+    gateway_id      = aws_internet_gateway.igw.id
   }
 
   tags = {
