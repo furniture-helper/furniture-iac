@@ -6,7 +6,7 @@ variable "subnet_ids" {
 resource "aws_cloudwatch_event_rule" "crawler" {
   name                = "${var.project}-crawler-event-rule"
   description         = "Run crawler"
-  schedule_expression = "cron(0 * * * ? *)"
+  schedule_expression = "cron(30 * * * ? *)"
 
   tags = {
     Project = var.project
@@ -22,7 +22,7 @@ resource "aws_cloudwatch_event_target" "crawler_daily_run" {
 
   ecs_target {
     task_definition_arn = module.furniture_crawler_task.furniture_crawler_task_definition_arn
-    task_count          = 2
+    task_count          = 3
 
     capacity_provider_strategy {
       capacity_provider = "FARGATE_SPOT"
