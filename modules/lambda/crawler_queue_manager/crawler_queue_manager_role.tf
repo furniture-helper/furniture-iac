@@ -44,7 +44,8 @@ resource "aws_iam_policy" "crawler_queue_manager_lambda_sqs_write_policy" {
         Effect = "Allow"
         Action = [
           "sqs:SendMessage",
-          "sqs:GetQueueAttributes"
+          "sqs:GetQueueAttributes",
+          "sqs:PurgeQueue"
         ]
         Resource = var.crawler_sqs_queue_arn
       }
