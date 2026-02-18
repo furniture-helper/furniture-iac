@@ -37,7 +37,7 @@ module "crawler_queue_manager" {
   source                           = "./crawler_queue_manager"
   crawler_sqs_queue_arn            = var.crawler_sqs_queue_arn
   ecr_repo_url                     = var.crawler_ecr_repo_url
-  image_tag                        = "5b013c88ef808e70eb074ec0a47e3a1e04ce93e8"
+  image_tag                        = "0dcf7376bddc117338324f412283274c897ae144"
   project                          = var.project
   database_credentials_secret_arn  = var.database_credentials_secret_arn
   crawler_sqs_queue_url            = var.crawler_sqs_queue_url
