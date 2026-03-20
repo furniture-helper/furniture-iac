@@ -45,7 +45,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "minimized_html_st
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "minimized_html_storage_lifecycle" {
-  bucket = aws_s3_bucket.crawler_storage.id
+  bucket = aws_s3_bucket.minimized_html_storage.id
 
   rule {
     id     = "TierAndExpire"
