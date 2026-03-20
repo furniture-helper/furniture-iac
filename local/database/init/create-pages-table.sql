@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS pages (
 
 CREATE INDEX IF NOT EXISTS idx_pages_domain ON pages(domain);
 CREATE INDEX IF NOT EXISTS idx_pages_is_active ON pages(is_active);
+CREATE INDEX IF NOT EXISTS idx_pages_url ON pages (url);
 
 CREATE OR REPLACE FUNCTION update_updated_at()
 RETURNS TRIGGER AS $$

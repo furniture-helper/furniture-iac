@@ -50,6 +50,7 @@ module "github_actions" {
   github_organization            = var.github_organization
   crawler_repo_arn               = module.ecr.furniture_crawler_ecr_repo_arn
   crawler_queue_manager_repo_arn = module.ecr.furniture_crawler_queue_manager_ecr_repo_arn
+  html_minimizer_repo_arn        = module.ecr.html_minimizer_ecr_repo_arn
 }
 
 module "rds" {
@@ -92,6 +93,11 @@ module "amplify" {
   s3_bucket_name                   = module.s3.crawler_storage_s3_bucket_name
 }
 
+module "sagemaker" {
+  source  = "./modules/sagemaker"
+  project = var.project
+}
+
 output "crawler_queue_url" {
   description = "URL of the crawler SQS queue"
   value       = module.sqs.crawler_queue_url
@@ -110,4 +116,14 @@ output "db_instance_id" {
 output "furniture_kaneel_xyz_nameservers" {
   description = "Nameservers for furniture.kaneel.xyz (copy these to Namecheap Custom DNS)"
   value       = module.r53.namecheap_nameservers
+}
+
+output "sagemaker_role_arn" {
+  description = "ARN of the SageMaker execution role"
+  value       = module.sagemaker.sagemaker_role_arn
+}
+
+output "sagemaker_storage_s3_bucket_name" {
+  description = "Name of the S3 bucket used by SageMaker"
+  value       = module.sagemaker.sagemaker_storage_s3_bucket_name
 }
