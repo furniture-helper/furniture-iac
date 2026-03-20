@@ -14,6 +14,11 @@ resource "aws_iam_role" "sagemaker_execution_role" {
       },
     ]
   })
+
+  tags = {
+    Project = var.project
+    Name    = "${var.project}-sagemaker-execution-role"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "sagemaker_full_access" {
