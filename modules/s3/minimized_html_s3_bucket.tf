@@ -18,7 +18,7 @@ resource "aws_s3_bucket" "minimized_html_storage" {
 }
 
 resource "aws_s3_bucket_public_access_block" "minimized_html_storage_public_access_block" {
-  bucket = aws_s3_bucket.crawler_storage.id
+  bucket = aws_s3_bucket.minimized_html_storage.id
 
   block_public_acls       = true
   block_public_policy     = true
@@ -27,7 +27,7 @@ resource "aws_s3_bucket_public_access_block" "minimized_html_storage_public_acce
 }
 
 resource "aws_s3_bucket_versioning" "minimized_html_storage_versioning" {
-  bucket = aws_s3_bucket.crawler_storage.id
+  bucket = aws_s3_bucket.minimized_html_storage.id
 
   versioning_configuration {
     status = "Enabled"
@@ -35,7 +35,7 @@ resource "aws_s3_bucket_versioning" "minimized_html_storage_versioning" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "minimized_html_storage_encryption" {
-  bucket = aws_s3_bucket.crawler_storage.id
+  bucket = aws_s3_bucket.minimized_html_storage.id
 
   rule {
     apply_server_side_encryption_by_default {
