@@ -42,6 +42,11 @@ module "ecs" {
   rds_db_endpoint                 = module.rds.db_endpoint
   crawler_sqs_queue_url           = module.sqs.crawler_queue_url
   crawler_sqs_queue_arn           = module.sqs.crawler_queue_arn
+  anchor_tree_s3_bucket_arn       = module.sagemaker.sagemaker_storage_s3_bucket_arn
+  anchor_tree_s3_bucket_name      = module.sagemaker.sagemaker_storage_s3_bucket_name
+  html_minimizer_ecr_repo_url     = module.ecr.html_minimizer_ecr_repo_uri
+  html_minimizer_s3_bucket_arn    = module.s3.minimized_html_storage_s3_bucket_arn
+  html_minimizer_s3_bucket_name   = module.s3.minimized_html_storage_s3_bucket_name
 }
 
 module "github_actions" {

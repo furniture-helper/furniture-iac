@@ -24,7 +24,7 @@ resource "aws_ecr_repository" "html_minimizer_ecr_repo" {
   }
 }
 
-output "html-minimizer_ecr_repo_uri" {
+output "html_minimizer_ecr_repo_uri" {
   value       = aws_ecr_repository.html_minimizer_ecr_repo.repository_url
   description = "URL of the ECR repository for the furniture html minimizer"
 }

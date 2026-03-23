@@ -1,3 +1,6 @@
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
 resource "aws_iam_role" "events_invoke_ecs_role" {
   name = "${var.project}-events-invoke-ecs"
 
@@ -32,6 +35,7 @@ resource "aws_iam_role_policy" "events_invoke_ecs_policy" {
         ]
         Resource = [
           module.furniture_crawler_task.furniture_crawler_task_definition_arn,
+          module.html_minimizer_task.html_minimizer_task_definition_arn
         ]
         Condition = {
           StringEquals = {
@@ -47,7 +51,8 @@ resource "aws_iam_role_policy" "events_invoke_ecs_policy" {
         ]
         Resource = [
           aws_iam_role.ecs_task_execution_role.arn,
-          module.furniture_crawler_task.furniture_crawler_task_role_arn
+          module.furniture_crawler_task.furniture_crawler_task_role_arn,
+          module.html_minimizer_task.html_minimizer_task_definition_arn
         ]
       },
       {
