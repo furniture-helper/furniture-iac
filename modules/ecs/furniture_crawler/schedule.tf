@@ -3,6 +3,21 @@ variable "subnet_ids" {
   type        = list(string)
 }
 
+variable "furniture_cluster_arn" {
+  description = "ARN of the ECS cluster where the crawler task will run"
+  type        = string
+}
+
+variable "events_invoke_ecs_role_arn" {
+  description = "ARN of the IAM role that allows EventBridge to invoke ECS tasks"
+  type        = string
+}
+
+variable "security_group_ids" {
+  description = "Security group IDs to attach to the ECS tasks"
+  type        = list(string)
+}
+
 resource "aws_cloudwatch_event_rule" "crawler" {
   name                = "${var.project}-crawler-event-rule"
   description         = "Run crawler"
@@ -17,12 +32,12 @@ resource "aws_cloudwatch_event_rule" "crawler" {
 
 resource "aws_cloudwatch_event_target" "crawler_daily_run" {
   rule      = aws_cloudwatch_event_rule.crawler.name
-  arn       = aws_ecs_cluster.furniture_cluster.arn
-  role_arn  = aws_iam_role.events_invoke_ecs_role.arn
+  arn       = var.furniture_cluster_arn
+  role_arn  = var.events_invoke_ecs_role_arn
   target_id = "${var.project}-crawler-ecs-target"
 
   ecs_target {
-    task_definition_arn = module.furniture_crawler_task.furniture_crawler_task_definition_arn
+    task_definition_arn = aws_ecs_task_definition.furniture_crawler_task_definition.arn
     task_count          = 1
 
     capacity_provider_strategy {
@@ -32,7 +47,7 @@ resource "aws_cloudwatch_event_target" "crawler_daily_run" {
 
     network_configuration {
       subnets          = var.subnet_ids
-      security_groups  = [aws_security_group.ecs_tasks_sg.id]
+      security_groups  = var.security_group_ids
       assign_public_ip = true
     }
 

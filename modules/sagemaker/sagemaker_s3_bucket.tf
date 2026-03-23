@@ -82,3 +82,8 @@ output "sagemaker_storage_s3_bucket_name" {
   value       = aws_s3_bucket.sagemaker_storage.bucket
   description = "Name of the S3 bucket used by SageMaker"
 }
+
+output "sagemaker_storage_s3_bucket_arn" {
+  value       = aws_s3_bucket.sagemaker_storage.arn
+  description = "ARN of the S3 bucket used by SageMaker"
+}

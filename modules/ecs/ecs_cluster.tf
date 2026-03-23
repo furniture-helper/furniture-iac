@@ -9,7 +9,7 @@ resource "aws_ecs_cluster" "furniture_cluster" {
 
   setting {
     name  = "containerInsights"
-    value = "disabled"
+    value = "enhanced"
   }
 
   tags = {
