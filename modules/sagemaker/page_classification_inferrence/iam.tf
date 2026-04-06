@@ -2,6 +2,8 @@ data "aws_caller_identity" "current" {}
 
 data "aws_partition" "current" {}
 
+data "aws_region" "current" {}
+
 data "aws_iam_policy_document" "sfn_assume_role" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -60,6 +62,7 @@ resource "aws_iam_role_policy" "sfn_schedule_invoke" {
 }
 
 resource "aws_iam_role_policy" "sfn_inline" {
+  # checkov:skip=CKV_AWS_290: "CloudWatch Logs delivery APIs (CreateLogDelivery etc.) do not support resource-level constraints"
   name = "page-classification-sfn-inline-policy"
   role = aws_iam_role.sfn_execution.id
 
@@ -75,7 +78,11 @@ resource "aws_iam_role_policy" "sfn_inline" {
           "sagemaker:DescribeProcessingJob",
           "sagemaker:StopProcessingJob"
         ]
-        Resource = "*"
+        Resource = [
+          "arn:${data.aws_partition.current.partition}:sagemaker:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:processing-job/generate-classify-infer-dataset-*",
+          "arn:${data.aws_partition.current.partition}:sagemaker:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:processing-job/classify-infer-*",
+          "arn:${data.aws_partition.current.partition}:sagemaker:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:processing-job/update-classify-table-*"
+        ]
       },
       {
         Sid      = "PassSageMakerRole"
@@ -102,17 +109,24 @@ resource "aws_iam_role_policy" "sfn_inline" {
         Resource = "arn:${data.aws_partition.current.partition}:events:*:*:rule/StepFunctionsGetEventsForSageMakerProcessingJobsRule"
       },
       {
-        Sid    = "StateMachineLogs"
+        Sid    = "StateMachineLogGroupActions"
+        Effect = "Allow"
+        Action = [
+          "logs:PutResourcePolicy",
+          "logs:DescribeResourcePolicies",
+          "logs:DescribeLogGroups"
+        ]
+        Resource = "arn:${data.aws_partition.current.partition}:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/states/page-classification-pipeline:*"
+      },
+      {
+        Sid    = "StateMachineLogDeliveryActions"
         Effect = "Allow"
         Action = [
           "logs:CreateLogDelivery",
           "logs:GetLogDelivery",
           "logs:UpdateLogDelivery",
           "logs:DeleteLogDelivery",
-          "logs:ListLogDeliveries",
-          "logs:PutResourcePolicy",
-          "logs:DescribeResourcePolicies",
-          "logs:DescribeLogGroups"
+          "logs:ListLogDeliveries"
         ]
         Resource = "*"
       }

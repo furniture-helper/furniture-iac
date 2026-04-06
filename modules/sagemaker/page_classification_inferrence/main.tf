@@ -35,6 +35,8 @@ locals {
 }
 
 resource "aws_cloudwatch_log_group" "sfn" {
+  # checkov:skip=CKV_AWS_158: "KMS encryption is not required for this log group"
+  # checkov:skip=CKV_AWS_338: "Log group retention is set to 14 days only for cost management"
   name              = "/aws/states/page-classification-pipeline"
   retention_in_days = 14
   tags = {
@@ -54,10 +56,14 @@ resource "aws_sfn_state_machine" "page_classification" {
   }
 
   logging_configuration {
-    include_execution_data = false
+    include_execution_data = true
     level                  = "ALL"
 
     log_destination = "${aws_cloudwatch_log_group.sfn.arn}:*"
+  }
+
+  tracing_configuration {
+    enabled = true
   }
 }
 
