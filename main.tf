@@ -95,12 +95,15 @@ module "amplify" {
   database_credentials_secret_arn  = module.rds.database_credentials_secret_arn
   database_credentials_secret_name = module.rds.database_credentials_secret_name
   db_endpoint                      = module.rds.db_endpoint
-  s3_bucket_name                   = module.s3.crawler_storage_s3_bucket_name
+  s3_minimized_html_bucket_name    = module.s3.minimized_html_storage_s3_bucket_name
+  s3_raw_html_bucket_name          = module.s3.crawler_storage_s3_bucket_name
 }
 
 module "sagemaker" {
-  source  = "./modules/sagemaker"
-  project = var.project
+  source                   = "./modules/sagemaker"
+  project                  = var.project
+  database_credentials_arn = module.rds.database_credentials_secret_arn
+  rds_db_endpoint          = module.rds.db_endpoint
 }
 
 output "crawler_queue_url" {

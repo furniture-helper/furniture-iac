@@ -18,8 +18,13 @@ variable "db_endpoint" {
   type        = string
 }
 
-variable "s3_bucket_name" {
+variable "s3_raw_html_bucket_name" {
   description = "Name of the S3 bucket for the furniture crawler"
+  type        = string
+}
+
+variable "s3_minimized_html_bucket_name" {
+  description = "Name of the S3 bucket for the minimized HTML files"
   type        = string
 }
 
@@ -29,5 +34,6 @@ module "labeller_app" {
   database_credentials_secret_arn  = var.database_credentials_secret_arn
   database_credentials_secret_name = var.database_credentials_secret_name
   db_endpoint                      = var.db_endpoint
-  s3_bucket_name                   = var.s3_bucket_name
+  s3_raw_html_bucket_name          = var.s3_raw_html_bucket_name
+  s3_minimized_html_bucket_name    = var.s3_minimized_html_bucket_name
 }
