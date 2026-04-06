@@ -21,8 +21,13 @@ variable "db_endpoint" {
   type        = string
 }
 
-variable "s3_bucket_name" {
+variable "s3_raw_html_bucket_name" {
   description = "Name of the S3 bucket for the furniture crawler"
+  type        = string
+}
+
+variable "s3_minimized_html_bucket_name" {
+  description = "Name of the S3 bucket for the minimized HTML files"
   type        = string
 }
 
@@ -47,7 +52,8 @@ resource "aws_amplify_app" "furniture_labeller_app" {
             - export DB_SECRET_NAME="${var.database_credentials_secret_name}"
             - export AWS_REGION_NAME="${data.aws_region.current.region}"
             - export PG_HOST="${var.db_endpoint}"
-            - export AWS_S3_BUCKET="${var.s3_bucket_name}"
+            - export AWS_S3_BUCKET="${var.s3_raw_html_bucket_name}"
+            - export AWS_S3_MNINIMIZED_BUCKET_NAME="${var.s3_minimized_html_bucket_name}"
 
             # 2. Run Node.js and pull from process.env
             - |
@@ -70,7 +76,8 @@ resource "aws_amplify_app" "furniture_labeller_app" {
                   PG_USER: secrets.username,
                   PG_PASSWORD: secrets.password,
                   PG_DATABASE: secrets.database_name,
-                  AWS_S3_BUCKET: process.env.AWS_S3_BUCKET
+                  AWS_S3_BUCKET: process.env.AWS_S3_BUCKET,
+                  AWS_S3_MINIMIZED_BUCKET_NAME: process.env.AWS_S3_MNINIMIZED_BUCKET_NAME
                 };
 
 

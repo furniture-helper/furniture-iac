@@ -109,7 +109,7 @@ resource "aws_iam_role_policy" "anchor_tree_s3_read_policy" {
         ]
         Resource = [
           var.anchor_tree_s3_bucket_arn,
-          "${var.anchor_tree_s3_bucket_arn}/anchor_tree/anchor_tree.pkl"
+          "${var.anchor_tree_s3_bucket_arn}/anchor_tree/*"
         ]
       }
     ]

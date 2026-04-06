@@ -37,7 +37,8 @@ resource "aws_iam_policy" "s3_access_policy" {
           "s3:GetObject"
         ],
         "Resource" : [
-          "arn:aws:s3:::${var.s3_bucket_name}/*"
+          "arn:aws:s3:::${var.s3_raw_html_bucket_name}/*",
+          "arn:aws:s3:::${var.s3_minimized_html_bucket_name}/*"
         ]
       },
       {
@@ -47,7 +48,8 @@ resource "aws_iam_policy" "s3_access_policy" {
           "s3:ListBucket"
         ],
         "Resource" : [
-          "arn:aws:s3:::${var.s3_bucket_name}"
+          "arn:aws:s3:::${var.s3_raw_html_bucket_name}",
+          "arn:aws:s3:::${var.s3_minimized_html_bucket_name}"
         ]
       }
     ]
