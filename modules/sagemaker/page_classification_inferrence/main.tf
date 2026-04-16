@@ -5,7 +5,7 @@ locals {
     dataset_image_uri       = "763104351884.dkr.ecr.eu-west-1.amazonaws.com/pytorch-training:2.1.0-cpu-py310"
     inference_image_uri     = "763104351884.dkr.ecr.eu-west-1.amazonaws.com/pytorch-training:2.1.0-gpu-py310"
     update_image_uri        = "470317259841.dkr.ecr.eu-west-1.amazonaws.com/sagemaker-base-python-310:1.0"
-    dataset_instance_type   = "ml.m7i.xlarge"
+    dataset_instance_type   = "ml.r7i.xlarge"
     inference_instance_type = "ml.g5.xlarge"
     update_instance_type    = "ml.t3.medium"
     volume_size_gb          = 30

@@ -3,8 +3,8 @@ variable "rds_db_endpoint" { type = string }
 variable "database_credentials_secret_arn" { type = string }
 variable "sagemaker_bucket_name" { type = string }
 
-variable "page_classification_schedule_expression" {
+variable "information_extraction_schedule_expression" {
   type    = string
-  default = "cron(30 18 * * ? *)"
+  default = "cron(0 0 * * ? *)"
 }
 
