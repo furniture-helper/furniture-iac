@@ -1,0 +1,261 @@
+{
+  "Comment": "Information extraction inference pipeline",
+  "StartAt": "FetchDbCredentials",
+  "States": {
+    "FetchDbCredentials": {
+      "Type": "Task",
+      "Resource": "arn:${partition}:states:::aws-sdk:secretsmanager:getSecretValue",
+      "Parameters": {
+        "SecretId": "${database_credentials_secret_arn}"
+      },
+      "ResultSelector": {
+        "db.$": "States.StringToJson($.SecretString)"
+      },
+      "ResultPath": "$.secrets",
+      "Next": "ExtractDateAndTime"
+    },
+    "ExtractDateAndTime": {
+      "Type": "Pass",
+      "Parameters": {
+        "date.$": "States.ArrayGetItem(States.StringSplit($$.State.EnteredTime, 'T'), 0)",
+        "time.$": "States.ArrayGetItem(States.StringSplit($$.State.EnteredTime, 'T'), 1)"
+      },
+      "ResultPath": "$.meta",
+      "Next": "ExtractTimeParts"
+    },
+    "ExtractTimeParts": {
+      "Type": "Pass",
+      "Parameters": {
+        "date.$": "$.meta.date",
+        "hh.$": "States.ArrayGetItem(States.StringSplit($.meta.time, ':'), 0)",
+        "mm.$": "States.ArrayGetItem(States.StringSplit($.meta.time, ':'), 1)",
+        "ss_frac.$": "States.ArrayGetItem(States.StringSplit($.meta.time, ':'), 2)"
+      },
+      "ResultPath": "$.meta",
+      "Next": "ExtractSeconds"
+    },
+    "ExtractSeconds": {
+      "Type": "Pass",
+      "Parameters": {
+        "date.$": "$.meta.date",
+        "hh.$": "$.meta.hh",
+        "mm.$": "$.meta.mm",
+        "ss.$": "States.ArrayGetItem(States.StringSplit($.meta.ss_frac, '.'), 0)"
+      },
+      "ResultPath": "$.meta",
+      "Next": "BuildJobTimestamp"
+    },
+    "BuildJobTimestamp": {
+      "Type": "Pass",
+      "Parameters": {
+        "job_ts.$": "States.Format('{}-{}{}{}', $.meta.date, $.meta.hh, $.meta.mm, $.meta.ss)"
+      },
+      "ResultPath": "$.meta",
+      "Next": "GenerateIeInferenceDataset"
+    },
+    "GenerateIeInferenceDataset": {
+      "Type": "Task",
+      "Resource": "arn:${partition}:states:::sagemaker:createProcessingJob.sync",
+      "Parameters": {
+        "ProcessingJobName.$": "States.Format('generate-ie-inference-dataset-{}', $.meta.job_ts)",
+        "RoleArn": "${sagemaker_role_arn}",
+        "AppSpecification": {
+          "ImageUri": "${dataset_image_uri}",
+          "ContainerEntrypoint": ["python3"],
+          "ContainerArguments": ["/opt/ml/processing/input/code/generate_ie_inference_dataset.py"]
+        },
+        "Environment": {
+          "PG_HOST": "${pg_host}",
+          "PG_USER.$": "$.secrets.db.username",
+          "PG_PASSWORD.$": "$.secrets.db.password",
+          "PG_DATABASE.$": "$.secrets.db.database_name",
+          "PG_PORT": "${pg_port}",
+          "IE_INFERENCE_QUERY_LIMIT": "${ie_inference_query_limit}",
+          "MARKUPLM_MODEL_ID": "${markuplm_model_id}",
+          "MINIMIZED_HTML_BUCKET": "${minimized_html_bucket}",
+          "S3_FETCH_NUM_PROC": "${s3_fetch_num_proc}",
+          "TOKENIZE_NUM_PROC": "${tokenize_num_proc}",
+          "S3_FETCH_THREADS": "${s3_fetch_threads}"
+        },
+        "ProcessingResources": {
+          "ClusterConfig": {
+            "InstanceCount": 1,
+            "InstanceType": "${dataset_instance_type}",
+            "VolumeSizeInGB": ${volume_size_gb}
+          }
+        },
+        "ProcessingInputs": [
+          {
+            "InputName": "code",
+            "S3Input": {
+              "S3Uri": "${dataset_script_s3_uri}",
+              "LocalPath": "/opt/ml/processing/input/code",
+              "S3DataType": "S3Prefix",
+              "S3InputMode": "File"
+            }
+          }
+        ],
+        "ProcessingOutputConfig": {
+          "Outputs": [
+            {
+              "OutputName": "dataset",
+              "S3Output": {
+                "S3Uri": "${dataset_output_s3_uri}",
+                "LocalPath": "/opt/ml/processing/output/",
+                "S3UploadMode": "EndOfJob"
+              }
+            }
+          ]
+        }
+      },
+      "ResultPath": null,
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "PipelineFailed"
+        }
+      ],
+      "Next": "InformationExtractionInference"
+    },
+    "InformationExtractionInference": {
+      "Type": "Task",
+      "Resource": "arn:${partition}:states:::sagemaker:createProcessingJob.sync",
+      "Parameters": {
+        "ProcessingJobName.$": "States.Format('information-extraction-inference-{}', $.meta.job_ts)",
+        "RoleArn": "${sagemaker_role_arn}",
+        "AppSpecification": {
+          "ImageUri": "${inference_image_uri}",
+          "ContainerEntrypoint": ["python3"],
+          "ContainerArguments": ["/opt/ml/processing/input/code/information_extraction_inference.py"]
+        },
+        "Environment": {
+          "INFERENCE_BATCH_SIZE": "${inference_batch_size}",
+          "SKIP_RUNTIME_PIP": "${skip_runtime_pip}"
+        },
+        "ProcessingResources": {
+          "ClusterConfig": {
+            "InstanceCount": 1,
+            "InstanceType": "${inference_instance_type}",
+            "VolumeSizeInGB": ${volume_size_gb}
+          }
+        },
+        "ProcessingInputs": [
+          {
+            "InputName": "code",
+            "S3Input": {
+              "S3Uri": "${inference_script_s3_uri}",
+              "LocalPath": "/opt/ml/processing/input/code",
+              "S3DataType": "S3Prefix",
+              "S3InputMode": "File"
+            }
+          },
+          {
+            "InputName": "dataset",
+            "S3Input": {
+              "S3Uri": "${dataset_output_s3_uri}",
+              "LocalPath": "/opt/ml/processing/input/dataset",
+              "S3DataType": "S3Prefix",
+              "S3InputMode": "File"
+            }
+          },
+          {
+            "InputName": "model",
+            "S3Input": {
+              "S3Uri": "${model_s3_uri}",
+              "LocalPath": "/opt/ml/processing/input/model",
+              "S3DataType": "S3Prefix",
+              "S3InputMode": "File"
+            }
+          }
+        ],
+        "ProcessingOutputConfig": {
+          "Outputs": [
+            {
+              "OutputName": "predictions",
+              "S3Output": {
+                "S3Uri": "${predictions_output_s3_uri}",
+                "LocalPath": "/opt/ml/processing/output",
+                "S3UploadMode": "EndOfJob"
+              }
+            }
+          ]
+        }
+      },
+      "ResultPath": null,
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "PipelineFailed"
+        }
+      ],
+      "Next": "UpdateIeInferredLabels"
+    },
+    "UpdateIeInferredLabels": {
+      "Type": "Task",
+      "Resource": "arn:${partition}:states:::sagemaker:createProcessingJob.sync",
+      "Parameters": {
+        "ProcessingJobName.$": "States.Format('update-ie-inferred-labels-{}', $.meta.job_ts)",
+        "RoleArn": "${sagemaker_role_arn}",
+        "AppSpecification": {
+          "ImageUri": "${update_image_uri}",
+          "ContainerEntrypoint": ["python3"],
+          "ContainerArguments": ["/opt/ml/processing/input/code/update_ie_inferred_labels.py"]
+        },
+        "Environment": {
+          "PG_HOST": "${pg_host}",
+          "PG_USER.$": "$.secrets.db.username",
+          "PG_PASSWORD.$": "$.secrets.db.password",
+          "PG_DATABASE.$": "$.secrets.db.database_name",
+          "PG_PORT": "${pg_port}",
+          "PREDICTIONS_PATH": "/opt/ml/processing/input/information_extraction_predictions.jsonl",
+          "TITLE_SCORE_THRESHOLD": "${title_score_threshold}",
+          "PRICE_SCORE_THRESHOLD": "${price_score_threshold}"
+        },
+        "ProcessingResources": {
+          "ClusterConfig": {
+            "InstanceCount": 1,
+            "InstanceType": "${update_instance_type}",
+            "VolumeSizeInGB": ${volume_size_gb}
+          }
+        },
+        "ProcessingInputs": [
+          {
+            "InputName": "code",
+            "S3Input": {
+              "S3Uri": "${update_script_s3_uri}",
+              "LocalPath": "/opt/ml/processing/input/code",
+              "S3DataType": "S3Prefix",
+              "S3InputMode": "File"
+            }
+          },
+          {
+            "InputName": "predictions",
+            "S3Input": {
+              "S3Uri": "${predictions_input_s3_uri}",
+              "LocalPath": "/opt/ml/processing/input/",
+              "S3DataType": "S3Prefix",
+              "S3InputMode": "File"
+            }
+          }
+        ]
+      },
+      "ResultPath": null,
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "PipelineFailed"
+        }
+      ],
+      "End": true
+    },
+    "PipelineFailed": {
+      "Type": "Fail",
+      "Error": "PipelineExecutionFailed",
+      "Cause": "A SageMaker processing stage failed. Inspect execution history for details."
+    }
+  }
+}
+
