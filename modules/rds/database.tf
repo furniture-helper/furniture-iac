@@ -37,7 +37,7 @@ resource "aws_db_instance" "db_instance" {
   password                            = local.db_creds.password
   db_subnet_group_name                = aws_db_subnet_group.rds_subnet_group.name
   vpc_security_group_ids              = [aws_security_group.rds_sg.id]
-  allocated_storage                   = 20
+  allocated_storage                   = 50
   storage_type                        = "gp3"
   storage_encrypted                   = true
   backup_retention_period             = 7
@@ -96,6 +96,12 @@ resource "aws_db_parameter_group" "rds_parameter_group" {
   parameter {
     name  = "statement_timeout"
     value = "120000"
+  }
+
+  parameter {
+    name         = "rds.logical_replication"
+    value        = "1"
+    apply_method = "pending-reboot"
   }
 
   parameter {
