@@ -15,7 +15,7 @@ locals {
     update_script_s3_uri    = "s3://${var.sagemaker_bucket_name}/code/update_ie_inferred_labels.py"
 
     dataset_output_s3_uri     = "s3://${var.sagemaker_bucket_name}/ie-inference-dataset"
-    model_s3_uri              = "s3://kaneel-sagemaker-testing/ie-model-artifacts/ie-hpo-1776270345-001-514d03ce/output/"
+    model_s3_uri              = "s3://kaneel-sagemaker-testing/ie-model-artifacts/ie-hpo-1776402101-010-1a824ab5/output/"
     predictions_output_s3_uri = "s3://${var.sagemaker_bucket_name}/ie-predictions/"
     predictions_input_s3_uri  = "s3://${var.sagemaker_bucket_name}/ie-predictions"
 
@@ -31,8 +31,8 @@ locals {
     s3_fetch_threads         = 16
     inference_batch_size     = 16
     skip_runtime_pip         = 0
-    title_score_threshold    = "0.95"
-    price_score_threshold    = "0.95"
+    title_score_threshold    = "0.90"
+    price_score_threshold    = "0.90"
   })
 }
 
