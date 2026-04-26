@@ -108,6 +108,12 @@ module "sagemaker" {
   rds_db_endpoint          = module.rds.db_endpoint
 }
 
+module "api_gateway" {
+  source                          = "./modules/api_gateway"
+  search_api_lambda_invoke_arn    = module.lambda.search_api_lambda_invoke_arn
+  search_api_lambda_function_name = module.lambda.search_api_lambda_name
+}
+
 output "crawler_queue_url" {
   description = "URL of the crawler SQS queue"
   value       = module.sqs.crawler_queue_url
@@ -136,4 +142,9 @@ output "sagemaker_role_arn" {
 output "sagemaker_storage_s3_bucket_name" {
   description = "Name of the S3 bucket used by SageMaker"
   value       = module.sagemaker.sagemaker_storage_s3_bucket_name
+}
+
+output "search_api_endpoint" {
+  description = "Endpoint of the Search API"
+  value       = module.api_gateway.search_api_endpoint
 }

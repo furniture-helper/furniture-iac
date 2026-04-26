@@ -58,3 +58,11 @@ resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
     Name    = "${var.project}-search-api-lambda"
   }
 }
+
+output "search_api_lambda_invoke_arn" {
+  value = aws_lambda_function.crawler_queue_manager_lambda_function.invoke_arn
+}
+
+output "search_api_lambda_function_name" {
+  value = aws_lambda_function.crawler_queue_manager_lambda_function.function_name
+}

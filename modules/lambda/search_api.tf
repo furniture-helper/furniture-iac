@@ -14,3 +14,10 @@ module "search_api" {
   rds_db_endpoint                  = var.rds_db_endpoint
 }
 
+output "search_api_lambda_invoke_arn" {
+  value = module.search_api.search_api_lambda_invoke_arn
+}
+
+output "search_api_lambda_name" {
+  value = module.search_api.search_api_lambda_function_name
+}
