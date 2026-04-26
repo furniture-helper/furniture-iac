@@ -56,6 +56,7 @@ module "github_actions" {
   crawler_repo_arn               = module.ecr.furniture_crawler_ecr_repo_arn
   crawler_queue_manager_repo_arn = module.ecr.furniture_crawler_queue_manager_ecr_repo_arn
   html_minimizer_repo_arn        = module.ecr.html_minimizer_ecr_repo_arn
+  search_api_repo_arn            = module.ecr.furniture_search_api_ecr_repo_arn
 }
 
 module "rds" {
@@ -77,6 +78,7 @@ module "lambda" {
   source                          = "./modules/lambda"
   crawler_sqs_queue_arn           = module.sqs.crawler_queue_arn
   crawler_ecr_repo_url            = module.ecr.furniture_crawler_queue_manager_ecr_repo_uri
+  search_api_ecr_repo_url         = module.ecr.furniture_search_api_ecr_repo_uri
   project                         = var.project
   database_credentials_secret_arn = module.rds.database_credentials_secret_arn
   crawler_sqs_queue_url           = module.sqs.crawler_queue_url

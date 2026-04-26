@@ -12,3 +12,13 @@ CREATE TABLE IF NOT EXISTS page_inferred_labels
 -- Change product title to VARCHAR(511) to accommodate longer titles
 ALTER TABLE page_inferred_labels
     ALTER COLUMN product_title TYPE VARCHAR;
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+CREATE INDEX product_title_gist_idx
+    ON page_inferred_labels
+        USING GiST (product_title gist_trgm_ops);
+
+CREATE INDEX product_title_fts_idx
+    ON page_inferred_labels
+        USING GIN (to_tsvector('simple', product_title));

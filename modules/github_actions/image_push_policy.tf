@@ -13,6 +13,11 @@ variable "html_minimizer_repo_arn" {
   type        = string
 }
 
+variable "search_api_repo_arn" {
+  description = "ECR repository ARN for the furniture search api"
+  type        = string
+}
+
 data "aws_iam_policy_document" "ecr_push" {
   statement {
     sid    = "GetAuthorization"
@@ -41,7 +46,8 @@ data "aws_iam_policy_document" "ecr_push" {
     resources = [
       var.crawler_repo_arn,
       var.crawler_queue_manager_repo_arn,
-      var.html_minimizer_repo_arn
+      var.html_minimizer_repo_arn,
+      var.search_api_repo_arn
     ]
   }
 }
