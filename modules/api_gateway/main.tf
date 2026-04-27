@@ -54,7 +54,7 @@ resource "aws_apigatewayv2_stage" "default_stage" {
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.search_api_gateway_logs.arn
     format = jsonencode({
-      requestId      = "$requestId"
+      requestId      = "$context.requestId"
       ip             = "$context.identity.sourceIp"
       caller         = "$context.identity.caller"
       user           = "$context.identity.user"
