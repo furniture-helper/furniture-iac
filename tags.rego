@@ -31,7 +31,11 @@ ignored_resources := {
     "tls_private_key",
     "aws_amplify_domain_association",
     "aws_route53_hosted_zone_dnssec",
-    "aws_route53_record"
+    "aws_route53_record",
+    "aws_apigatewayv2_integration",
+    "aws_apigatewayv2_route",
+    "aws_acm_certificate_validation",
+    "aws_apigatewayv2_api_mapping",
 }
 
 deny contains msg if {

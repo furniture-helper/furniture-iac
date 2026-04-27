@@ -56,6 +56,7 @@ module "github_actions" {
   crawler_repo_arn               = module.ecr.furniture_crawler_ecr_repo_arn
   crawler_queue_manager_repo_arn = module.ecr.furniture_crawler_queue_manager_ecr_repo_arn
   html_minimizer_repo_arn        = module.ecr.html_minimizer_ecr_repo_arn
+  search_api_repo_arn            = module.ecr.furniture_search_api_ecr_repo_arn
 }
 
 module "rds" {
@@ -77,6 +78,7 @@ module "lambda" {
   source                          = "./modules/lambda"
   crawler_sqs_queue_arn           = module.sqs.crawler_queue_arn
   crawler_ecr_repo_url            = module.ecr.furniture_crawler_queue_manager_ecr_repo_uri
+  search_api_ecr_repo_url         = module.ecr.furniture_search_api_ecr_repo_uri
   project                         = var.project
   database_credentials_secret_arn = module.rds.database_credentials_secret_arn
   crawler_sqs_queue_url           = module.sqs.crawler_queue_url
@@ -85,8 +87,10 @@ module "lambda" {
 }
 
 module "r53" {
-  source  = "./modules/r53"
-  project = var.project
+  source                 = "./modules/r53"
+  project                = var.project
+  search_api_http_api_id = module.api_gateway.search_api_id
+  search_api_stage_name  = module.api_gateway.search_api_stage_name
 }
 
 module "amplify" {
@@ -104,6 +108,13 @@ module "sagemaker" {
   project                  = var.project
   database_credentials_arn = module.rds.database_credentials_secret_arn
   rds_db_endpoint          = module.rds.db_endpoint
+}
+
+module "api_gateway" {
+  source                          = "./modules/api_gateway"
+  project                         = var.project
+  search_api_lambda_invoke_arn    = module.lambda.search_api_lambda_invoke_arn
+  search_api_lambda_function_name = module.lambda.search_api_lambda_name
 }
 
 output "crawler_queue_url" {
@@ -134,4 +145,9 @@ output "sagemaker_role_arn" {
 output "sagemaker_storage_s3_bucket_name" {
   description = "Name of the S3 bucket used by SageMaker"
   value       = module.sagemaker.sagemaker_storage_s3_bucket_name
+}
+
+output "search_api_endpoint" {
+  description = "Endpoint of the Search API"
+  value       = module.api_gateway.search_api_endpoint
 }
