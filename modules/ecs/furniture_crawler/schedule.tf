@@ -27,7 +27,7 @@ resource "aws_cloudwatch_event_rule" "crawler" {
     Name    = "${var.project}-crawler-event-rule"
   }
 
-  is_enabled = true
+  state = "ENABLED"
 }
 
 resource "aws_cloudwatch_event_target" "crawler_daily_run" {

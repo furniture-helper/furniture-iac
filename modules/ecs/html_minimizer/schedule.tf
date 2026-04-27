@@ -27,7 +27,7 @@ resource "aws_cloudwatch_event_rule" "html_minimizer" {
     Name    = "${var.project}-html-minimizer-event-rule"
   }
 
-  is_enabled = true
+  state = "ENABLED"
 }
 
 resource "aws_cloudwatch_event_target" "html_minimizer_run" {
