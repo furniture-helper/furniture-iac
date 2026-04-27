@@ -16,6 +16,11 @@ variable "search_api_lambda_function_name" {
 resource "aws_apigatewayv2_api" "http_api" {
   name          = "search-api-http-api"
   protocol_type = "HTTP"
+
+  tags = {
+    Project = var.project
+    Name    = "search-api-http-api"
+  }
 }
 
 resource "aws_apigatewayv2_integration" "lambda_integration" {
@@ -67,6 +72,11 @@ resource "aws_apigatewayv2_stage" "default_stage" {
       protocol       = "$context.protocol"
       responseLength = "$context.responseLength"
     })
+  }
+
+  tags = {
+    Project = var.project
+    Name    = "search-api-default-stage"
   }
 }
 
