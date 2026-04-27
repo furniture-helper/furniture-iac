@@ -1,5 +1,5 @@
 variable "search_api_ecr_repo_url" {
-  description = "URL of the ECR repository for the crawler queue manager"
+  description = "URL of the ECR repository for the search API"
   type        = string
 }
 

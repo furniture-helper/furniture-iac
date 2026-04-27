@@ -23,12 +23,12 @@ variable "database_credentials_secret_name" {
   type        = string
 }
 
-resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
+resource "aws_lambda_function" "search_api_lambda_function" {
   # checkov:skip=CKV_AWS_117: "Cannot deploy in VPC at the moment"
   # checkov:skip=CKV_AWS_116: "Dead letter queue not required for this use case"
   # checkov:skip=CKV_AWS_173: "Environment variables do not contain sensitive data"
   # checkov:skip=CKV_AWS_272: "No clue what this even is"
-  function_name = "${var.project}-searchapi-lambda"
+  function_name = "${var.project}-search-api-lambda"
   role          = aws_iam_role.search_api_lambda_role.arn
   package_type  = "Image"
   image_uri     = "${var.ecr_repo_url}:${var.image_tag}"
@@ -61,9 +61,9 @@ resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
 }
 
 output "search_api_lambda_invoke_arn" {
-  value = aws_lambda_function.crawler_queue_manager_lambda_function.invoke_arn
+  value = aws_lambda_function.search_api_lambda_function.invoke_arn
 }
 
 output "search_api_lambda_function_name" {
-  value = aws_lambda_function.crawler_queue_manager_lambda_function.function_name
+  value = aws_lambda_function.search_api_lambda_function.function_name
 }

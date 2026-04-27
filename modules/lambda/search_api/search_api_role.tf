@@ -23,7 +23,7 @@ resource "aws_iam_role" "search_api_lambda_role" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "crawler_queue_manager_lambda_basic_execution" {
+resource "aws_iam_role_policy_attachment" "search_api_attach_basic_execution" {
   role       = aws_iam_role.search_api_lambda_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
@@ -42,7 +42,7 @@ resource "aws_iam_policy" "search_api_database_credentials_policy" {
 
   tags = {
     Project = var.project
-    Name    = "${var.project}-crawler-queue-manager-db-credentials-policy"
+    Name    = "${var.project}-search-api-db-credentials-policy"
   }
 }
 

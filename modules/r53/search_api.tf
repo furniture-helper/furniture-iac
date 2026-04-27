@@ -15,6 +15,11 @@ resource "aws_acm_certificate" "api_cert" {
   lifecycle {
     create_before_destroy = true
   }
+
+  tags = {
+    Project = var.project
+    Name    = "${var.project}-api-certificate"
+  }
 }
 
 resource "aws_route53_record" "cert_validation" {
@@ -46,6 +51,11 @@ resource "aws_apigatewayv2_domain_name" "api_domain" {
     certificate_arn = aws_acm_certificate_validation.api_cert_val.certificate_arn
     endpoint_type   = "REGIONAL"
     security_policy = "TLS_1_2"
+  }
+
+  tags = {
+    Project = var.project
+    Name    = "${var.project}-api-domain"
   }
 }
 
