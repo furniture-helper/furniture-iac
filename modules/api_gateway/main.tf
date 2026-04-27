@@ -1,3 +1,8 @@
+variable "project" {
+  description = "The name of the project for tagging resources"
+  type        = string
+}
+
 variable "search_api_lambda_invoke_arn" {
   description = "The ARN of the Lambda function to invoke"
   type        = string
@@ -22,15 +27,17 @@ resource "aws_apigatewayv2_integration" "lambda_integration" {
 }
 
 resource "aws_apigatewayv2_route" "search_prodoucts_route" {
-  api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "GET /products/search"
-  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  api_id             = aws_apigatewayv2_api.http_api.id
+  route_key          = "GET /products/search"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  authorization_type = "NONE"
 }
 
 resource "aws_apigatewayv2_route" "get_products_route" {
-  api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "GET /products"
-  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  api_id             = aws_apigatewayv2_api.http_api.id
+  route_key          = "GET /products"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  authorization_type = "NONE"
 }
 resource "aws_apigatewayv2_stage" "default_stage" {
   api_id      = aws_apigatewayv2_api.http_api.id
@@ -42,6 +49,22 @@ resource "aws_apigatewayv2_stage" "default_stage" {
 
     throttling_burst_limit = 10
     throttling_rate_limit  = 1
+  }
+
+  access_log_settings {
+    destination_arn = aws_cloudwatch_log_group.search_api_gateway_logs.arn
+    format = jsonencode({
+      requestId      = "$requestId"
+      ip             = "$context.identity.sourceIp"
+      caller         = "$context.identity.caller"
+      user           = "$context.identity.user"
+      requestTime    = "$context.requestTime"
+      httpMethod     = "$context.httpMethod"
+      resourcePath   = "$context.resourcePath"
+      status         = "$context.status"
+      protocol       = "$context.protocol"
+      responseLength = "$context.responseLength"
+    })
   }
 }
 
