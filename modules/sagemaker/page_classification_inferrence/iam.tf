@@ -79,9 +79,9 @@ resource "aws_iam_role_policy" "sfn_inline" {
           "sagemaker:StopProcessingJob"
         ]
         Resource = [
-          "arn:${data.aws_partition.current.partition}:sagemaker:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:processing-job/generate-classify-infer-dataset-*",
-          "arn:${data.aws_partition.current.partition}:sagemaker:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:processing-job/classify-infer-*",
-          "arn:${data.aws_partition.current.partition}:sagemaker:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:processing-job/update-classify-table-*"
+          "arn:${data.aws_partition.current.partition}:sagemaker:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:processing-job/generate-classify-infer-dataset-*",
+          "arn:${data.aws_partition.current.partition}:sagemaker:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:processing-job/classify-infer-*",
+          "arn:${data.aws_partition.current.partition}:sagemaker:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:processing-job/update-classify-table-*"
         ]
       },
       {
@@ -116,7 +116,7 @@ resource "aws_iam_role_policy" "sfn_inline" {
           "logs:DescribeResourcePolicies",
           "logs:DescribeLogGroups"
         ]
-        Resource = "arn:${data.aws_partition.current.partition}:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/states/page-classification-pipeline:*"
+        Resource = "arn:${data.aws_partition.current.partition}:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/states/page-classification-pipeline:*"
       },
       {
         Sid    = "StateMachineLogDeliveryActions"

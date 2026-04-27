@@ -79,9 +79,9 @@ resource "aws_iam_role_policy" "sfn_inline" {
           "sagemaker:StopProcessingJob"
         ]
         Resource = [
-          "arn:${data.aws_partition.current.partition}:sagemaker:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:processing-job/generate-ie-inference-dataset-*",
-          "arn:${data.aws_partition.current.partition}:sagemaker:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:processing-job/information-extraction-inference-*",
-          "arn:${data.aws_partition.current.partition}:sagemaker:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:processing-job/update-ie-inferred-labels-*"
+          "arn:${data.aws_partition.current.partition}:sagemaker:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:processing-job/generate-ie-inference-dataset-*",
+          "arn:${data.aws_partition.current.partition}:sagemaker:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:processing-job/information-extraction-inference-*",
+          "arn:${data.aws_partition.current.partition}:sagemaker:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:processing-job/update-ie-inferred-labels-*"
         ]
       },
       {
