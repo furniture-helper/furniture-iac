@@ -112,6 +112,7 @@ module "sagemaker" {
 
 module "api_gateway" {
   source                          = "./modules/api_gateway"
+  project                         = var.project
   search_api_lambda_invoke_arn    = module.lambda.search_api_lambda_invoke_arn
   search_api_lambda_function_name = module.lambda.search_api_lambda_name
 }
