@@ -87,8 +87,10 @@ module "lambda" {
 }
 
 module "r53" {
-  source  = "./modules/r53"
-  project = var.project
+  source                 = "./modules/r53"
+  project                = var.project
+  search_api_http_api_id = module.api_gateway.search_api_id
+  search_api_stage_name  = module.api_gateway.search_api_stage_name
 }
 
 module "amplify" {

@@ -41,6 +41,7 @@ resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
       DATABASE_CREDENTIALS_TYPE        = "secrets_manager"
       DATABASE_CREDENTIALS_SECRET_NAME = var.database_credentials_secret_name
       PG_SSLMODE                       = "require"
+      LOG_LEVEL                        = "DEBUG"
     }
   }
 

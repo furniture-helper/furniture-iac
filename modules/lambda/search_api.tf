@@ -7,7 +7,7 @@ variable "search_api_ecr_repo_url" {
 module "search_api" {
   source                           = "./search_api"
   ecr_repo_url                     = var.search_api_ecr_repo_url
-  image_tag                        = "5f9bb4fa881c0f678a9797dd5130edd41f2e3859"
+  image_tag                        = "1bad819699df73ea49b519e255aea133b6fd55f4"
   project                          = var.project
   database_credentials_secret_arn  = var.database_credentials_secret_arn
   database_credentials_secret_name = var.database_credentials_name

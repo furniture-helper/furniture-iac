@@ -21,16 +21,28 @@ resource "aws_apigatewayv2_integration" "lambda_integration" {
   payload_format_version = "2.0"
 }
 
-resource "aws_apigatewayv2_route" "default_route" {
+resource "aws_apigatewayv2_route" "search_prodoucts_route" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "ANY /{proxy+}"
+  route_key = "GET /products/search"
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 
+resource "aws_apigatewayv2_route" "get_products_route" {
+  api_id    = aws_apigatewayv2_api.http_api.id
+  route_key = "GET /products"
+  target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+}
 resource "aws_apigatewayv2_stage" "default_stage" {
   api_id      = aws_apigatewayv2_api.http_api.id
   name        = "$default"
   auto_deploy = true
+
+  default_route_settings {
+    detailed_metrics_enabled = true
+
+    throttling_burst_limit = 10
+    throttling_rate_limit  = 1
+  }
 }
 
 resource "aws_lambda_permission" "api_gw_permission" {
@@ -43,4 +55,12 @@ resource "aws_lambda_permission" "api_gw_permission" {
 
 output "search_api_endpoint" {
   value = aws_apigatewayv2_stage.default_stage.invoke_url
+}
+
+output "search_api_id" {
+  value = aws_apigatewayv2_api.http_api.id
+}
+
+output "search_api_stage_name" {
+  value = aws_apigatewayv2_stage.default_stage.name
 }
