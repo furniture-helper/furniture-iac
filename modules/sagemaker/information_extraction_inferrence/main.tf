@@ -23,7 +23,7 @@ locals {
     database_credentials_secret_arn = var.database_credentials_secret_arn
     pg_port                         = "5432"
 
-    ie_inference_query_limit = 16000
+    ie_inference_query_limit = 20000
     markuplm_model_id        = "microsoft/markuplm-base"
     minimized_html_bucket    = "furniture-minimized-html"
     s3_fetch_num_proc        = 2
