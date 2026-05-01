@@ -14,7 +14,7 @@ resource "aws_sqs_queue" "crawler_queue" {
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.crawler_dlq.arn
-    maxReceiveCount     = 3
+    maxReceiveCount     = 1
   })
 
   tags = {

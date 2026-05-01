@@ -62,7 +62,7 @@ locals {
       { name = "ANCHOR_TREE_S3_KEY", value = "anchor_tree.pkl" },
       { name = "ANCHOR_TREE_S3_PREFIX", value = "anchor_tree" },
       { name = "MAX_WORKERS", value = "64" },
-      { name = "MINIMIZE_BATCH_LIMIT", value = "5000" },
+      { name = "MINIMIZE_BATCH_LIMIT", value = "10000" },
       { name = "LOG_LEVEL", value = "INFO" },
     ]
     secrets = [

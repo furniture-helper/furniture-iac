@@ -21,7 +21,7 @@ variable "security_group_ids" {
 resource "aws_cloudwatch_event_rule" "crawler" {
   name                = "${var.project}-crawler-event-rule"
   description         = "Run crawler"
-  schedule_expression = "cron(0/15 * * * ? *)"
+  schedule_expression = "cron(0/7 * * * ? *)"
   tags = {
     Project = var.project
     Name    = "${var.project}-crawler-event-rule"

@@ -23,7 +23,7 @@ locals {
     database_credentials_secret_arn = var.database_credentials_secret_arn
     pg_port                         = "5432"
 
-    inference_query_limit    = 20000
+    inference_query_limit    = 25000
     markuplm_model_id        = "microsoft/markuplm-base"
     s3_fetch_num_proc        = 2
     tokenize_num_proc        = 1
