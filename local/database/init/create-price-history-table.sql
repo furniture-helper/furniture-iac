@@ -1,6 +1,7 @@
-CREATE TABLE IF NOT EXISTS product_price_history (
-    url         TEXT NOT NULL,
-    price       NUMERIC(10, 2),
+CREATE TABLE IF NOT EXISTS product_price_history
+(
+    url         TEXT        NOT NULL,
+    price       NUMERIC(12, 2),
     recorded_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     PRIMARY KEY (url, recorded_at)
 );
@@ -12,7 +13,7 @@ ALTER TABLE IF EXISTS product_price_history
     ALTER COLUMN price DROP NOT NULL;
 
 CREATE OR REPLACE FUNCTION record_price_change()
-RETURNS TRIGGER AS
+    RETURNS TRIGGER AS
 $$
 BEGIN
     INSERT INTO product_price_history (url, price, recorded_at)
@@ -25,6 +26,10 @@ $$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS trg_record_price_changes ON page_inferred_labels;
 
 CREATE TRIGGER trg_record_price_changes
-    AFTER INSERT OR UPDATE ON page_inferred_labels
+    AFTER INSERT OR UPDATE
+    ON page_inferred_labels
     FOR EACH ROW
-    EXECUTE FUNCTION record_price_change();
+EXECUTE FUNCTION record_price_change();
+
+ALTER TABLE product_price_history
+    ALTER COLUMN price TYPE NUMERIC(12, 2);

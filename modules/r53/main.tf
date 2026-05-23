@@ -22,6 +22,15 @@ resource "aws_route53_record" "label_to_www" {
   records = ["www.label.furniture.kaneel.xyz."]
 }
 
+resource "aws_route53_record" "search_to_www" {
+  zone_id = aws_route53_zone.furniture_kaneel_xyz.zone_id
+  name    = "search.furniture.kaneel.xyz"
+  type    = "CNAME"
+  ttl     = 300
+  records = ["www.search.furniture.kaneel.xyz."]
+}
+
+
 # resource "aws_route53_hosted_zone_dnssec" "example" {
 #   hosted_zone_id = aws_route53_zone.furniture_kaneel_xyz.zone_id
 # }

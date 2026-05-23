@@ -28,6 +28,12 @@ variable "s3_minimized_html_bucket_name" {
   type        = string
 }
 
+variable "search_api_base_url" {
+  description = "The base URL of the search API"
+  type        = string
+}
+
+
 module "labeller_app" {
   source                           = "./labeller_app"
   project                          = var.project
@@ -36,4 +42,10 @@ module "labeller_app" {
   db_endpoint                      = var.db_endpoint
   s3_raw_html_bucket_name          = var.s3_raw_html_bucket_name
   s3_minimized_html_bucket_name    = var.s3_minimized_html_bucket_name
+}
+
+module "search_app" {
+  source              = "./search_app"
+  project             = var.project
+  search_api_base_url = var.search_api_base_url
 }
