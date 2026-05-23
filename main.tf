@@ -101,6 +101,7 @@ module "amplify" {
   db_endpoint                      = module.rds.db_endpoint
   s3_minimized_html_bucket_name    = module.s3.minimized_html_storage_s3_bucket_name
   s3_raw_html_bucket_name          = module.s3.crawler_storage_s3_bucket_name
+  search_api_base_url              = module.r53.custom_domain_url
 }
 
 module "sagemaker" {

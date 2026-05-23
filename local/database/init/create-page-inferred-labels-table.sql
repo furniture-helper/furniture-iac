@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS page_inferred_labels
 (
     url              TEXT NOT NULL,
     product_title    VARCHAR(255),
-    product_price    DECIMAL(10, 2),
+    product_price    DECIMAL(12, 2),
     last_inferred_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     created_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -22,3 +22,6 @@ CREATE INDEX product_title_gist_idx
 CREATE INDEX product_title_fts_idx
     ON page_inferred_labels
         USING GIN (to_tsvector('simple', product_title));
+
+ALTER TABLE page_inferred_labels
+    ALTER COLUMN product_price TYPE DECIMAL(12, 2);
