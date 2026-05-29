@@ -31,7 +31,7 @@ resource "aws_db_instance" "db_instance" {
   identifier                          = "${var.project}-db-instance"
   engine                              = "postgres"
   engine_version                      = "17.4"
-  instance_class                      = "db.t4g.micro"
+  instance_class                      = "db.t4g.small"
   db_name                             = local.db_creds.database_name
   username                            = local.db_creds.username
   password                            = local.db_creds.password
