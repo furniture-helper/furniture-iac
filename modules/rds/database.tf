@@ -30,7 +30,7 @@ resource "aws_db_instance" "db_instance" {
   # checkov:skip=CKV_AWS_157 "I cannot afford multi-AZ at this time"
   identifier                          = "${var.project}-db-instance"
   engine                              = "postgres"
-  engine_version                      = "17.4"
+  engine_version                      = "17.9"
   instance_class                      = "db.t4g.small"
   db_name                             = local.db_creds.database_name
   username                            = local.db_creds.username
@@ -42,7 +42,7 @@ resource "aws_db_instance" "db_instance" {
   storage_encrypted                   = true
   backup_retention_period             = 7
   publicly_accessible                 = var.allow_public_connections
-  monitoring_interval                 = 5
+  monitoring_interval                 = 60
   monitoring_role_arn                 = aws_iam_role.rds_enhanced_monitoring.arn
   performance_insights_enabled        = true
   parameter_group_name                = aws_db_parameter_group.rds_parameter_group.name
@@ -52,7 +52,7 @@ resource "aws_db_instance" "db_instance" {
   iam_database_authentication_enabled = true
   auto_minor_version_upgrade          = true
   deletion_protection                 = true
-  enabled_cloudwatch_logs_exports     = ["postgresql"]
+  enabled_cloudwatch_logs_exports     = []
   copy_tags_to_snapshot               = true
 
   lifecycle {
@@ -75,12 +75,12 @@ resource "aws_db_parameter_group" "rds_parameter_group" {
 
   parameter {
     name  = "log_statement"
-    value = "all"
+    value = "none"
   }
 
   parameter {
     name  = "log_min_duration_statement"
-    value = "1"
+    value = "-1"
   }
 
   parameter {

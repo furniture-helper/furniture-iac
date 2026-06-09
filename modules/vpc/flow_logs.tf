@@ -37,7 +37,7 @@
 #       Effect = "Allow"
 #       Action = [
 #         "logs:CreateLogGroup",
-#         "logs:CreateLogStream",
+#         "logs:CreateLogStream", 
 #         "logs:PutLogEvents",
 #         "logs:DescribeLogGroups",
 #         "logs:DescribeLogStreams"
