@@ -59,6 +59,10 @@
       "Parameters": {
         "ProcessingJobName.$": "States.Format('generate-classify-infer-dataset-{}', $.meta.job_ts)",
         "RoleArn": "${sagemaker_role_arn}",
+        "Tags": [
+          {"Key": "Project", "Value": "furniture"},
+          {"Key": "Name", "Value": "furniture-sagemaker-generate-classification-inference-dataset"}
+        ],
         "AppSpecification": {
           "ImageUri": "${dataset_image_uri}",
           "ContainerEntrypoint": ["python3"],
@@ -123,6 +127,10 @@
       "Parameters": {
         "ProcessingJobName.$": "States.Format('classify-infer-{}', $.meta.job_ts)",
         "RoleArn": "${sagemaker_role_arn}",
+        "Tags": [
+          {"Key": "Project", "Value": "furniture"},
+          {"Key": "Name", "Value": "furniture-sagemaker-classification-inference"}
+        ],
         "AppSpecification": {
           "ImageUri": "${inference_image_uri}",
           "ContainerEntrypoint": ["python3"],
@@ -198,6 +206,10 @@
       "Parameters": {
         "ProcessingJobName.$": "States.Format('update-classify-table-{}', $.meta.job_ts)",
         "RoleArn": "${sagemaker_role_arn}",
+        "Tags": [
+          {"Key": "Project", "Value": "furniture"},
+          {"Key": "Name", "Value": "furniture-sagemaker-update-classification-table"}
+        ],
         "AppSpecification": {
           "ImageUri": "${update_image_uri}",
           "ContainerEntrypoint": ["python3"],
