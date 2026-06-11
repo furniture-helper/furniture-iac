@@ -28,6 +28,7 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
 resource "aws_db_instance" "db_instance" {
   # checkov:skip=CKV_AWS_354 "Not required to encrypt performance insights at this time"
   # checkov:skip=CKV_AWS_157 "I cannot afford multi-AZ at this time"
+  # checkov:skip=CKV_AWS_129: "Cannot afford logging."
   identifier                          = "${var.project}-db-instance"
   engine                              = "postgres"
   engine_version                      = "17.9"
