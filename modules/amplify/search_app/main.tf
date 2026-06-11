@@ -43,6 +43,7 @@ resource "aws_amplify_app" "furniture_search_app" {
               try {
                 const correct_secrets = {
                   API_BASE_URL: process.env.API_BASE_URL,
+                  NEXT_PUBLIC_API_BASE_URL: process.env.API_BASE_URL,
                 };
 
 
@@ -99,4 +100,9 @@ resource "aws_amplify_domain_association" "this" {
     branch_name = aws_amplify_branch.main.branch_name
     prefix      = "www"
   }
+}
+
+output "search_app_endpoint" {
+  description = "URL of the search app"
+  value       = aws_amplify_domain_association.this.domain_name
 }

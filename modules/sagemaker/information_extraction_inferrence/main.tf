@@ -6,7 +6,7 @@ locals {
     inference_image_uri     = "763104351884.dkr.ecr.eu-west-1.amazonaws.com/pytorch-training:2.1.0-gpu-py310"
     update_image_uri        = "470317259841.dkr.ecr.eu-west-1.amazonaws.com/sagemaker-base-python-310:1.0"
     dataset_instance_type   = "ml.m7i.xlarge"
-    inference_instance_type = "ml.g5.xlarge"
+    inference_instance_type = "ml.g4dn.xlarge"
     update_instance_type    = "ml.t3.medium"
     volume_size_gb          = 30
 
@@ -23,7 +23,7 @@ locals {
     database_credentials_secret_arn = var.database_credentials_secret_arn
     pg_port                         = "5432"
 
-    ie_inference_query_limit = 20000
+    ie_inference_query_limit = 30000
     markuplm_model_id        = "microsoft/markuplm-base"
     minimized_html_bucket    = "furniture-minimized-html"
     s3_fetch_num_proc        = 2

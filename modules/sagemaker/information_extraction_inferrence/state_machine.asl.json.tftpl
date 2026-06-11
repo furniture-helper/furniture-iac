@@ -59,6 +59,10 @@
       "Parameters": {
         "ProcessingJobName.$": "States.Format('generate-ie-inference-dataset-{}', $.meta.job_ts)",
         "RoleArn": "${sagemaker_role_arn}",
+        "Tags": [
+          {"Key": "Project", "Value": "furniture"},
+          {"Key": "Name", "Value": "furniture-sagemaker-generate-ie-inference-dataset"}
+        ],
         "AppSpecification": {
           "ImageUri": "${dataset_image_uri}",
           "ContainerEntrypoint": ["python3"],
@@ -113,7 +117,7 @@
         {
           "ErrorEquals": ["States.ALL"],
           "ResultPath": "$.error",
-          "Next": "PipelineFailed"
+          "Next": "HandleGenerateIeInferenceDatasetFailure"
         }
       ],
       "Next": "InformationExtractionInference"
@@ -124,6 +128,10 @@
       "Parameters": {
         "ProcessingJobName.$": "States.Format('information-extraction-inference-{}', $.meta.job_ts)",
         "RoleArn": "${sagemaker_role_arn}",
+        "Tags": [
+          {"Key": "Project", "Value": "furniture"},
+          {"Key": "Name", "Value": "furniture-sagemaker-information-extraction-inference"}
+        ],
         "AppSpecification": {
           "ImageUri": "${inference_image_uri}",
           "ContainerEntrypoint": ["python3"],
@@ -188,7 +196,7 @@
         {
           "ErrorEquals": ["States.ALL"],
           "ResultPath": "$.error",
-          "Next": "PipelineFailed"
+          "Next": "HandleInformationExtractionInferenceFailure"
         }
       ],
       "Next": "UpdateIeInferredLabels"
@@ -199,6 +207,10 @@
       "Parameters": {
         "ProcessingJobName.$": "States.Format('update-ie-inferred-labels-{}', $.meta.job_ts)",
         "RoleArn": "${sagemaker_role_arn}",
+        "Tags": [
+          {"Key": "Project", "Value": "furniture"},
+          {"Key": "Name", "Value": "furniture-sagemaker-update-ie-inferred-labels"}
+        ],
         "AppSpecification": {
           "ImageUri": "${update_image_uri}",
           "ContainerEntrypoint": ["python3"],
@@ -247,10 +259,196 @@
         {
           "ErrorEquals": ["States.ALL"],
           "ResultPath": "$.error",
-          "Next": "PipelineFailed"
+          "Next": "HandleUpdateIeInferredLabelsFailure"
         }
       ],
       "End": true
+    },
+    "HandleGenerateIeInferenceDatasetFailure": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "And": [
+            {
+              "Variable": "$.error.Cause",
+              "StringMatches": "*CapacityError*"
+            },
+            {
+              "Or": [
+                {
+                  "Variable": "$.retry.generate_ie_inference_dataset_count",
+                  "IsPresent": false
+                },
+                {
+                  "Variable": "$.retry.generate_ie_inference_dataset_count",
+                  "NumericEquals": 0
+                }
+              ]
+            }
+          ],
+          "Next": "WaitBeforeRetryGenerateIeInferenceDataset"
+        },
+        {
+          "And": [
+            {
+              "Variable": "$.error.Cause",
+              "StringMatches": "*CapacityError*"
+            },
+            {
+              "Variable": "$.retry.generate_ie_inference_dataset_count",
+              "NumericEquals": 1
+            }
+          ],
+          "Next": "WaitBeforeSecondRetryGenerateIeInferenceDataset"
+        }
+      ],
+      "Default": "PipelineFailed"
+    },
+    "WaitBeforeRetryGenerateIeInferenceDataset": {
+      "Type": "Wait",
+      "Seconds": 3600,
+      "Next": "MarkGenerateIeInferenceDatasetRetried"
+    },
+    "MarkGenerateIeInferenceDatasetRetried": {
+      "Type": "Pass",
+      "Result": 1,
+      "ResultPath": "$.retry.generate_ie_inference_dataset_count",
+      "Next": "GenerateIeInferenceDataset"
+    },
+    "WaitBeforeSecondRetryGenerateIeInferenceDataset": {
+      "Type": "Wait",
+      "Seconds": 3600,
+      "Next": "MarkGenerateIeInferenceDatasetSecondRetried"
+    },
+    "MarkGenerateIeInferenceDatasetSecondRetried": {
+      "Type": "Pass",
+      "Result": 2,
+      "ResultPath": "$.retry.generate_ie_inference_dataset_count",
+      "Next": "GenerateIeInferenceDataset"
+    },
+    "HandleInformationExtractionInferenceFailure": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "And": [
+            {
+              "Variable": "$.error.Cause",
+              "StringMatches": "*CapacityError*"
+            },
+            {
+              "Or": [
+                {
+                  "Variable": "$.retry.information_extraction_inference_count",
+                  "IsPresent": false
+                },
+                {
+                  "Variable": "$.retry.information_extraction_inference_count",
+                  "NumericEquals": 0
+                }
+              ]
+            }
+          ],
+          "Next": "WaitBeforeRetryInformationExtractionInference"
+        },
+        {
+          "And": [
+            {
+              "Variable": "$.error.Cause",
+              "StringMatches": "*CapacityError*"
+            },
+            {
+              "Variable": "$.retry.information_extraction_inference_count",
+              "NumericEquals": 1
+            }
+          ],
+          "Next": "WaitBeforeSecondRetryInformationExtractionInference"
+        }
+      ],
+      "Default": "PipelineFailed"
+    },
+    "WaitBeforeRetryInformationExtractionInference": {
+      "Type": "Wait",
+      "Seconds": 3600,
+      "Next": "MarkInformationExtractionInferenceRetried"
+    },
+    "MarkInformationExtractionInferenceRetried": {
+      "Type": "Pass",
+      "Result": 1,
+      "ResultPath": "$.retry.information_extraction_inference_count",
+      "Next": "InformationExtractionInference"
+    },
+    "WaitBeforeSecondRetryInformationExtractionInference": {
+      "Type": "Wait",
+      "Seconds": 3600,
+      "Next": "MarkInformationExtractionInferenceSecondRetried"
+    },
+    "MarkInformationExtractionInferenceSecondRetried": {
+      "Type": "Pass",
+      "Result": 2,
+      "ResultPath": "$.retry.information_extraction_inference_count",
+      "Next": "InformationExtractionInference"
+    },
+    "HandleUpdateIeInferredLabelsFailure": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "And": [
+            {
+              "Variable": "$.error.Cause",
+              "StringMatches": "*CapacityError*"
+            },
+            {
+              "Or": [
+                {
+                  "Variable": "$.retry.update_ie_inferred_labels_count",
+                  "IsPresent": false
+                },
+                {
+                  "Variable": "$.retry.update_ie_inferred_labels_count",
+                  "NumericEquals": 0
+                }
+              ]
+            }
+          ],
+          "Next": "WaitBeforeRetryUpdateIeInferredLabels"
+        },
+        {
+          "And": [
+            {
+              "Variable": "$.error.Cause",
+              "StringMatches": "*CapacityError*"
+            },
+            {
+              "Variable": "$.retry.update_ie_inferred_labels_count",
+              "NumericEquals": 1
+            }
+          ],
+          "Next": "WaitBeforeSecondRetryUpdateIeInferredLabels"
+        }
+      ],
+      "Default": "PipelineFailed"
+    },
+    "WaitBeforeRetryUpdateIeInferredLabels": {
+      "Type": "Wait",
+      "Seconds": 3600,
+      "Next": "MarkUpdateIeInferredLabelsRetried"
+    },
+    "MarkUpdateIeInferredLabelsRetried": {
+      "Type": "Pass",
+      "Result": 1,
+      "ResultPath": "$.retry.update_ie_inferred_labels_count",
+      "Next": "UpdateIeInferredLabels"
+    },
+    "WaitBeforeSecondRetryUpdateIeInferredLabels": {
+      "Type": "Wait",
+      "Seconds": 3600,
+      "Next": "MarkUpdateIeInferredLabelsSecondRetried"
+    },
+    "MarkUpdateIeInferredLabelsSecondRetried": {
+      "Type": "Pass",
+      "Result": 2,
+      "ResultPath": "$.retry.update_ie_inferred_labels_count",
+      "Next": "UpdateIeInferredLabels"
     },
     "PipelineFailed": {
       "Type": "Fail",
@@ -259,4 +457,3 @@
     }
   }
 }
-

@@ -59,6 +59,10 @@
       "Parameters": {
         "ProcessingJobName.$": "States.Format('generate-classify-infer-dataset-{}', $.meta.job_ts)",
         "RoleArn": "${sagemaker_role_arn}",
+        "Tags": [
+          {"Key": "Project", "Value": "furniture"},
+          {"Key": "Name", "Value": "furniture-sagemaker-generate-classification-inference-dataset"}
+        ],
         "AppSpecification": {
           "ImageUri": "${dataset_image_uri}",
           "ContainerEntrypoint": ["python3"],
@@ -112,7 +116,7 @@
         {
           "ErrorEquals": ["States.ALL"],
           "ResultPath": "$.error",
-          "Next": "PipelineFailed"
+          "Next": "HandleGenerateDatasetFailure"
         }
       ],
       "Next": "ClassificationInference"
@@ -123,6 +127,10 @@
       "Parameters": {
         "ProcessingJobName.$": "States.Format('classify-infer-{}', $.meta.job_ts)",
         "RoleArn": "${sagemaker_role_arn}",
+        "Tags": [
+          {"Key": "Project", "Value": "furniture"},
+          {"Key": "Name", "Value": "furniture-sagemaker-classification-inference"}
+        ],
         "AppSpecification": {
           "ImageUri": "${inference_image_uri}",
           "ContainerEntrypoint": ["python3"],
@@ -187,7 +195,7 @@
         {
           "ErrorEquals": ["States.ALL"],
           "ResultPath": "$.error",
-          "Next": "PipelineFailed"
+          "Next": "HandleClassificationInferenceFailure"
         }
       ],
       "Next": "UpdateClassificationTable"
@@ -198,6 +206,10 @@
       "Parameters": {
         "ProcessingJobName.$": "States.Format('update-classify-table-{}', $.meta.job_ts)",
         "RoleArn": "${sagemaker_role_arn}",
+        "Tags": [
+          {"Key": "Project", "Value": "furniture"},
+          {"Key": "Name", "Value": "furniture-sagemaker-update-classification-table"}
+        ],
         "AppSpecification": {
           "ImageUri": "${update_image_uri}",
           "ContainerEntrypoint": ["python3"],
@@ -244,10 +256,196 @@
         {
           "ErrorEquals": ["States.ALL"],
           "ResultPath": "$.error",
-          "Next": "PipelineFailed"
+          "Next": "HandleUpdateClassificationTableFailure"
         }
       ],
       "End": true
+    },
+    "HandleGenerateDatasetFailure": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "And": [
+            {
+              "Variable": "$.error.Cause",
+              "StringMatches": "*CapacityError*"
+            },
+            {
+              "Or": [
+                {
+                  "Variable": "$.retry.generate_dataset_count",
+                  "IsPresent": false
+                },
+                {
+                  "Variable": "$.retry.generate_dataset_count",
+                  "NumericEquals": 0
+                }
+              ]
+            }
+          ],
+          "Next": "WaitBeforeRetryGenerateDataset"
+        },
+        {
+          "And": [
+            {
+              "Variable": "$.error.Cause",
+              "StringMatches": "*CapacityError*"
+            },
+            {
+              "Variable": "$.retry.generate_dataset_count",
+              "NumericEquals": 1
+            }
+          ],
+          "Next": "WaitBeforeSecondRetryGenerateDataset"
+        }
+      ],
+      "Default": "PipelineFailed"
+    },
+    "WaitBeforeRetryGenerateDataset": {
+      "Type": "Wait",
+      "Seconds": 3600,
+      "Next": "MarkGenerateDatasetRetried"
+    },
+    "MarkGenerateDatasetRetried": {
+      "Type": "Pass",
+      "Result": 1,
+      "ResultPath": "$.retry.generate_dataset_count",
+      "Next": "GenerateDataset"
+    },
+    "WaitBeforeSecondRetryGenerateDataset": {
+      "Type": "Wait",
+      "Seconds": 3600,
+      "Next": "MarkGenerateDatasetSecondRetried"
+    },
+    "MarkGenerateDatasetSecondRetried": {
+      "Type": "Pass",
+      "Result": 2,
+      "ResultPath": "$.retry.generate_dataset_count",
+      "Next": "GenerateDataset"
+    },
+    "HandleClassificationInferenceFailure": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "And": [
+            {
+              "Variable": "$.error.Cause",
+              "StringMatches": "*CapacityError*"
+            },
+            {
+              "Or": [
+                {
+                  "Variable": "$.retry.classification_inference_count",
+                  "IsPresent": false
+                },
+                {
+                  "Variable": "$.retry.classification_inference_count",
+                  "NumericEquals": 0
+                }
+              ]
+            }
+          ],
+          "Next": "WaitBeforeRetryClassificationInference"
+        },
+        {
+          "And": [
+            {
+              "Variable": "$.error.Cause",
+              "StringMatches": "*CapacityError*"
+            },
+            {
+              "Variable": "$.retry.classification_inference_count",
+              "NumericEquals": 1
+            }
+          ],
+          "Next": "WaitBeforeSecondRetryClassificationInference"
+        }
+      ],
+      "Default": "PipelineFailed"
+    },
+    "WaitBeforeRetryClassificationInference": {
+      "Type": "Wait",
+      "Seconds": 3600,
+      "Next": "MarkClassificationInferenceRetried"
+    },
+    "MarkClassificationInferenceRetried": {
+      "Type": "Pass",
+      "Result": 1,
+      "ResultPath": "$.retry.classification_inference_count",
+      "Next": "ClassificationInference"
+    },
+    "WaitBeforeSecondRetryClassificationInference": {
+      "Type": "Wait",
+      "Seconds": 3600,
+      "Next": "MarkClassificationInferenceSecondRetried"
+    },
+    "MarkClassificationInferenceSecondRetried": {
+      "Type": "Pass",
+      "Result": 2,
+      "ResultPath": "$.retry.classification_inference_count",
+      "Next": "ClassificationInference"
+    },
+    "HandleUpdateClassificationTableFailure": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "And": [
+            {
+              "Variable": "$.error.Cause",
+              "StringMatches": "*CapacityError*"
+            },
+            {
+              "Or": [
+                {
+                  "Variable": "$.retry.update_classification_table_count",
+                  "IsPresent": false
+                },
+                {
+                  "Variable": "$.retry.update_classification_table_count",
+                  "NumericEquals": 0
+                }
+              ]
+            }
+          ],
+          "Next": "WaitBeforeRetryUpdateClassificationTable"
+        },
+        {
+          "And": [
+            {
+              "Variable": "$.error.Cause",
+              "StringMatches": "*CapacityError*"
+            },
+            {
+              "Variable": "$.retry.update_classification_table_count",
+              "NumericEquals": 1
+            }
+          ],
+          "Next": "WaitBeforeSecondRetryUpdateClassificationTable"
+        }
+      ],
+      "Default": "PipelineFailed"
+    },
+    "WaitBeforeRetryUpdateClassificationTable": {
+      "Type": "Wait",
+      "Seconds": 3600,
+      "Next": "MarkUpdateClassificationTableRetried"
+    },
+    "MarkUpdateClassificationTableRetried": {
+      "Type": "Pass",
+      "Result": 1,
+      "ResultPath": "$.retry.update_classification_table_count",
+      "Next": "UpdateClassificationTable"
+    },
+    "WaitBeforeSecondRetryUpdateClassificationTable": {
+      "Type": "Wait",
+      "Seconds": 3600,
+      "Next": "MarkUpdateClassificationTableSecondRetried"
+    },
+    "MarkUpdateClassificationTableSecondRetried": {
+      "Type": "Pass",
+      "Result": 2,
+      "ResultPath": "$.retry.update_classification_table_count",
+      "Next": "UpdateClassificationTable"
     },
     "PipelineFailed": {
       "Type": "Fail",

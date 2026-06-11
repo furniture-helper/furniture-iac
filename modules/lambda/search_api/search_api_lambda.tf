@@ -23,6 +23,11 @@ variable "database_credentials_secret_name" {
   type        = string
 }
 
+variable "frontend_origin" {
+  description = "The allowed origin for CORS configuration"
+  type        = string
+}
+
 resource "aws_lambda_function" "search_api_lambda_function" {
   # checkov:skip=CKV_AWS_117: "Cannot deploy in VPC at the moment"
   # checkov:skip=CKV_AWS_116: "Dead letter queue not required for this use case"
@@ -42,6 +47,7 @@ resource "aws_lambda_function" "search_api_lambda_function" {
       DATABASE_CREDENTIALS_SECRET_NAME = var.database_credentials_secret_name
       PG_SSLMODE                       = "require"
       LOG_LEVEL                        = "DEBUG"
+      FRONTEND_ORIGIN                  = var.frontend_origin
     }
   }
 

@@ -3,15 +3,21 @@ variable "search_api_ecr_repo_url" {
   type        = string
 }
 
+variable "frontend_origin" {
+  description = "The allowed origin for CORS configuration"
+  type        = string
+}
+
 
 module "search_api" {
   source                           = "./search_api"
   ecr_repo_url                     = var.search_api_ecr_repo_url
-  image_tag                        = "135ddf17558eced648c9ca5d40e36dee0a2213fd"
+  image_tag                        = "85e08381eecfe71362033ed4281bba4ddefa8d4f"
   project                          = var.project
   database_credentials_secret_arn  = var.database_credentials_secret_arn
   database_credentials_secret_name = var.database_credentials_name
   rds_db_endpoint                  = var.rds_db_endpoint
+  frontend_origin                  = var.frontend_origin
 }
 
 output "search_api_lambda_invoke_arn" {

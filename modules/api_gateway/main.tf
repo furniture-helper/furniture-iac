@@ -55,6 +55,14 @@ resource "aws_apigatewayv2_route" "get_price_history_route" {
   authorization_type = "NONE"
 }
 
+resource "aws_apigatewayv2_route" "get_similar_products_route" {
+  # checkov:skip=CKV_AWS_309: "No auth is required for this route"
+  api_id             = aws_apigatewayv2_api.http_api.id
+  route_key          = "GET /products/similar"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  authorization_type = "NONE"
+}
+
 resource "aws_apigatewayv2_stage" "default_stage" {
   api_id      = aws_apigatewayv2_api.http_api.id
   name        = "$default"
