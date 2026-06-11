@@ -49,3 +49,8 @@ module "search_app" {
   project             = var.project
   search_api_base_url = var.search_api_base_url
 }
+
+output "search_app_endpoint" {
+  description = "URL of the Amplify app hosting the furniture search frontend"
+  value       = module.search_app.search_app_endpoint
+}

@@ -84,6 +84,7 @@ module "lambda" {
   crawler_sqs_queue_url           = module.sqs.crawler_queue_url
   database_credentials_name       = module.rds.database_credentials_secret_name
   rds_db_endpoint                 = module.rds.db_endpoint
+  frontend_origin                 = module.amplify.search_app_endpoint
 }
 
 module "r53" {

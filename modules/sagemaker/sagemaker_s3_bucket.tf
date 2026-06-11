@@ -62,8 +62,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "sagemaker_storage_lifecycle" {
     status = "Enabled"
 
     transition {
-      days          = 30
-      storage_class = "STANDARD_IA"
+      days          = 0
+      storage_class = "INTELLIGENT_TIERING"
     }
 
     noncurrent_version_expiration {
