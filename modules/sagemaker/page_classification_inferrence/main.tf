@@ -15,7 +15,7 @@ locals {
     update_script_s3_uri    = "s3://${var.sagemaker_bucket_name}/code/update_classification_table.py"
 
     dataset_output_s3_uri     = "s3://${var.sagemaker_bucket_name}/classification-inference-dataset"
-    model_s3_uri              = "s3://${var.sagemaker_bucket_name}/model-artifacts/classification-hpo-1776378495-006-07b764fe/output/"
+    model_s3_uri              = "s3://${var.sagemaker_bucket_name}/model-artifacts/classification-hpo-1781322108-006-689e0781/output/"
     predictions_output_s3_uri = "s3://${var.sagemaker_bucket_name}/predictions/"
     predictions_input_s3_uri  = "s3://${var.sagemaker_bucket_name}/predictions"
 

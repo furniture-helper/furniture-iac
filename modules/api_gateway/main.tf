@@ -13,6 +13,11 @@ variable "search_api_lambda_function_name" {
   type        = string
 }
 
+variable "search_frontend_origin" {
+  description = "The allowed origin for CORS configuration"
+  type        = string
+}
+
 resource "aws_apigatewayv2_api" "http_api" {
   name          = "search-api-http-api"
   protocol_type = "HTTP"
@@ -20,6 +25,13 @@ resource "aws_apigatewayv2_api" "http_api" {
   tags = {
     Project = var.project
     Name    = "search-api-http-api"
+  }
+
+  cors_configuration {
+    allow_origins = ["https://${var.search_frontend_origin}", "https://www.${var.search_frontend_origin}"]
+    allow_methods = ["POST", "GET", "OPTIONS"]
+    allow_headers = ["content-type", "authorization"]
+    max_age       = 300
   }
 }
 
@@ -59,6 +71,22 @@ resource "aws_apigatewayv2_route" "get_similar_products_route" {
   # checkov:skip=CKV_AWS_309: "No auth is required for this route"
   api_id             = aws_apigatewayv2_api.http_api.id
   route_key          = "GET /products/similar"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  authorization_type = "NONE"
+}
+
+resource "aws_apigatewayv2_route" "mark_matching_products_route" {
+  # checkov:skip=CKV_AWS_309: "No auth is required for this route"
+  api_id             = aws_apigatewayv2_api.http_api.id
+  route_key          = "POST /products/mark-matching"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  authorization_type = "NONE"
+}
+
+resource "aws_apigatewayv2_route" "get_random_product_route" {
+  # checkov:skip=CKV_AWS_309: "No auth is required for this route"
+  api_id             = aws_apigatewayv2_api.http_api.id
+  route_key          = "GET /products/random"
   target             = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
   authorization_type = "NONE"
 }
