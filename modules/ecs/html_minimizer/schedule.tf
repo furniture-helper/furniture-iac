@@ -21,7 +21,7 @@ variable "security_group_ids" {
 resource "aws_cloudwatch_event_rule" "html_minimizer" {
   name                = "${var.project}-html-minimizer-event-rule"
   description         = "Run HTML minimizer every 6 hours"
-  schedule_expression = "rate(6 hours)"
+  schedule_expression = "rate(4 hours)"
   tags = {
     Project = var.project
     Name    = "${var.project}-html-minimizer-event-rule"
