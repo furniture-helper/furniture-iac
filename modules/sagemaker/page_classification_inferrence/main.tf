@@ -8,7 +8,7 @@ locals {
     dataset_instance_type   = "ml.r7i.xlarge"
     inference_instance_type = "ml.g4dn.xlarge"
     update_instance_type    = "ml.t3.medium"
-    volume_size_gb          = 30
+    volume_size_gb          = 100
 
     dataset_script_s3_uri   = "s3://${var.sagemaker_bucket_name}/code/generate_classification_inference_dataset.py"
     inference_script_s3_uri = "s3://${var.sagemaker_bucket_name}/code/classification_inference.py"
