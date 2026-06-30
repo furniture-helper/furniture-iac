@@ -25,3 +25,8 @@ CREATE INDEX product_title_fts_idx
 
 ALTER TABLE page_inferred_labels
     ALTER COLUMN product_price TYPE DECIMAL(12, 2);
+
+CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;
+
+ALTER TABLE page_inferred_labels
+    ADD COLUMN IF NOT EXISTS product_image_url TEXT;
