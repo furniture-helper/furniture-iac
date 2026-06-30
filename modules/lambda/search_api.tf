@@ -12,7 +12,7 @@ variable "frontend_origin" {
 module "search_api" {
   source                           = "./search_api"
   ecr_repo_url                     = var.search_api_ecr_repo_url
-  image_tag                        = "62bee1171f594493db4077c4d31018cee73930f9"
+  image_tag                        = "486dbb10992846dcb3ffebe4a306a46375a0940d"
   project                          = var.project
   database_credentials_secret_arn  = var.database_credentials_secret_arn
   database_credentials_secret_name = var.database_credentials_name
