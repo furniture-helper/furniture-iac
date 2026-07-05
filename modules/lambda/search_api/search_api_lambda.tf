@@ -76,7 +76,7 @@ resource "aws_lambda_function" "search_api_lambda_function" {
     mode = "Active"
   }
 
-  reserved_concurrent_executions = 1
+  reserved_concurrent_executions = 10
 
   tags = {
     Project = var.project

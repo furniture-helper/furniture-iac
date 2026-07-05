@@ -50,3 +50,40 @@ resource "aws_iam_role_policy_attachment" "search_api_attach_secrets" {
   role       = aws_iam_role.search_api_lambda_role.name
   policy_arn = aws_iam_policy.search_api_database_credentials_policy.arn
 }
+
+resource "aws_iam_policy" "search_api_read_access_to_s3_buckets" {
+  name = "${var.project}-search-api-read-s3-buckets-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowListBuckets"
+        Effect = "Allow"
+        Action = ["s3:ListBucket"]
+        Resource = [
+          "arn:aws:s3:::${var.crawler_storage_s3_bucket}",
+          "arn:aws:s3:::${var.minimized_pages_s3_bucket}"
+        ]
+      },
+      {
+        Sid    = "AllowReadObjects"
+        Effect = "Allow"
+        Action = ["s3:GetObject"]
+        Resource = [
+          "arn:aws:s3:::${var.crawler_storage_s3_bucket}/*",
+          "arn:aws:s3:::${var.minimized_pages_s3_bucket}/*"
+        ]
+      }
+    ]
+  })
+  tags = {
+    Project = var.project
+    Name    = "${var.project}-search-api-read-s3-buckets-policy"
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "search_api_attach_s3_read_access" {
+  role       = aws_iam_role.search_api_lambda_role.name
+  policy_arn = aws_iam_policy.search_api_read_access_to_s3_buckets.arn
+}
