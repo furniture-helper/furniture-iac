@@ -85,6 +85,9 @@ module "lambda" {
   database_credentials_name       = module.rds.database_credentials_secret_name
   rds_db_endpoint                 = module.rds.db_endpoint
   frontend_origin                 = module.amplify.search_app_endpoint
+  crawler_storage_s3_bucket       = module.s3.crawler_storage_s3_bucket_name
+  minimized_pages_s3_bucket       = module.s3.minimized_html_storage_s3_bucket_name
+  s3_region                       = var.region
 }
 
 module "r53" {

@@ -15,7 +15,7 @@ locals {
     update_script_s3_uri    = "s3://${var.sagemaker_bucket_name}/code/update_ie_inferred_labels.py"
 
     dataset_output_s3_uri     = "s3://${var.sagemaker_bucket_name}/ie-inference-dataset"
-    model_s3_uri              = "s3://kaneel-sagemaker-testing/ie-model-artifacts/ie-hpo-1782749942-008-61830004/output/"
+    model_s3_uri              = "s3://kaneel-sagemaker-testing/ie-model-artifacts/ie-hpo-1783186793-001-1e15057b/output/"
     predictions_output_s3_uri = "s3://${var.sagemaker_bucket_name}/ie-predictions/"
     predictions_input_s3_uri  = "s3://${var.sagemaker_bucket_name}/ie-predictions"
 
