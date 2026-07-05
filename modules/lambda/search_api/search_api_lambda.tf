@@ -28,6 +28,21 @@ variable "frontend_origin" {
   type        = string
 }
 
+variable "s3_region" {
+  description = "The AWS region where the S3 buckets are located"
+  type        = string
+}
+
+variable "crawler_storage_s3_bucket" {
+  description = "The name of the S3 bucket for crawler storage"
+  type        = string
+}
+
+variable "minimized_pages_s3_bucket" {
+  description = "The name of the S3 bucket for minimized pages"
+  type        = string
+}
+
 resource "aws_lambda_function" "search_api_lambda_function" {
   # checkov:skip=CKV_AWS_117: "Cannot deploy in VPC at the moment"
   # checkov:skip=CKV_AWS_116: "Dead letter queue not required for this use case"
@@ -48,6 +63,9 @@ resource "aws_lambda_function" "search_api_lambda_function" {
       PG_SSLMODE                       = "require"
       LOG_LEVEL                        = "DEBUG"
       FRONTEND_ORIGIN                  = var.frontend_origin
+      CRAWLER_STORAGE_S3_BUCKET        = var.crawler_storage_s3_bucket
+      MINIMIZED_PAGES_S3_BUCKET        = var.minimized_pages_s3_bucket
+      S3_REGION                        = var.s3_region
     }
   }
 
