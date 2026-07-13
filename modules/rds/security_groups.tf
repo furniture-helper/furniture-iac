@@ -3,8 +3,8 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "ecs_tasks_sg_id" {
-  description = "Security group for ECS tasks"
+variable "ecs_primary_tasks_sg_id" {
+  description = "Security group for ECS primary tasks"
   type        = string
 }
 
@@ -20,14 +20,14 @@ resource "aws_security_group" "rds_sg" {
   }
 }
 
-resource "aws_security_group_rule" "allow_db_inbound_from_ecs_tasks" {
-  description              = "Allow inbound traffic on port 5432 from ECS tasks security group"
+resource "aws_security_group_rule" "allow_db_inbound_from_primary_ecs_tasks" {
+  description              = "Allow inbound traffic on port 5432 from ECS primary tasks security group"
   security_group_id        = aws_security_group.rds_sg.id
   type                     = "ingress"
   from_port                = 5432
   to_port                  = 5432
   protocol                 = "tcp"
-  source_security_group_id = var.ecs_tasks_sg_id
+  source_security_group_id = var.ecs_primary_tasks_sg_id
 }
 
 resource "aws_security_group_rule" "allow_all_inbound_on_5432" {

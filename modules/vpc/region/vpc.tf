@@ -1,6 +1,6 @@
 resource "aws_vpc" "vpc" {
   # checkov:skip=CKV2_AWS_11: "Cannot afford VPC flow logs."
-  cidr_block                       = "10.0.0.0/16"
+  cidr_block                       = var.vpc_cidr_block
   enable_dns_support               = true
   enable_dns_hostnames             = true
   assign_generated_ipv6_cidr_block = true
@@ -31,7 +31,7 @@ resource "aws_internet_gateway" "igw" {
 
 resource "aws_subnet" "public_subnet_1" {
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "10.0.0.0/24"
+  cidr_block              = var.public_subnet_cidr_blocks[0]
   availability_zone       = var.availability_zone_1
   map_public_ip_on_launch = false
 
@@ -46,7 +46,7 @@ resource "aws_subnet" "public_subnet_1" {
 
 resource "aws_subnet" "public_subnet_2" {
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "10.0.1.0/24"
+  cidr_block              = var.public_subnet_cidr_blocks[1]
   availability_zone       = var.availability_zone_2
   map_public_ip_on_launch = false
 
@@ -91,7 +91,7 @@ resource "aws_route_table_association" "public_assoc_2" {
 
 resource "aws_subnet" "private_subnet_1" {
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "10.0.2.0/24"
+  cidr_block              = var.private_subnet_cidr_blocks[0]
   availability_zone       = var.availability_zone_1
   map_public_ip_on_launch = false
 
@@ -103,7 +103,7 @@ resource "aws_subnet" "private_subnet_1" {
 
 resource "aws_subnet" "private_subnet_2" {
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "10.0.3.0/24"
+  cidr_block              = var.private_subnet_cidr_blocks[1]
   availability_zone       = var.availability_zone_2
   map_public_ip_on_launch = false
 

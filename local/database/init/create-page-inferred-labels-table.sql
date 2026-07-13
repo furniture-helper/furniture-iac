@@ -30,3 +30,6 @@ CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;
 
 ALTER TABLE page_inferred_labels
     ADD COLUMN IF NOT EXISTS product_image_url TEXT;
+
+ALTER TABLE page_inferred_labels
+    ADD COLUMN IF NOT EXISTS in_stock BOOLEAN DEFAULT NULL;

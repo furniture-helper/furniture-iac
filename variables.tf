@@ -10,6 +10,12 @@ variable "region" {
   default     = "eu-west-1"
 }
 
+variable "secondary_region" {
+  description = "Secondary AWS region to deploy into"
+  type        = string
+  default     = "ap-southeast-1"
+}
+
 variable "availability_zone_1" {
   description = "Availability Zone to create subnets in (single-AZ setup)"
   type        = string
@@ -20,6 +26,18 @@ variable "availability_zone_2" {
   description = "Second Availability Zone to create subnets in (for multi-AZ setup)"
   type        = string
   default     = "eu-west-1b"
+}
+
+variable "secondary_availability_zone_1" {
+  description = "Availability Zone to create subnets in (single-AZ setup)"
+  type        = string
+  default     = "ap-southeast-1a"
+}
+
+variable "secondary_availability_zone_2" {
+  description = "Second Availability Zone to create subnets in (for multi-AZ setup)"
+  type        = string
+  default     = "ap-southeast-1b"
 }
 
 variable "github_organization" {

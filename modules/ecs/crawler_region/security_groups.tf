@@ -1,13 +1,3 @@
-variable "vpc_id" {
-  description = "VPC ID where the ECS tasks will run"
-  type        = string
-}
-
-variable "rds_sg_id" {
-  description = "Security group ID for RDS"
-  type        = string
-}
-
 resource "aws_security_group" "ecs_tasks_sg" {
   # checkov:skip=CKV2_AWS_5: "This security group is attached via the output to resources that require all outbound traffic"
   name        = "${var.project}-ecs-tasks-sg"
@@ -31,7 +21,8 @@ resource "aws_security_group_rule" "allow_https_outbound" {
   ipv6_cidr_blocks  = ["::/0"]
 }
 
-resource "aws_security_group_rule" "allow_5432_outbound_to_rds" {
+resource "aws_security_group_rule" "allow_5432_outbound_to_rds_sg" {
+  count                    = var.rds_sg_id != null ? 1 : 0
   security_group_id        = aws_security_group.ecs_tasks_sg.id
   description              = "Allow outbound Postgres traffic to RDS"
   type                     = "egress"
@@ -41,7 +32,13 @@ resource "aws_security_group_rule" "allow_5432_outbound_to_rds" {
   source_security_group_id = var.rds_sg_id
 }
 
-output "ecs_tasks_sg_id" {
-  description = "Security group ID for ECS tasks"
-  value       = aws_security_group.ecs_tasks_sg.id
+resource "aws_security_group_rule" "allow_5432_outbound_to_rds_cidr" {
+  count             = var.rds_sg_id == null ? 1 : 0
+  security_group_id = aws_security_group.ecs_tasks_sg.id
+  description       = "Allow outbound Postgres traffic to the public RDS endpoint"
+  type              = "egress"
+  from_port         = 5432
+  to_port           = 5432
+  protocol          = "tcp"
+  cidr_blocks       = var.rds_egress_cidr_blocks
 }
