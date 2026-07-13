@@ -19,7 +19,7 @@ variable "crawler_sqs_queue_arn" {
 }
 
 resource "aws_iam_role" "furniture_crawler_task_role" {
-  name = "${var.project}-crawler-task-role"
+  name = "${var.project}-crawler-task-role-${data.aws_region.current.region}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -36,7 +36,7 @@ resource "aws_iam_role" "furniture_crawler_task_role" {
 
   tags = {
     Project = var.project
-    Name    = "${var.project}-crawler-task-role"
+    Name    = "${var.project}-crawler-task-role-${data.aws_region.current.region}"
   }
 }
 

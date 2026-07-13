@@ -23,6 +23,11 @@ variable "rds_db_endpoint" {
   type        = string
 }
 
+variable "shared_services_region" {
+  description = "Region where shared dependencies like SQS, S3, and Secrets live"
+  type        = string
+}
+
 variable "crawler_sqs_queue_url" {
   description = "URL of the SQS queue for the crawler tasks"
   type        = string
@@ -49,13 +54,14 @@ locals {
 
     environment = [
       { name = "AWS_S3_BUCKET", value = var.s3_bucket_name },
-      { name = "AWS_REGION", value = data.aws_region.current.region },
+      { name = "AWS_REGION", value = var.shared_services_region },
+      { name = "AWS_DEFAULT_REGION", value = var.shared_services_region },
       { name = "PAGE_STORAGE", value = "AWSStorage" },
       { name = "PG_HOST", value = var.rds_db_endpoint },
       { name = "PG_PORT", value = "5432" },
       { name = "MAX_CONCURRENCY", value = "2" },
       { name = "MAX_REQUESTS_PER_MINUTE", value = "25" },
-      { name = "MAX_REQUESTS_PER_CRAWL", value = "250" },
+      { name = "MAX_REQUESTS_PER_CRAWL", value = "50" },
       { name = "NODE_OPTIONS", value = "--max-old-space-size=8192" },
       { name = "CRAWLEE_AVAILABLE_MEMORY_RATIO", value = "0.8" },
       { name = "LOG_LEVEL", value = "info" },

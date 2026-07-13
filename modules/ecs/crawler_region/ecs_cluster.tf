@@ -1,11 +1,16 @@
-variable "project" {
-  description = "Project name"
-  type        = string
+moved {
+  from = aws_ecs_cluster.furniture_secondary_cluster
+  to   = aws_ecs_cluster.furniture_cluster
+}
+
+moved {
+  from = aws_ecs_cluster_capacity_providers.furniture_secondary_cluster_capacity_providers
+  to   = aws_ecs_cluster_capacity_providers.furniture_cluster_capacity_providers
 }
 
 resource "aws_ecs_cluster" "furniture_cluster" {
   # checkov:skip=CKV_AWS_65: "Container insights is disabled to avoid additional costs."
-  name = "${var.project}-cluster"
+  name = var.cluster_name
 
   setting {
     name  = "containerInsights"
@@ -14,13 +19,8 @@ resource "aws_ecs_cluster" "furniture_cluster" {
 
   tags = {
     Project = var.project
-    Name    = "${var.project}-ecs-cluster"
+    Name    = var.cluster_tag_name
   }
-}
-
-output "ecs_cluster_arn" {
-  value       = aws_ecs_cluster.furniture_cluster.arn
-  description = "ARN of the ECS cluster"
 }
 
 resource "aws_ecs_cluster_capacity_providers" "furniture_cluster_capacity_providers" {

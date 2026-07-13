@@ -12,6 +12,11 @@ provider "aws" {
   region = var.region
 }
 
+provider "aws" {
+  alias  = "secondary"
+  region = var.secondary_region
+}
+
 module "s3" {
   source  = "./modules/s3"
   project = var.project
@@ -23,23 +28,31 @@ module "ecr" {
 }
 
 module "vpc" {
-  source              = "./modules/vpc"
-  project             = var.project
-  availability_zone_1 = var.availability_zone_1
-  availability_zone_2 = var.availability_zone_2
+  source = "./modules/vpc"
+  providers = {
+    aws           = aws
+    aws.secondary = aws.secondary
+  }
+  primary_availability_zone_1   = var.availability_zone_1
+  primary_availability_zone_2   = var.availability_zone_2
+  secondary_availability_zone_1 = var.secondary_availability_zone_1
+  secondary_availability_zone_2 = var.secondary_availability_zone_2
 }
 
 module "ecs" {
-  source                          = "./modules/ecs"
+  source = "./modules/ecs"
+  providers = {
+    aws           = aws
+    aws.secondary = aws.secondary
+  }
   project                         = var.project
-  subnet_ids                      = module.vpc.public_subnet_ids
-  vpc_id                          = module.vpc.vpc_id
   crawler_s3_bucket_name          = module.s3.crawler_storage_s3_bucket_name
   crawler_ecr_repo_url            = module.ecr.furniture_crawler_ecr_repo_uri
   crawler_s3_bucket_arn           = module.s3.crawler_storage_s3_bucket_arn
   rds_sg_id                       = module.rds.rds_sg_id
   database_credentials_secret_arn = module.rds.database_credentials_secret_arn
   rds_db_endpoint                 = module.rds.db_endpoint
+  shared_services_region          = var.region
   crawler_sqs_queue_url           = module.sqs.crawler_queue_url
   crawler_sqs_queue_arn           = module.sqs.crawler_queue_arn
   anchor_tree_s3_bucket_arn       = module.sagemaker.sagemaker_storage_s3_bucket_arn
@@ -47,6 +60,10 @@ module "ecs" {
   html_minimizer_ecr_repo_url     = module.ecr.html_minimizer_ecr_repo_uri
   html_minimizer_s3_bucket_arn    = module.s3.minimized_html_storage_s3_bucket_arn
   html_minimizer_s3_bucket_name   = module.s3.minimized_html_storage_s3_bucket_name
+  primary_public_subnet_ids       = module.vpc.primary_public_subnet_ids
+  primary_vpc_id                  = module.vpc.primary_vpc_id
+  secondary_public_subnet_ids     = module.vpc.secondary_public_subnet_ids
+  secondary_vpc_id                = module.vpc.secondary_vpc_id
 }
 
 module "github_actions" {
@@ -62,11 +79,11 @@ module "github_actions" {
 module "rds" {
   source                   = "./modules/rds"
   project                  = var.project
-  vpc_id                   = module.vpc.vpc_id
-  ecs_tasks_sg_id          = module.ecs.ecs_tasks_sg_id
-  private_subnet_ids       = module.vpc.private_subnet_ids
-  public_subnet_ids        = module.vpc.public_subnet_ids
+  vpc_id                   = module.vpc.primary_vpc_id
+  private_subnet_ids       = module.vpc.primary_private_subnet_ids
+  public_subnet_ids        = module.vpc.primary_public_subnet_ids
   allow_public_connections = true
+  ecs_primary_tasks_sg_id  = module.ecs.ecs_primary_tasks_sg_id
 }
 
 module "sqs" {
