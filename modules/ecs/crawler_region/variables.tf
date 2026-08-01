@@ -23,9 +23,9 @@ variable "subnet_ids" {
   type        = list(string)
 }
 
-variable "crawler_ecr_repo_url" {
-  description = "ECR repository URL for the furniture crawler container image"
-  type        = string
+variable "crawler_ecr_repo_urls" {
+  description = "ECR repository URLs for the furniture crawler container image"
+  type        = map(string)
 }
 
 variable "crawler_s3_bucket_name" {
@@ -60,6 +60,11 @@ variable "crawler_sqs_queue_url" {
 
 variable "crawler_sqs_queue_arn" {
   description = "ARN of the SQS queue for the crawler tasks"
+  type        = string
+}
+
+variable "crawler_schedule_expression" {
+  description = "EventBridge schedule expression for the crawler task"
   type        = string
 }
 

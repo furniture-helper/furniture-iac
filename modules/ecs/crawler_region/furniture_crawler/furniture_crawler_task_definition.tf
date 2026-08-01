@@ -1,6 +1,6 @@
-variable "ecr_repo_url" {
-  description = "ECR repository URL for the furniture crawler container image"
-  type        = string
+variable "ecr_repo_urls" {
+  description = "Map of AWS regions to their localized ECR repository URLs"
+  type        = map(string)
 }
 
 variable "image_tag" {
@@ -38,7 +38,7 @@ data "aws_region" "current" {}
 locals {
   container = {
     name      = "furniture-crawler"
-    image     = "${var.ecr_repo_url}:${var.image_tag}"
+    image     = "${var.ecr_repo_urls[data.aws_region.current.name]}:${var.image_tag}"
     cpu       = 512
     memory    = 4096
     essential = true
@@ -61,7 +61,7 @@ locals {
       { name = "PG_PORT", value = "5432" },
       { name = "MAX_CONCURRENCY", value = "3" },
       { name = "MAX_REQUESTS_PER_MINUTE", value = "25" },
-      { name = "MAX_REQUESTS_PER_CRAWL", value = "100" },
+      { name = "MAX_REQUESTS_PER_CRAWL", value = "200" },
       { name = "NODE_OPTIONS", value = "--max-old-space-size=8192" },
       { name = "CRAWLEE_AVAILABLE_MEMORY_RATIO", value = "0.8" },
       { name = "LOG_LEVEL", value = "info" },

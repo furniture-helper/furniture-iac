@@ -16,6 +16,12 @@ variable "secondary_region" {
   default     = "ap-southeast-1"
 }
 
+variable "tertiary_region" {
+  description = "Tertiary AWS region to deploy into"
+  type        = string
+  default     = "us-east-1"
+}
+
 variable "availability_zone_1" {
   description = "Availability Zone to create subnets in (single-AZ setup)"
   type        = string
@@ -40,7 +46,37 @@ variable "secondary_availability_zone_2" {
   default     = "ap-southeast-1b"
 }
 
+variable "tertiary_availability_zone_1" {
+  description = "Availability Zone to create subnets in (single-AZ setup)"
+  type        = string
+  default     = "us-east-1a"
+}
+
+variable "tertiary_availability_zone_2" {
+  description = "Second Availability Zone to create subnets in (for multi-AZ setup)"
+  type        = string
+  default     = "us-east-1b"
+}
+
 variable "github_organization" {
   type    = string
   default = "furniture-helper"
+}
+
+variable "primary_crawler_schedule_expression" {
+  description = "EventBridge schedule expression for the primary-region crawler task"
+  type        = string
+  default     = "cron(0/14 * * * ? *)"
+}
+
+variable "secondary_crawler_schedule_expression" {
+  description = "EventBridge schedule expression for the secondary-region crawler task"
+  type        = string
+  default     = "cron(0/14 * * * ? *)"
+}
+
+variable "tertiary_crawler_schedule_expression" {
+  description = "EventBridge schedule expression for the tertiary-region crawler task"
+  type        = string
+  default     = "cron(0 0 1 1 ? 2099)"
 }

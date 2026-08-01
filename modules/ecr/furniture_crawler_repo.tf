@@ -2,6 +2,13 @@ variable "project" {
   type = string
 }
 
+variable "replication_regions" {
+  type        = set(string)
+  description = "List of AWS regions to replicate the ECR repository to"
+}
+
+data "aws_region" "current" {}
+
 resource "aws_ecr_repository" "furniture_crawler_ecr_repo" {
   # checkov:skip=CKV_AWS_136: "Using default encryption is acceptable for this repo"
   # checkov:skip=CKV_AWS_51: "Images are immutable except for latest"
@@ -28,14 +35,21 @@ resource "aws_ecr_repository" "furniture_crawler_ecr_repo" {
   }
 }
 
-output "furniture_crawler_ecr_repo_uri" {
-  value       = aws_ecr_repository.furniture_crawler_ecr_repo.repository_url
-  description = "URL of the ECR repository for the furniture crawler"
-}
-
 output "furniture_crawler_ecr_repo_arn" {
   value       = aws_ecr_repository.furniture_crawler_ecr_repo.arn
   description = "ARN of the ECR repository for the furniture crawler"
+}
+
+locals {
+  all_repo_regions = setunion([data.aws_region.current.name], var.replication_regions)
+}
+
+output "furniture_crawler_ecr_regional_uris" {
+  description = "Map of AWS regions to their localized ECR repository URIs"
+  value = {
+    for region in local.all_repo_regions :
+    region => "${data.aws_caller_identity.current.account_id}.dkr.ecr.${region}.amazonaws.com/${aws_ecr_repository.furniture_crawler_ecr_repo.name}"
+  }
 }
 
 resource "aws_ecr_lifecycle_policy" "furniture_crawler_lifecycle" {
@@ -67,4 +81,25 @@ resource "aws_ecr_lifecycle_policy" "furniture_crawler_lifecycle" {
       }
     ]
   })
+}
+
+data "aws_caller_identity" "current" {}
+
+resource "aws_ecr_replication_configuration" "furniture_crawler_replication" {
+  replication_configuration {
+    rule {
+      repository_filter {
+        filter      = aws_ecr_repository.furniture_crawler_ecr_repo.name
+        filter_type = "PREFIX_MATCH"
+      }
+
+      dynamic "destination" {
+        for_each = var.replication_regions
+        content {
+          region      = destination.value
+          registry_id = data.aws_caller_identity.current.account_id
+        }
+      }
+    }
+  }
 }

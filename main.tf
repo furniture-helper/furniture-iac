@@ -17,14 +17,20 @@ provider "aws" {
   region = var.secondary_region
 }
 
+provider "aws" {
+  alias  = "tertiary"
+  region = var.tertiary_region
+}
+
 module "s3" {
   source  = "./modules/s3"
   project = var.project
 }
 
 module "ecr" {
-  source  = "./modules/ecr"
-  project = var.project
+  source              = "./modules/ecr"
+  project             = var.project
+  replication_regions = [var.secondary_region, var.tertiary_region]
 }
 
 module "vpc" {
@@ -32,11 +38,14 @@ module "vpc" {
   providers = {
     aws           = aws
     aws.secondary = aws.secondary
+    aws.tertiary  = aws.tertiary
   }
   primary_availability_zone_1   = var.availability_zone_1
   primary_availability_zone_2   = var.availability_zone_2
   secondary_availability_zone_1 = var.secondary_availability_zone_1
   secondary_availability_zone_2 = var.secondary_availability_zone_2
+  tertiary_availability_zone_1  = var.tertiary_availability_zone_1
+  tertiary_availability_zone_2  = var.tertiary_availability_zone_2
 }
 
 module "ecs" {
@@ -44,26 +53,32 @@ module "ecs" {
   providers = {
     aws           = aws
     aws.secondary = aws.secondary
+    aws.tertiary  = aws.tertiary
   }
-  project                         = var.project
-  crawler_s3_bucket_name          = module.s3.crawler_storage_s3_bucket_name
-  crawler_ecr_repo_url            = module.ecr.furniture_crawler_ecr_repo_uri
-  crawler_s3_bucket_arn           = module.s3.crawler_storage_s3_bucket_arn
-  rds_sg_id                       = module.rds.rds_sg_id
-  database_credentials_secret_arn = module.rds.database_credentials_secret_arn
-  rds_db_endpoint                 = module.rds.db_endpoint
-  shared_services_region          = var.region
-  crawler_sqs_queue_url           = module.sqs.crawler_queue_url
-  crawler_sqs_queue_arn           = module.sqs.crawler_queue_arn
-  anchor_tree_s3_bucket_arn       = module.sagemaker.sagemaker_storage_s3_bucket_arn
-  anchor_tree_s3_bucket_name      = module.sagemaker.sagemaker_storage_s3_bucket_name
-  html_minimizer_ecr_repo_url     = module.ecr.html_minimizer_ecr_repo_uri
-  html_minimizer_s3_bucket_arn    = module.s3.minimized_html_storage_s3_bucket_arn
-  html_minimizer_s3_bucket_name   = module.s3.minimized_html_storage_s3_bucket_name
-  primary_public_subnet_ids       = module.vpc.primary_public_subnet_ids
-  primary_vpc_id                  = module.vpc.primary_vpc_id
-  secondary_public_subnet_ids     = module.vpc.secondary_public_subnet_ids
-  secondary_vpc_id                = module.vpc.secondary_vpc_id
+  project                               = var.project
+  crawler_s3_bucket_name                = module.s3.crawler_storage_s3_bucket_name
+  crawler_ecr_repo_urls                 = module.ecr.furniture_crawler_ecr_regional_uris
+  crawler_s3_bucket_arn                 = module.s3.crawler_storage_s3_bucket_arn
+  rds_sg_id                             = module.rds.rds_sg_id
+  database_credentials_secret_arn       = module.rds.database_credentials_secret_arn
+  rds_db_endpoint                       = module.rds.db_endpoint
+  shared_services_region                = var.region
+  crawler_sqs_queue_url                 = module.sqs.crawler_queue_url
+  crawler_sqs_queue_arn                 = module.sqs.crawler_queue_arn
+  primary_crawler_schedule_expression   = var.primary_crawler_schedule_expression
+  secondary_crawler_schedule_expression = var.secondary_crawler_schedule_expression
+  tertiary_crawler_schedule_expression  = var.tertiary_crawler_schedule_expression
+  anchor_tree_s3_bucket_arn             = module.sagemaker.sagemaker_storage_s3_bucket_arn
+  anchor_tree_s3_bucket_name            = module.sagemaker.sagemaker_storage_s3_bucket_name
+  html_minimizer_ecr_repo_url           = module.ecr.html_minimizer_ecr_repo_uri
+  html_minimizer_s3_bucket_arn          = module.s3.minimized_html_storage_s3_bucket_arn
+  html_minimizer_s3_bucket_name         = module.s3.minimized_html_storage_s3_bucket_name
+  primary_public_subnet_ids             = module.vpc.primary_public_subnet_ids
+  primary_vpc_id                        = module.vpc.primary_vpc_id
+  secondary_public_subnet_ids           = module.vpc.secondary_public_subnet_ids
+  secondary_vpc_id                      = module.vpc.secondary_vpc_id
+  tertiary_public_subnet_ids            = module.vpc.tertiary_public_subnet_ids
+  tertiary_vpc_id                       = module.vpc.tertiary_vpc_id
 }
 
 module "github_actions" {

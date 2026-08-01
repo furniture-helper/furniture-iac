@@ -26,7 +26,7 @@ variable "minimized_pages_s3_bucket" {
 module "search_api" {
   source                           = "./search_api"
   ecr_repo_url                     = var.search_api_ecr_repo_url
-  image_tag                        = "2929339504cb8f473bdc1fc2142df8e69103af73"
+  image_tag                        = "1f4e33c4cc0cb9b395dd5ce694956cefd1135134"
   project                          = var.project
   database_credentials_secret_arn  = var.database_credentials_secret_arn
   database_credentials_secret_name = var.database_credentials_name
