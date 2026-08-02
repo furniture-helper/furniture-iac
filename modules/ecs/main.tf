@@ -98,12 +98,32 @@ variable "shared_services_region" {
 }
 
 variable "crawler_sqs_queue_url" {
-  description = "URL of the SQS queue for the crawler"
+  description = "URL of the primary SQS queue for the crawler"
   type        = string
 }
 
 variable "crawler_sqs_queue_arn" {
-  description = "ARN of the SQS queue for the crawler"
+  description = "ARN of the primary SQS queue for the crawler"
+  type        = string
+}
+
+variable "secondary_crawler_sqs_queue_url" {
+  description = "URL of the secondary SQS queue for the crawler"
+  type        = string
+}
+
+variable "secondary_crawler_sqs_queue_arn" {
+  description = "ARN of the secondary SQS queue for the crawler"
+  type        = string
+}
+
+variable "tertiary_crawler_sqs_queue_url" {
+  description = "URL of the tertiary SQS queue for the crawler"
+  type        = string
+}
+
+variable "tertiary_crawler_sqs_queue_arn" {
+  description = "ARN of the tertiary SQS queue for the crawler"
   type        = string
 }
 
@@ -164,8 +184,8 @@ module "secondary" {
   crawler_ecr_repo_urls           = var.crawler_ecr_repo_urls
   crawler_s3_bucket_arn           = var.crawler_s3_bucket_arn
   crawler_s3_bucket_name          = var.crawler_s3_bucket_name
-  crawler_sqs_queue_arn           = var.crawler_sqs_queue_arn
-  crawler_sqs_queue_url           = var.crawler_sqs_queue_url
+  crawler_sqs_queue_arn           = var.secondary_crawler_sqs_queue_arn
+  crawler_sqs_queue_url           = var.secondary_crawler_sqs_queue_url
   database_credentials_secret_arn = var.database_credentials_secret_arn
   rds_db_endpoint                 = var.rds_db_endpoint
   shared_services_region          = var.shared_services_region
@@ -186,8 +206,8 @@ module "tertiary" {
   crawler_ecr_repo_urls           = var.crawler_ecr_repo_urls
   crawler_s3_bucket_arn           = var.crawler_s3_bucket_arn
   crawler_s3_bucket_name          = var.crawler_s3_bucket_name
-  crawler_sqs_queue_arn           = var.crawler_sqs_queue_arn
-  crawler_sqs_queue_url           = var.crawler_sqs_queue_url
+  crawler_sqs_queue_arn           = var.tertiary_crawler_sqs_queue_arn
+  crawler_sqs_queue_url           = var.tertiary_crawler_sqs_queue_url
   database_credentials_secret_arn = var.database_credentials_secret_arn
   rds_db_endpoint                 = var.rds_db_endpoint
   shared_services_region          = var.shared_services_region

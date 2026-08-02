@@ -65,6 +65,10 @@ module "ecs" {
   shared_services_region                = var.region
   crawler_sqs_queue_url                 = module.sqs.crawler_queue_url
   crawler_sqs_queue_arn                 = module.sqs.crawler_queue_arn
+  secondary_crawler_sqs_queue_url       = module.sqs.crawler_secondary_queue_url
+  secondary_crawler_sqs_queue_arn       = module.sqs.crawler_secondary_queue_arn
+  tertiary_crawler_sqs_queue_url        = module.sqs.crawler_tertiary_queue_url
+  tertiary_crawler_sqs_queue_arn        = module.sqs.crawler_tertiary_queue_arn
   primary_crawler_schedule_expression   = var.primary_crawler_schedule_expression
   secondary_crawler_schedule_expression = var.secondary_crawler_schedule_expression
   tertiary_crawler_schedule_expression  = var.tertiary_crawler_schedule_expression

@@ -66,17 +66,17 @@ variable "github_organization" {
 variable "primary_crawler_schedule_expression" {
   description = "EventBridge schedule expression for the primary-region crawler task"
   type        = string
-  default     = "cron(0/14 * * * ? *)"
+  default     = "cron(0/8 * * * ? *)"
 }
 
 variable "secondary_crawler_schedule_expression" {
   description = "EventBridge schedule expression for the secondary-region crawler task"
   type        = string
-  default     = "cron(0/14 * * * ? *)"
+  default     = "rate(1 hour)"
 }
 
 variable "tertiary_crawler_schedule_expression" {
   description = "EventBridge schedule expression for the tertiary-region crawler task"
   type        = string
-  default     = "cron(0 0 1 1 ? 2099)"
+  default     = "rate(6 hours)"
 }
