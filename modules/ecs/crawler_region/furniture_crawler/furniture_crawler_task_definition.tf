@@ -1,6 +1,6 @@
-variable "ecr_repo_url" {
-  description = "ECR repository URL for the furniture crawler container image"
-  type        = string
+variable "ecr_repo_urls" {
+  description = "Map of AWS regions to their localized ECR repository URLs"
+  type        = map(string)
 }
 
 variable "image_tag" {
@@ -38,9 +38,9 @@ data "aws_region" "current" {}
 locals {
   container = {
     name      = "furniture-crawler"
-    image     = "${var.ecr_repo_url}:${var.image_tag}"
+    image     = "${var.ecr_repo_urls[data.aws_region.current.name]}:${var.image_tag}"
     cpu       = 512
-    memory    = 2048
+    memory    = 4096
     essential = true
 
     logConfiguration = {
@@ -59,14 +59,14 @@ locals {
       { name = "PAGE_STORAGE", value = "AWSStorage" },
       { name = "PG_HOST", value = var.rds_db_endpoint },
       { name = "PG_PORT", value = "5432" },
-      { name = "MAX_CONCURRENCY", value = "2" },
+      { name = "MAX_CONCURRENCY", value = "3" },
       { name = "MAX_REQUESTS_PER_MINUTE", value = "25" },
-      { name = "MAX_REQUESTS_PER_CRAWL", value = "50" },
+      { name = "MAX_REQUESTS_PER_CRAWL", value = "300" },
       { name = "NODE_OPTIONS", value = "--max-old-space-size=8192" },
       { name = "CRAWLEE_AVAILABLE_MEMORY_RATIO", value = "0.8" },
       { name = "LOG_LEVEL", value = "info" },
       { name = "SQS_QUEUE_URL", value = var.crawler_sqs_queue_url },
-      { name = "TIMEOUT_MINS", value = "30" },
+      { name = "TIMEOUT_MINS", value = "60" },
       { name = "REQUEST_HANDLER_TIMEOUT_S", value = "60" }
     ]
     secrets = [
@@ -93,11 +93,11 @@ resource "aws_ecs_task_definition" "furniture_crawler_task_definition" {
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = 512
-  memory                   = 2048
+  memory                   = 4096
 
   runtime_platform {
     operating_system_family = "LINUX"
-    cpu_architecture        = "ARM64"
+    cpu_architecture        = "X86_64"
   }
 
   execution_role_arn = var.task_execution_role_arn

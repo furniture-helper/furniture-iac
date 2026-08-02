@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source                = "hashicorp/aws"
-      configuration_aliases = [aws.secondary]
+      configuration_aliases = [aws.secondary, aws.tertiary]
     }
   }
 }
@@ -34,6 +34,16 @@ variable "secondary_vpc_id" {
 
 variable "secondary_public_subnet_ids" {
   description = "IDs of the secondary public subnets"
+  type        = list(string)
+}
+
+variable "tertiary_vpc_id" {
+  description = "ID of the tertiary VPC"
+  type        = string
+}
+
+variable "tertiary_public_subnet_ids" {
+  description = "IDs of the tertiary public subnets"
   type        = list(string)
 }
 
@@ -88,18 +98,53 @@ variable "shared_services_region" {
 }
 
 variable "crawler_sqs_queue_url" {
-  description = "URL of the SQS queue for the crawler"
+  description = "URL of the primary SQS queue for the crawler"
   type        = string
 }
 
 variable "crawler_sqs_queue_arn" {
-  description = "ARN of the SQS queue for the crawler"
+  description = "ARN of the primary SQS queue for the crawler"
   type        = string
 }
 
-variable "crawler_ecr_repo_url" {
-  description = "URL of the ECR repository for the crawler"
+variable "secondary_crawler_sqs_queue_url" {
+  description = "URL of the secondary SQS queue for the crawler"
   type        = string
+}
+
+variable "secondary_crawler_sqs_queue_arn" {
+  description = "ARN of the secondary SQS queue for the crawler"
+  type        = string
+}
+
+variable "tertiary_crawler_sqs_queue_url" {
+  description = "URL of the tertiary SQS queue for the crawler"
+  type        = string
+}
+
+variable "tertiary_crawler_sqs_queue_arn" {
+  description = "ARN of the tertiary SQS queue for the crawler"
+  type        = string
+}
+
+variable "primary_crawler_schedule_expression" {
+  description = "EventBridge schedule expression for the primary-region crawler task"
+  type        = string
+}
+
+variable "secondary_crawler_schedule_expression" {
+  description = "EventBridge schedule expression for the secondary-region crawler task"
+  type        = string
+}
+
+variable "tertiary_crawler_schedule_expression" {
+  description = "EventBridge schedule expression for the tertiary-region crawler task"
+  type        = string
+}
+
+variable "crawler_ecr_repo_urls" {
+  description = "URL of the ECR repository for the crawler"
+  type        = map(string)
 }
 
 variable "rds_sg_id" {
@@ -121,7 +166,8 @@ module "primary" {
   shared_services_region          = var.shared_services_region
   crawler_sqs_queue_url           = var.crawler_sqs_queue_url
   crawler_sqs_queue_arn           = var.crawler_sqs_queue_arn
-  crawler_ecr_repo_url            = var.crawler_ecr_repo_url
+  crawler_schedule_expression     = var.primary_crawler_schedule_expression
+  crawler_ecr_repo_urls           = var.crawler_ecr_repo_urls
   rds_sg_id                       = var.rds_sg_id
   subnet_ids                      = var.primary_public_subnet_ids
 }
@@ -135,16 +181,39 @@ module "secondary" {
   project                         = var.project
   cluster_name                    = "${var.project}-secondary-cluster"
   cluster_tag_name                = "${var.project}-ecs-secondary-cluster"
-  crawler_ecr_repo_url            = var.crawler_ecr_repo_url
+  crawler_ecr_repo_urls           = var.crawler_ecr_repo_urls
   crawler_s3_bucket_arn           = var.crawler_s3_bucket_arn
   crawler_s3_bucket_name          = var.crawler_s3_bucket_name
-  crawler_sqs_queue_arn           = var.crawler_sqs_queue_arn
-  crawler_sqs_queue_url           = var.crawler_sqs_queue_url
+  crawler_sqs_queue_arn           = var.secondary_crawler_sqs_queue_arn
+  crawler_sqs_queue_url           = var.secondary_crawler_sqs_queue_url
   database_credentials_secret_arn = var.database_credentials_secret_arn
   rds_db_endpoint                 = var.rds_db_endpoint
   shared_services_region          = var.shared_services_region
+  crawler_schedule_expression     = var.secondary_crawler_schedule_expression
   subnet_ids                      = var.secondary_public_subnet_ids
   vpc_id                          = var.secondary_vpc_id
+}
+
+module "tertiary" {
+  source = "./crawler_region"
+  providers = {
+    aws = aws.tertiary
+  }
+
+  project                         = var.project
+  cluster_name                    = "${var.project}-tertiary-cluster"
+  cluster_tag_name                = "${var.project}-ecs-tertiary-cluster"
+  crawler_ecr_repo_urls           = var.crawler_ecr_repo_urls
+  crawler_s3_bucket_arn           = var.crawler_s3_bucket_arn
+  crawler_s3_bucket_name          = var.crawler_s3_bucket_name
+  crawler_sqs_queue_arn           = var.tertiary_crawler_sqs_queue_arn
+  crawler_sqs_queue_url           = var.tertiary_crawler_sqs_queue_url
+  database_credentials_secret_arn = var.database_credentials_secret_arn
+  rds_db_endpoint                 = var.rds_db_endpoint
+  shared_services_region          = var.shared_services_region
+  crawler_schedule_expression     = var.tertiary_crawler_schedule_expression
+  subnet_ids                      = var.tertiary_public_subnet_ids
+  vpc_id                          = var.tertiary_vpc_id
 }
 
 module "html_minimizer_task" {
@@ -174,4 +243,9 @@ output "ecs_primary_tasks_sg_id" {
 output "ecs_secondary_tasks_sg_id" {
   description = "Security group ID for ECS secondary tasks"
   value       = module.secondary.ecs_tasks_sg_id
+}
+
+output "ecs_tertiary_tasks_sg_id" {
+  description = "Security group ID for ECS tertiary tasks"
+  value       = module.tertiary.ecs_tasks_sg_id
 }

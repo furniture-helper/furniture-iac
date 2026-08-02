@@ -36,6 +36,7 @@ ignored_resources := {
     "aws_apigatewayv2_route",
     "aws_acm_certificate_validation",
     "aws_apigatewayv2_api_mapping",
+    "aws_ecr_replication_configuration",
 }
 
 deny contains msg if {

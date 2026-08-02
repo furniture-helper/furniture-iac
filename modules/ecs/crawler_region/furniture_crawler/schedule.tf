@@ -18,10 +18,15 @@ variable "security_group_ids" {
   type        = list(string)
 }
 
+variable "crawler_schedule_expression" {
+  description = "EventBridge schedule expression for the crawler task"
+  type        = string
+}
+
 resource "aws_cloudwatch_event_rule" "crawler" {
   name                = "${var.project}-crawler-event-rule"
   description         = "Run crawler"
-  schedule_expression = "cron(0/5 * * * ? *)"
+  schedule_expression = var.crawler_schedule_expression
   tags = {
     Project = var.project
     Name    = "${var.project}-crawler-event-rule"
