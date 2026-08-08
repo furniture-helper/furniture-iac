@@ -5,5 +5,6 @@ variable "sagemaker_bucket_name" { type = string }
 
 variable "page_classification_schedule_expression" {
   type    = string
-  default = "rate(3 days)"}
+  default = "rate(3 days)"
+}
 
