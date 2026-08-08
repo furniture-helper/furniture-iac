@@ -72,7 +72,7 @@ variable "primary_crawler_schedule_expression" {
 variable "secondary_crawler_schedule_expression" {
   description = "EventBridge schedule expression for the secondary-region crawler task"
   type        = string
-  default     = "rate(2 hour)"
+  default     = "rate(2 hours)"
 }
 
 variable "tertiary_crawler_schedule_expression" {
