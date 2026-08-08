@@ -5,6 +5,5 @@ variable "sagemaker_bucket_name" { type = string }
 
 variable "information_extraction_schedule_expression" {
   type    = string
-  default = "cron(0 1 * * ? *)"
-}
+  default = "rate(3 days)"}
 
