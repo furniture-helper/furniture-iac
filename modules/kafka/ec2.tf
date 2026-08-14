@@ -38,7 +38,7 @@ resource "aws_launch_template" "kafka_server" {
   }
 
   network_interfaces {
-    associate_public_ip_address = true
+    associate_public_ip_address = false
     security_groups             = [aws_security_group.kafka_sg.id]
   }
   metadata_options {
@@ -86,6 +86,22 @@ resource "aws_eip" "kafka_server" {
     Name    = "${var.project}-kafka-eip"
     Project = var.project
   }
+}
+
+data "aws_instances" "kafka_server" {
+  instance_tags = {
+    Name    = "${var.project}-kafka-server"
+    Project = var.project
+  }
+
+  instance_state_names = ["pending", "running"]
+
+  depends_on = [aws_autoscaling_group.kafka_server]
+}
+
+resource "aws_eip_association" "kafka_server" {
+  instance_id   = data.aws_instances.kafka_server.ids[0]
+  allocation_id = aws_eip.kafka_server.id
 }
 
 output "kafka_server_public_ip" {
