@@ -152,6 +152,11 @@ variable "rds_sg_id" {
   type        = string
 }
 
+variable "kafka_public_ip" {
+  description = "Public IP address of the Kafka cluster"
+  type        = string
+}
+
 module "primary" {
   source = "./crawler_region"
 
@@ -170,6 +175,7 @@ module "primary" {
   crawler_ecr_repo_urls           = var.crawler_ecr_repo_urls
   rds_sg_id                       = var.rds_sg_id
   subnet_ids                      = var.primary_public_subnet_ids
+  kafka_public_ip                 = var.kafka_public_ip
 }
 
 module "secondary" {
@@ -192,6 +198,7 @@ module "secondary" {
   crawler_schedule_expression     = var.secondary_crawler_schedule_expression
   subnet_ids                      = var.secondary_public_subnet_ids
   vpc_id                          = var.secondary_vpc_id
+  kafka_public_ip                 = var.kafka_public_ip
 }
 
 module "tertiary" {
@@ -214,6 +221,7 @@ module "tertiary" {
   crawler_schedule_expression     = var.tertiary_crawler_schedule_expression
   subnet_ids                      = var.tertiary_public_subnet_ids
   vpc_id                          = var.tertiary_vpc_id
+  kafka_public_ip                 = var.kafka_public_ip
 }
 
 module "html_minimizer_task" {

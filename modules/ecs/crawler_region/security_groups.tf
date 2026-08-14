@@ -42,3 +42,13 @@ resource "aws_security_group_rule" "allow_5432_outbound_to_rds_cidr" {
   protocol          = "tcp"
   cidr_blocks       = var.rds_egress_cidr_blocks
 }
+
+resource "aws_security_group_rule" "allow_outbound_to_kafka" {
+  security_group_id = aws_security_group.ecs_tasks_sg.id
+  description       = "Allow outbound Kafka traffic to Kafka endpoint CIDRs"
+  type              = "egress"
+  from_port         = 9092
+  to_port           = 9092
+  protocol          = "tcp"
+  cidr_blocks       = ["${var.kafka_public_ip}/32"]
+}
