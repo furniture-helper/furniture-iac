@@ -33,6 +33,11 @@ variable "crawler_sqs_queue_url" {
   type        = string
 }
 
+variable "kafka_public_ip" {
+  description = "Public IP address of the Kafka broker"
+  type        = string
+}
+
 data "aws_region" "current" {}
 
 locals {
@@ -54,7 +59,6 @@ locals {
 
     environment = [
       { name = "AWS_S3_BUCKET", value = var.s3_bucket_name },
-      { name = "AWS_REGION", value = var.shared_services_region },
       { name = "AWS_DEFAULT_REGION", value = var.shared_services_region },
       { name = "PAGE_STORAGE", value = "AWSStorage" },
       { name = "PG_HOST", value = var.rds_db_endpoint },
@@ -67,7 +71,10 @@ locals {
       { name = "LOG_LEVEL", value = "info" },
       { name = "SQS_QUEUE_URL", value = var.crawler_sqs_queue_url },
       { name = "TIMEOUT_MINS", value = "60" },
-      { name = "REQUEST_HANDLER_TIMEOUT_S", value = "60" }
+      { name = "REQUEST_HANDLER_TIMEOUT_S", value = "60" },
+      { name = "KAFKA_BROKER", value = "${var.kafka_public_ip}:9092" },
+      { name = "CRAWLER_EVENTS_TOPIC", value = "crawler-events" },
+      { name = "RUNNING_MODE", value = "ecs" }
     ]
     secrets = [
       {

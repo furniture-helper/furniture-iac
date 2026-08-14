@@ -79,3 +79,8 @@ variable "rds_egress_cidr_blocks" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
 }
+
+variable "kafka_public_ip" {
+  description = "Public IP address of the Kafka broker"
+  type        = string
+}

@@ -83,6 +83,7 @@ module "ecs" {
   secondary_vpc_id                      = module.vpc.secondary_vpc_id
   tertiary_public_subnet_ids            = module.vpc.tertiary_public_subnet_ids
   tertiary_vpc_id                       = module.vpc.tertiary_vpc_id
+  kafka_public_ip                       = module.kafka.kafka_server_public_ip
 }
 
 module "github_actions" {
@@ -159,9 +160,11 @@ module "api_gateway" {
   search_frontend_origin          = module.amplify.search_app_endpoint
 }
 
-output "crawler_queue_url" {
-  description = "URL of the crawler SQS queue"
-  value       = module.sqs.crawler_queue_url
+module "kafka" {
+  source    = "./modules/kafka"
+  project   = var.project
+  vpc_id    = module.vpc.primary_vpc_id
+  subnet_id = module.vpc.primary_public_subnet_ids[0]
 }
 
 output "db_endpoint" {
@@ -169,27 +172,17 @@ output "db_endpoint" {
   value       = module.rds.db_endpoint
 }
 
-output "db_instance_id" {
-  description = "RDS Database Instance ID"
-  value       = module.rds.db_instance_id
-}
-
 output "furniture_kaneel_xyz_nameservers" {
   description = "Nameservers for furniture.kaneel.xyz (copy these to Namecheap Custom DNS)"
   value       = module.r53.namecheap_nameservers
 }
 
-output "sagemaker_role_arn" {
-  description = "ARN of the SageMaker execution role"
-  value       = module.sagemaker.sagemaker_role_arn
-}
-
-output "sagemaker_storage_s3_bucket_name" {
-  description = "Name of the S3 bucket used by SageMaker"
-  value       = module.sagemaker.sagemaker_storage_s3_bucket_name
-}
-
 output "search_api_endpoint" {
   description = "Endpoint of the Search API"
   value       = module.api_gateway.search_api_endpoint
+}
+
+output "kafka_server_public_ip" {
+  description = "Public IP of the Kafka server"
+  value       = module.kafka.kafka_server_public_ip
 }

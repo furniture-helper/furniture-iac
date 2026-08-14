@@ -16,4 +16,5 @@ module "furniture_crawler_task" {
   furniture_cluster_arn           = aws_ecs_cluster.furniture_cluster.arn
   security_group_ids              = [aws_security_group.ecs_tasks_sg.id]
   subnet_ids                      = var.subnet_ids
+  kafka_public_ip                 = var.kafka_public_ip
 }
