@@ -11,6 +11,11 @@ resource "aws_iam_role" "kafka_ssm_role" {
       }
     }]
   })
+
+  tags = {
+    Name    = "${var.project}-kafka-ssm-role"
+    Project = var.project
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "kafka_ssm" {
@@ -60,4 +65,9 @@ resource "aws_iam_role_policy" "kafka_ebs_attach" {
 resource "aws_iam_instance_profile" "kafka_profile" {
   name = "${var.project}-kafka-profile"
   role = aws_iam_role.kafka_ssm_role.name
+
+  tags = {
+    Name    = "${var.project}-kafka-profile"
+    Project = var.project
+  }
 }

@@ -8,6 +8,11 @@ resource "aws_security_group" "kafka_sg" {
   description = "Allow SSH and Kafka inbound traffic"
 
   vpc_id = var.vpc_id
+
+  tags = {
+    Name    = "${var.project}-kafka-allow-traffic"
+    Project = var.project
+  }
 }
 
 resource "aws_vpc_security_group_egress_rule" "kafka_ssm" {
@@ -17,6 +22,11 @@ resource "aws_vpc_security_group_egress_rule" "kafka_ssm" {
   ip_protocol       = "tcp"
   cidr_ipv4         = "0.0.0.0/0"
   description       = "Allow HTTPS for SSM"
+
+  tags = {
+    Name    = "${var.project}-kafka-allow-ssm-egress"
+    Project = var.project
+  }
 }
 
 resource "aws_security_group_rule" "allow_kafka_ingress_from_internet" {
