@@ -38,7 +38,7 @@ resource "aws_db_instance" "db_instance" {
   password                            = local.db_creds.password
   db_subnet_group_name                = aws_db_subnet_group.rds_subnet_group.name
   vpc_security_group_ids              = [aws_security_group.rds_sg.id]
-  allocated_storage                   = 30
+  allocated_storage                   = 100
   storage_type                        = "gp3"
   storage_encrypted                   = true
   backup_retention_period             = 7
