@@ -1,4 +1,4 @@
-CREATE USER datastream_user WITH LOGIN PASSWORD 'dadshh2!@djshfhl2asjkd#83wr*';
+CREATE USER datastream_user WITH LOGIN PASSWORD '<password>';
 
 
 GRANT rds_replication TO datastream_user;
@@ -14,3 +14,5 @@ SELECT pg_create_logical_replication_slot('page_classifications_replication_slot
 
 CREATE PUBLICATION inferred_pages_publication FOR TABLE public.page_inferred_labels;
 SELECT pg_create_logical_replication_slot('page_inferences_replication_slot', 'pgoutput');
+
+DROP USER IF EXISTS datastream_user;
