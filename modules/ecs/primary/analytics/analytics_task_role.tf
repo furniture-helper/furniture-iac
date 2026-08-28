@@ -46,6 +46,11 @@ resource "aws_iam_policy" "database_secrets_retrieval_policy" {
       }
     ]
   })
+
+  tags = {
+    Project = var.project
+    Name    = "${var.project}-analytics-database-secrets-retrieval-policy"
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "attach_database_secrets_retrieval_policy" {
