@@ -1,4 +1,4 @@
-CREATE USER datastream_user WITH LOGIN PASSWORD '<password>';
+CREATE USER datastream_user WITH LOGIN PASSWORD 'dadshh2!@djshfhl2asjkd#83wr*';
 
 
 GRANT rds_replication TO datastream_user;

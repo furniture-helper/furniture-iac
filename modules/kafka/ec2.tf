@@ -21,24 +21,19 @@ data "aws_ami" "amazon_linux_2023_arm64" {
 resource "aws_launch_template" "kafka_server" {
   name_prefix   = "${var.project}-kafka-"
   image_id      = data.aws_ami.amazon_linux_2023_arm64.id
-  instance_type = "t4g.small"
-  user_data     = base64encode(file("${path.module}/user_data.sh"))
+  instance_type = "t4g.medium"
+  user_data = base64encode(templatefile("${path.module}/user_data.sh", {
+    docker_compose_content          = file("${path.module}/docker-compose.yml")
+    database_credentials_secret_arn = var.database_credentials_secret_arn
+    rds_db_endpoint                 = var.rds_db_endpoint
+  }))
 
   iam_instance_profile {
     name = aws_iam_instance_profile.kafka_profile.name
   }
 
-  instance_market_options {
-    market_type = "spot"
-
-    spot_options {
-      instance_interruption_behavior = "terminate"
-      spot_instance_type             = "one-time"
-    }
-  }
-
   network_interfaces {
-    associate_public_ip_address = false
+    associate_public_ip_address = true
     security_groups             = [aws_security_group.kafka_sg.id]
   }
   metadata_options {
