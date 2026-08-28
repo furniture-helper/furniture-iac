@@ -61,7 +61,7 @@ module "ecs" {
   crawler_s3_bucket_arn                 = module.s3.crawler_storage_s3_bucket_arn
   rds_sg_id                             = module.rds.rds_sg_id
   database_credentials_secret_arn       = module.rds.database_credentials_secret_arn
-  rds_db_endpoint                       = module.rds.db_endpoint
+  rds_db_endpoint                       = module.rds.db_endpoint_v2
   shared_services_region                = var.region
   crawler_sqs_queue_url                 = module.sqs.crawler_queue_url
   crawler_sqs_queue_arn                 = module.sqs.crawler_queue_arn
@@ -84,6 +84,8 @@ module "ecs" {
   tertiary_public_subnet_ids            = module.vpc.tertiary_public_subnet_ids
   tertiary_vpc_id                       = module.vpc.tertiary_vpc_id
   kafka_public_ip                       = module.kafka.kafka_server_public_ip
+  database_credentials_secret_name      = module.rds.database_credentials_secret_name
+  analytics_ecr_repo_url                = module.ecr.furniture_analytics_ecr_repo_uri
 }
 
 module "github_actions" {
@@ -94,6 +96,7 @@ module "github_actions" {
   crawler_queue_manager_repo_arn = module.ecr.furniture_crawler_queue_manager_ecr_repo_arn
   html_minimizer_repo_arn        = module.ecr.html_minimizer_ecr_repo_arn
   search_api_repo_arn            = module.ecr.furniture_search_api_ecr_repo_arn
+  analytics_repo_arn             = module.ecr.furniture_analytics_ecr_repo_arn
 }
 
 module "rds" {
@@ -120,7 +123,7 @@ module "lambda" {
   database_credentials_secret_arn = module.rds.database_credentials_secret_arn
   crawler_sqs_queue_url           = module.sqs.crawler_queue_url
   database_credentials_name       = module.rds.database_credentials_secret_name
-  rds_db_endpoint                 = module.rds.db_endpoint
+  rds_db_endpoint                 = module.rds.db_endpoint_v2
   frontend_origin                 = module.amplify.search_app_endpoint
   crawler_storage_s3_bucket       = module.s3.crawler_storage_s3_bucket_name
   minimized_pages_s3_bucket       = module.s3.minimized_html_storage_s3_bucket_name
@@ -132,6 +135,7 @@ module "r53" {
   project                = var.project
   search_api_http_api_id = module.api_gateway.search_api_id
   search_api_stage_name  = module.api_gateway.search_api_stage_name
+  kafka_server_public_ip = module.kafka.kafka_server_public_ip
 }
 
 module "amplify" {
@@ -139,7 +143,7 @@ module "amplify" {
   project                          = var.project
   database_credentials_secret_arn  = module.rds.database_credentials_secret_arn
   database_credentials_secret_name = module.rds.database_credentials_secret_name
-  db_endpoint                      = module.rds.db_endpoint
+  db_endpoint                      = module.rds.db_endpoint_v2
   s3_minimized_html_bucket_name    = module.s3.minimized_html_storage_s3_bucket_name
   s3_raw_html_bucket_name          = module.s3.crawler_storage_s3_bucket_name
   search_api_base_url              = module.r53.custom_domain_url
@@ -149,7 +153,7 @@ module "sagemaker" {
   source                   = "./modules/sagemaker"
   project                  = var.project
   database_credentials_arn = module.rds.database_credentials_secret_arn
-  rds_db_endpoint          = module.rds.db_endpoint
+  rds_db_endpoint          = module.rds.db_endpoint_v2
 }
 
 module "api_gateway" {
@@ -161,15 +165,17 @@ module "api_gateway" {
 }
 
 module "kafka" {
-  source    = "./modules/kafka"
-  project   = var.project
-  vpc_id    = module.vpc.primary_vpc_id
-  subnet_id = module.vpc.primary_public_subnet_ids[0]
+  source                          = "./modules/kafka"
+  project                         = var.project
+  vpc_id                          = module.vpc.primary_vpc_id
+  subnet_id                       = module.vpc.primary_public_subnet_ids[0]
+  database_credentials_secret_arn = module.rds.database_credentials_secret_arn
+  rds_db_endpoint                 = module.rds.db_endpoint_v2
 }
 
-output "db_endpoint" {
-  description = "RDS Database Endpoint"
-  value       = module.rds.db_endpoint
+output "db_endpoint_v2" {
+  description = "RDS Database Endpoint v2"
+  value       = module.rds.db_endpoint_v2
 }
 
 output "furniture_kaneel_xyz_nameservers" {

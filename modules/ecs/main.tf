@@ -157,6 +157,16 @@ variable "kafka_public_ip" {
   type        = string
 }
 
+variable "database_credentials_secret_name" {
+  description = "Name of the secret containing database credentials"
+  type        = string
+}
+
+variable "analytics_ecr_repo_url" {
+  description = "URL of the ECR repository for the analytics task"
+  type        = string
+}
+
 module "primary" {
   source = "./crawler_region"
 
@@ -241,6 +251,21 @@ module "html_minimizer_task" {
   furniture_cluster_arn           = module.primary.ecs_cluster_arn
   security_group_ids              = [module.primary.ecs_tasks_sg_id]
   subnet_ids                      = var.primary_public_subnet_ids
+}
+
+module "analytics_task" {
+  source                           = "./primary/analytics"
+  database_credentials_secret_arn  = var.database_credentials_secret_arn
+  ecr_repo_url                     = var.analytics_ecr_repo_url
+  image_tag                        = "latest"
+  project                          = var.project
+  rds_db_endpoint                  = var.rds_db_endpoint
+  task_execution_role_arn          = module.primary.task_execution_role_arn
+  furniture_cluster_arn            = module.primary.ecs_cluster_arn
+  security_group_ids               = [module.primary.ecs_tasks_sg_id]
+  subnet_ids                       = var.primary_public_subnet_ids
+  database_credentials_secret_name = var.database_credentials_secret_name
+  kafka_brokers                    = var.kafka_public_ip
 }
 
 output "ecs_primary_tasks_sg_id" {

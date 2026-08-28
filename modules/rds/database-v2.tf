@@ -15,30 +15,30 @@ variable "allow_public_connections" {
   default = false
 }
 
-resource "aws_db_subnet_group" "rds_subnet_group" {
-  name       = "${var.project}-db-subnet-group"
+resource "aws_db_subnet_group" "rds_subnet_group_v2" {
+  name       = "${var.project}-db-subnet-group-v2"
   subnet_ids = var.allow_public_connections ? var.public_subnet_ids : var.private_subnet_ids
 
   tags = {
-    Name    = "${var.project}-db-subnet-group"
+    Name    = "${var.project}-db-subnet-group-v2"
     Project = var.project
   }
 }
 
-resource "aws_db_instance" "db_instance" {
+resource "aws_db_instance" "db_instance_v2" {
   # checkov:skip=CKV_AWS_354 "Not required to encrypt performance insights at this time"
   # checkov:skip=CKV_AWS_157 "I cannot afford multi-AZ at this time"
   # checkov:skip=CKV_AWS_129: "Cannot afford logging."
-  identifier                          = "${var.project}-db-instance"
+  identifier                          = "${var.project}-db-instance-v2"
   engine                              = "postgres"
   engine_version                      = "17.9"
   instance_class                      = "db.t4g.small"
   db_name                             = local.db_creds.database_name
   username                            = local.db_creds.username
   password                            = local.db_creds.password
-  db_subnet_group_name                = aws_db_subnet_group.rds_subnet_group.name
+  db_subnet_group_name                = aws_db_subnet_group.rds_subnet_group_v2.name
   vpc_security_group_ids              = [aws_security_group.rds_sg.id]
-  allocated_storage                   = 100
+  allocated_storage                   = 200
   storage_type                        = "gp3"
   storage_encrypted                   = true
   backup_retention_period             = 7
@@ -46,7 +46,7 @@ resource "aws_db_instance" "db_instance" {
   monitoring_interval                 = 60
   monitoring_role_arn                 = aws_iam_role.rds_enhanced_monitoring.arn
   performance_insights_enabled        = true
-  parameter_group_name                = aws_db_parameter_group.rds_parameter_group.name
+  parameter_group_name                = aws_db_parameter_group.rds_parameter_group_v2.name
   skip_final_snapshot                 = false
   final_snapshot_identifier           = "${var.project}-rds-final-snapshot"
   apply_immediately                   = true
@@ -69,8 +69,8 @@ resource "aws_db_instance" "db_instance" {
 
 
 
-resource "aws_db_parameter_group" "rds_parameter_group" {
-  name        = "${var.project}-rds-pg"
+resource "aws_db_parameter_group" "rds_parameter_group_v2" {
+  name        = "${var.project}-rds-pg-v2"
   family      = "postgres17"
   description = "RDS default parameter group"
 
@@ -111,16 +111,28 @@ resource "aws_db_parameter_group" "rds_parameter_group" {
     value        = "1"
   }
 
+  parameter {
+    name         = "shared_preload_libraries"
+    value        = "pg_cron"
+    apply_method = "pending-reboot"
+  }
+
+  parameter {
+    name         = "cron.database_name"
+    value        = "furniture"
+    apply_method = "pending-reboot"
+  }
+
   tags = {
     Name    = "${var.project}-rds-pg"
     Project = var.project
   }
 }
 
-output "db_endpoint" {
-  value = aws_db_instance.db_instance.address
+output "db_endpoint_v2" {
+  value = aws_db_instance.db_instance_v2.address
 }
 
-output "db_instance_id" {
-  value = aws_db_instance.db_instance.id
+output "db_instance_id_v2" {
+  value = aws_db_instance.db_instance_v2.id
 }

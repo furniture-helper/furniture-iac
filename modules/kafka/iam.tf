@@ -28,6 +28,9 @@ data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
 resource "aws_iam_role_policy" "kafka_ebs_attach" {
+  # checkov:skip=CKV_AWS_355: "Allowing EBS attach/detach for Kafka data volume"
+
+
   name = "${var.project}-kafka-ebs-attach"
   role = aws_iam_role.kafka_ssm_role.id
 
@@ -57,6 +60,42 @@ resource "aws_iam_role_policy" "kafka_ebs_attach" {
           "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:instance/*",
           "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:network-interface/*"
         ]
+        Condition = {
+          StringEquals = {
+            "aws:RequestedRegion" = data.aws_region.current.name
+          }
+        }
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = var.database_credentials_secret_arn
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "route53:ListHostedZones",
+          "route53:ListHostedZonesByName"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "route53:ChangeResourceRecordSets",
+          "route53:ListResourceRecordSets"
+        ]
+        Resource = "arn:aws:route53:::hostedzone/*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "route53:GetChange"
+        ]
+        Resource = "arn:aws:route53:::change/*"
       }
     ]
   })
