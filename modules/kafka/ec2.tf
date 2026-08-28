@@ -19,6 +19,8 @@ data "aws_ami" "amazon_linux_2023_arm64" {
 }
 
 resource "aws_launch_template" "kafka_server" {
+  # checkov:skip=CKV_AWS_88: "Public IP is only used for bootstrapping"
+
   name_prefix   = "${var.project}-kafka-"
   image_id      = data.aws_ami.amazon_linux_2023_arm64.id
   instance_type = "t4g.medium"

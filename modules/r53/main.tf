@@ -36,6 +36,7 @@ resource "aws_route53_record" "search_to_www" {
 }
 
 resource "aws_route53_record" "kafka_dns" {
+  # checkov:skip=CKV2_AWS_23: Static A record intentionally points to external EIP.
   zone_id = aws_route53_zone.furniture_kaneel_xyz.zone_id
   name    = "kafka.furniture.kaneel.xyz"
   type    = "A"
@@ -44,6 +45,7 @@ resource "aws_route53_record" "kafka_dns" {
 }
 
 resource "aws_route53_record" "metabase_dns" {
+  # checkov:skip=CKV2_AWS_23: Static A record intentionally points to external EIP.
   zone_id = aws_route53_zone.furniture_kaneel_xyz.zone_id
   name    = "metabase.furniture.kaneel.xyz"
   type    = "A"

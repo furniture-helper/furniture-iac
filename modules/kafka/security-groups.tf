@@ -54,6 +54,8 @@ resource "aws_security_group_rule" "allow_kafka_ingress_from_internet" {
 }
 
 resource "aws_security_group_rule" "allow_http_ingress_from_internet" {
+  # checkov:skip=CKV_AWS_260: "Required public internet access for reverse proxy"
+
   security_group_id = aws_security_group.kafka_sg.id
   cidr_blocks       = ["0.0.0.0/0"]
   type              = "ingress"
@@ -64,6 +66,8 @@ resource "aws_security_group_rule" "allow_http_ingress_from_internet" {
 }
 
 resource "aws_security_group_rule" "allow_https_ingress_from_internet" {
+  # checkov:skip=CKV_AWS_260: "Required public internet access for reverse proxy"
+
   security_group_id = aws_security_group.kafka_sg.id
   cidr_blocks       = ["0.0.0.0/0"]
   type              = "ingress"
@@ -80,6 +84,7 @@ resource "aws_security_group_rule" "allow_outbound_to_19092" {
   to_port           = 19092
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
+  description       = "Allow outbound traffic to Kafka on port 19092"
 }
 
 resource "aws_security_group_rule" "allow_outbound_to_9092" {
@@ -89,6 +94,7 @@ resource "aws_security_group_rule" "allow_outbound_to_9092" {
   to_port           = 9092
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
+  description       = "Allow outbound traffic to Kafka on port 9092"
 }
 
 output "kafka_sg_id" {
