@@ -86,6 +86,7 @@ module "ecs" {
   kafka_public_ip                       = module.kafka.kafka_server_public_ip
   database_credentials_secret_name      = module.rds.database_credentials_secret_name
   analytics_ecr_repo_url                = module.ecr.furniture_analytics_ecr_repo_uri
+  anchor_tree_generator_ecr_repo_url    = module.ecr.anchor_tree_generator_ecr_repo_uri
 }
 
 module "github_actions" {
@@ -97,6 +98,7 @@ module "github_actions" {
   html_minimizer_repo_arn        = module.ecr.html_minimizer_ecr_repo_arn
   search_api_repo_arn            = module.ecr.furniture_search_api_ecr_repo_arn
   analytics_repo_arn             = module.ecr.furniture_analytics_ecr_repo_arn
+  anchor_tree_generator_repo_arn = module.ecr.anchor_tree_generator_ecr_repo_arn
 }
 
 module "rds" {

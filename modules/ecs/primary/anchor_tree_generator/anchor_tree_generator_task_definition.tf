@@ -1,15 +1,10 @@
 variable "ecr_repo_url" {
-  description = "ECR repository URL for the html minimizer container image"
+  description = "ECR repository URL for the anchor tree generator container image"
   type        = string
 }
 
 variable "image_tag" {
-  description = "Image tag for the html minimizer container"
-  type        = string
-}
-
-variable "minimized_html_s3_bucket_name" {
-  description = "Name of the S3 bucket for the html minimizer"
+  description = "Image tag for the anchor tree generator container"
   type        = string
 }
 
@@ -33,16 +28,11 @@ variable "rds_db_endpoint" {
   type        = string
 }
 
-variable "kafka_broker_urls" {
-  description = "Comma-separated list of Kafka broker URLs"
-  type        = string
-}
-
 data "aws_region" "current" {}
 
 locals {
   container = {
-    name      = "html_minimizer"
+    name      = "anchor_tree_generator"
     image     = "${var.ecr_repo_url}:${var.image_tag}"
     cpu       = 16384
     memory    = 32768
@@ -51,7 +41,7 @@ locals {
     logConfiguration = {
       logDriver = "awslogs"
       options = {
-        "awslogs-group"         = "/aws/ecs/html_minimizer"
+        "awslogs-group"         = "/aws/ecs/anchor_tree_generator"
         "awslogs-region"        = data.aws_region.current.region
         "awslogs-stream-prefix" = "ecs"
       }
@@ -61,16 +51,9 @@ locals {
       { name = "AWS_REGION", value = data.aws_region.current.region },
       { name = "PG_HOST", value = var.rds_db_endpoint },
       { name = "PG_PORT", value = "5432" },
-      { name = "MINIMIZED_HTML_S3_BUCKET", value = var.minimized_html_s3_bucket_name },
-      { name = "RAW_HTML_S3_BUCKET", value = var.raw_html_s3_bucket_name },
-      { name = "ANCHOR_TREE_S3_BUCKET", value = var.anchor_tree_s3_bucket_name },
-      { name = "ANCHOR_TREE_S3_KEY", value = "anchor_tree.pkl" },
-      { name = "ANCHOR_TREE_S3_PREFIX", value = "anchor_tree" },
-      { name = "MAX_WORKERS", value = "64" },
-      { name = "MINIMIZE_BATCH_LIMIT", value = "10000" },
+      { name = "CRAWLED_PAGES_BUCKET_NAME", value = var.raw_html_s3_bucket_name },
+      { name = "ANCHOR_TREE_BUCKET_NAME", value = var.anchor_tree_s3_bucket_name },
       { name = "LOG_LEVEL", value = "INFO" },
-      { name = "RUNNING_MODE", value = "ecs" },
-      { name = "KAFKA_BROKER_URLS", value = "${var.kafka_broker_urls}:9092" },
     ]
     secrets = [
       {
@@ -91,8 +74,8 @@ locals {
   container_definitions = [local.container]
 }
 
-resource "aws_ecs_task_definition" "html_minimizer_task_definition" {
-  family                   = "html_minimizer"
+resource "aws_ecs_task_definition" "anchor_tree_generator_task_definition" {
+  family                   = "anchor_tree_generator"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = 16384
@@ -104,17 +87,17 @@ resource "aws_ecs_task_definition" "html_minimizer_task_definition" {
   }
 
   execution_role_arn = var.task_execution_role_arn
-  task_role_arn      = aws_iam_role.html_minimizer_task_role.arn
+  task_role_arn      = aws_iam_role.anchor_tree_generator_task_role.arn
 
   container_definitions = jsonencode(local.container_definitions)
 
   tags = {
     Project = var.project
-    Name    = "html_minimizer_task_definition"
+    Name    = "anchor_tree_generator_task_definition"
   }
 }
 
-output "html_minimizer_task_definition_arn" {
-  value       = aws_ecs_task_definition.html_minimizer_task_definition.arn
-  description = "ARN of the ECS task definition for the HTML minimizer"
+output "anchor_tree_generator_task_definition_arn" {
+  value       = aws_ecs_task_definition.anchor_tree_generator_task_definition.arn
+  description = "ARN of the ECS task definition for the anchor tree generator"
 }
