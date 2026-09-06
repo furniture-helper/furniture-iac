@@ -23,6 +23,11 @@ variable "analytics_repo_arn" {
   type        = string
 }
 
+variable "anchor_tree_generator_repo_arn" {
+  description = "ECR repository ARN for the anchor tree generator"
+  type        = string
+}
+
 data "aws_iam_policy_document" "ecr_push" {
   statement {
     sid    = "GetAuthorization"
@@ -53,7 +58,8 @@ data "aws_iam_policy_document" "ecr_push" {
       var.crawler_queue_manager_repo_arn,
       var.html_minimizer_repo_arn,
       var.search_api_repo_arn,
-      var.analytics_repo_arn
+      var.analytics_repo_arn,
+      var.anchor_tree_generator_repo_arn
     ]
   }
 }

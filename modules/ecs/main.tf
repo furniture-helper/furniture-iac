@@ -167,6 +167,11 @@ variable "analytics_ecr_repo_url" {
   type        = string
 }
 
+variable "anchor_tree_generator_ecr_repo_url" {
+  description = "URL of the ECR repository for the anchor tree generator task"
+  type        = string
+}
+
 module "primary" {
   source = "./crawler_region"
 
@@ -186,6 +191,7 @@ module "primary" {
   rds_sg_id                       = var.rds_sg_id
   subnet_ids                      = var.primary_public_subnet_ids
   kafka_public_ip                 = var.kafka_public_ip
+  navigation_timeout_s            = 30
 }
 
 module "secondary" {
@@ -209,6 +215,7 @@ module "secondary" {
   subnet_ids                      = var.secondary_public_subnet_ids
   vpc_id                          = var.secondary_vpc_id
   kafka_public_ip                 = var.kafka_public_ip
+  navigation_timeout_s            = 60
 }
 
 module "tertiary" {
@@ -232,6 +239,7 @@ module "tertiary" {
   subnet_ids                      = var.tertiary_public_subnet_ids
   vpc_id                          = var.tertiary_vpc_id
   kafka_public_ip                 = var.kafka_public_ip
+  navigation_timeout_s            = 90
 }
 
 module "html_minimizer_task" {
@@ -251,6 +259,7 @@ module "html_minimizer_task" {
   furniture_cluster_arn           = module.primary.ecs_cluster_arn
   security_group_ids              = [module.primary.ecs_tasks_sg_id]
   subnet_ids                      = var.primary_public_subnet_ids
+  kafka_broker_urls               = var.kafka_public_ip
 }
 
 module "analytics_task" {
@@ -266,6 +275,23 @@ module "analytics_task" {
   subnet_ids                       = var.primary_public_subnet_ids
   database_credentials_secret_name = var.database_credentials_secret_name
   kafka_brokers                    = var.kafka_public_ip
+}
+
+module "anchor_tree_generator_task" {
+  source                          = "./primary/anchor_tree_generator"
+  anchor_tree_s3_bucket_arn       = var.anchor_tree_s3_bucket_arn
+  anchor_tree_s3_bucket_name      = var.anchor_tree_s3_bucket_name
+  database_credentials_secret_arn = var.database_credentials_secret_arn
+  ecr_repo_url                    = var.anchor_tree_generator_ecr_repo_url
+  image_tag                       = "latest"
+  project                         = var.project
+  raw_html_s3_bucket_arn          = var.crawler_s3_bucket_arn
+  raw_html_s3_bucket_name         = var.crawler_s3_bucket_name
+  rds_db_endpoint                 = var.rds_db_endpoint
+  task_execution_role_arn         = module.primary.task_execution_role_arn
+  furniture_cluster_arn           = module.primary.ecs_cluster_arn
+  security_group_ids              = [module.primary.ecs_tasks_sg_id]
+  subnet_ids                      = var.primary_public_subnet_ids
 }
 
 output "ecs_primary_tasks_sg_id" {

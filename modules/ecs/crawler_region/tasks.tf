@@ -1,3 +1,8 @@
+variable "navigation_timeout_s" {
+  description = "Timeout in seconds for navigation tasks"
+  type        = number
+}
+
 module "furniture_crawler_task" {
   source                          = "./furniture_crawler"
   project                         = var.project
@@ -17,4 +22,5 @@ module "furniture_crawler_task" {
   security_group_ids              = [aws_security_group.ecs_tasks_sg.id]
   subnet_ids                      = var.subnet_ids
   kafka_public_ip                 = var.kafka_public_ip
+  navigation_timeout_s            = var.navigation_timeout_s
 }

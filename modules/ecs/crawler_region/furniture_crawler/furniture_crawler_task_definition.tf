@@ -38,6 +38,11 @@ variable "kafka_public_ip" {
   type        = string
 }
 
+variable "navigation_timeout_s" {
+  description = "Timeout in seconds for navigation tasks"
+  type        = number
+}
+
 data "aws_region" "current" {}
 
 locals {
@@ -74,7 +79,8 @@ locals {
       { name = "REQUEST_HANDLER_TIMEOUT_S", value = "60" },
       { name = "KAFKA_BROKER", value = "${var.kafka_public_ip}:9092" },
       { name = "CRAWLER_EVENTS_TOPIC", value = "crawler-events" },
-      { name = "RUNNING_MODE", value = "ecs" }
+      { name = "RUNNING_MODE", value = "ecs" },
+      { name = "NAVIGATION_TIMEOUT_S", value = tostring(var.navigation_timeout_s) }
     ]
     secrets = [
       {
