@@ -4,7 +4,7 @@ variable "subnet_ids" {
 }
 
 variable "furniture_cluster_arn" {
-  description = "ARN of the ECS cluster where the html minimizer task will run"
+  description = "ARN of the ECS cluster where the page classifier task will run"
   type        = string
 }
 
@@ -14,7 +14,7 @@ variable "security_group_ids" {
 }
 
 resource "aws_iam_role" "events_invoke_ecs_role" {
-  name = "${var.project}-html-minimizer-events-invoke-ecs-${data.aws_region.current.region}"
+  name = "${var.project}-page-classifier-events-invoke-ecs-${data.aws_region.current.region}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -29,7 +29,7 @@ resource "aws_iam_role" "events_invoke_ecs_role" {
 
   tags = {
     Project = var.project
-    Name    = "${var.project}-html-minimizer-events-invoke-ecs-role-${data.aws_region.current.region}"
+    Name    = "${var.project}-page-classifier-events-invoke-ecs-role-${data.aws_region.current.region}"
   }
 }
 
@@ -46,7 +46,7 @@ resource "aws_iam_role_policy" "events_invoke_ecs_policy" {
           "ecs:RunTask"
         ]
         Resource = [
-          aws_ecs_task_definition.html_minimizer_task_definition.arn
+          aws_ecs_task_definition.page_classifier_task_definition.arn
         ]
         Condition = {
           StringEquals = {
@@ -62,7 +62,7 @@ resource "aws_iam_role_policy" "events_invoke_ecs_policy" {
         ]
         Resource = [
           var.task_execution_role_arn,
-          aws_iam_role.html_minimizer_task_role.arn
+          aws_iam_role.page_classifier_task_role.arn
         ]
       },
       {
@@ -79,26 +79,26 @@ resource "aws_iam_role_policy" "events_invoke_ecs_policy" {
   })
 }
 
-resource "aws_cloudwatch_event_rule" "html_minimizer" {
-  name                = "${var.project}-html-minimizer-event-rule"
-  description         = "Run HTML minimizer every 1 hour"
+resource "aws_cloudwatch_event_rule" "page_classifier_event_rule" {
+  name                = "${var.project}-page-classifier-event-rule"
+  description         = "Run page classifier every 1 hour"
   schedule_expression = "rate(1 hour)"
   tags = {
     Project = var.project
-    Name    = "${var.project}-html-minimizer-event-rule"
+    Name    = "${var.project}-page-classifier-event-rule"
   }
 
   state = "ENABLED"
 }
 
-resource "aws_cloudwatch_event_target" "html_minimizer_run" {
-  rule      = aws_cloudwatch_event_rule.html_minimizer.name
+resource "aws_cloudwatch_event_target" "page_classifier_ecs_target" {
+  rule      = aws_cloudwatch_event_rule.page_classifier_event_rule.name
   arn       = var.furniture_cluster_arn
   role_arn  = aws_iam_role.events_invoke_ecs_role.arn
-  target_id = "${var.project}-html-minimizer-ecs-target"
+  target_id = "${var.project}-page-classifier-ecs-target"
 
   ecs_target {
-    task_definition_arn = aws_ecs_task_definition.html_minimizer_task_definition.arn
+    task_definition_arn = aws_ecs_task_definition.page_classifier_task_definition.arn
     task_count          = 1
 
     capacity_provider_strategy {
@@ -109,11 +109,11 @@ resource "aws_cloudwatch_event_target" "html_minimizer_run" {
     network_configuration {
       subnets          = var.subnet_ids
       security_groups  = var.security_group_ids
-      assign_public_ip = true
+      assign_public_ip = false
     }
 
     tags = {
-      Name    = "${var.project}-html-minimizer-task-scheduled"
+      Name    = "${var.project}-page-classifier-task-scheduled"
       Project = var.project
     }
   }
