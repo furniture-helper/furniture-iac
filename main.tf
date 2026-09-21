@@ -87,6 +87,7 @@ module "ecs" {
   database_credentials_secret_name      = module.rds.database_credentials_secret_name
   analytics_ecr_repo_url                = module.ecr.furniture_analytics_ecr_repo_uri
   anchor_tree_generator_ecr_repo_url    = module.ecr.anchor_tree_generator_ecr_repo_uri
+  page_classifier_ecr_repo_url          = module.ecr.page_classifier_ecr_repo_uri
 }
 
 module "github_actions" {
@@ -99,6 +100,8 @@ module "github_actions" {
   search_api_repo_arn            = module.ecr.furniture_search_api_ecr_repo_arn
   analytics_repo_arn             = module.ecr.furniture_analytics_ecr_repo_arn
   anchor_tree_generator_repo_arn = module.ecr.anchor_tree_generator_ecr_repo_arn
+  page_classifier_repo_arn       = module.ecr.page_classifier_ecr_repo_arn
+  sagemaker_s3_bucket_arn        = module.sagemaker.sagemaker_storage_s3_bucket_arn
 }
 
 module "rds" {
