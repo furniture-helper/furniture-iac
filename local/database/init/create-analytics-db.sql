@@ -74,4 +74,30 @@ SET retention            = '90 days',
     retention_keep_table = false
 WHERE parent_table = 'analytics.success_minimizer_events';
 
+CREATE TABLE analytics.classification_event
+(
+    id             BIGSERIAL        NOT NULL,
+    event_ts       TIMESTAMPTZ      NOT NULL,
+    url            TEXT             NOT NULL,
+    domain         TEXT             NOT NULL,
+    classification TEXT             NOT NULL,
+    confidence     DOUBLE PRECISION NOT NULL,
+    PRIMARY KEY (id, event_ts)
+) PARTITION BY RANGE (event_ts);
+
+SELECT analytics.create_parent(
+               p_parent_table => 'analytics.classification_event',
+               p_control => 'event_ts',
+               p_interval => '1 day',
+               p_premake => 3
+       );
+
+UPDATE analytics.part_config
+SET retention            = '90 days',
+    retention_keep_table = false
+WHERE parent_table = 'analytics.classification_event';
+
 SELECT cron.schedule('@daily', $$SELECT analytics.run_maintenance_proc();$$);
+
+ALTER TABLE analytics.classification_event
+    ADD COLUMN source TEXT;

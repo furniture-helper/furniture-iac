@@ -13,14 +13,20 @@ data "aws_iam_policy_document" "s3_read_policy" {
     condition {
       test     = "StringLike"
       variable = "s3:prefix"
-      values   = ["model-artifacts/*"]
+      values = [
+        "model-artifacts/*",
+        "ie-model-artifacts/*"
+      ]
     }
   }
 
   statement {
-    sid       = "S3GetObject"
-    effect    = "Allow"
-    actions   = ["s3:GetObject"]
-    resources = ["${var.sagemaker_s3_bucket_arn}/model-artifacts/*"]
+    sid     = "S3GetObject"
+    effect  = "Allow"
+    actions = ["s3:GetObject"]
+    resources = [
+      "${var.sagemaker_s3_bucket_arn}/model-artifacts/*",
+      "${var.sagemaker_s3_bucket_arn}/ie-model-artifacts/*"
+    ]
   }
 }

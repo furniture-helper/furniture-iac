@@ -71,6 +71,7 @@ resource "aws_cloudwatch_event_rule" "page_classification_daily" {
   name                = "page-classification-pipeline-daily"
   description         = "Runs the page classification pipeline once per day"
   schedule_expression = var.page_classification_schedule_expression
+  state               = "DISABLED"
 
   tags = {
     Name    = "page-classification-pipeline-daily-schedule"

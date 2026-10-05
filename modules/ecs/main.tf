@@ -177,6 +177,11 @@ variable "page_classifier_ecr_repo_url" {
   type        = string
 }
 
+variable "information_extractor_ecr_repo_url" {
+  description = "URL of the ECR repository for the information extractor task"
+  type        = string
+}
+
 module "primary" {
   source = "./crawler_region"
 
@@ -300,20 +305,35 @@ module "anchor_tree_generator_task" {
 }
 
 module "page_classifier_task" {
-  source                           = "./primary/page_classifier"
-  database_credentials_secret_arn  = var.database_credentials_secret_arn
-  database_credentials_secret_name = var.database_credentials_secret_name
-  ecr_repo_url                     = var.page_classifier_ecr_repo_url
-  image_tag                        = "latest"
-  kafka_brokers                    = var.kafka_public_ip
-  minimized_pages_bucket_name      = var.html_minimizer_s3_bucket_name
-  minimized_html_s3_bucket_arn     = var.html_minimizer_s3_bucket_arn
-  project                          = var.project
-  rds_db_endpoint                  = var.rds_db_endpoint
-  task_execution_role_arn          = module.primary.task_execution_role_arn
-  furniture_cluster_arn            = module.primary.ecs_cluster_arn
-  security_group_ids               = [module.primary.ecs_tasks_sg_id]
-  subnet_ids                       = var.primary_public_subnet_ids
+  source                          = "./primary/page_classifier"
+  database_credentials_secret_arn = var.database_credentials_secret_arn
+  ecr_repo_url                    = var.page_classifier_ecr_repo_url
+  image_tag                       = "latest"
+  kafka_broker_urls               = var.kafka_public_ip
+  minimized_pages_bucket_name     = var.html_minimizer_s3_bucket_name
+  minimized_html_s3_bucket_arn    = var.html_minimizer_s3_bucket_arn
+  project                         = var.project
+  rds_db_endpoint                 = var.rds_db_endpoint
+  task_execution_role_arn         = module.primary.task_execution_role_arn
+  furniture_cluster_arn           = module.primary.ecs_cluster_arn
+  security_group_ids              = [module.primary.ecs_tasks_sg_id]
+  subnet_ids                      = var.primary_public_subnet_ids
+}
+
+module "information_extractor_task" {
+  source                          = "./primary/information_extractor"
+  database_credentials_secret_arn = var.database_credentials_secret_arn
+  ecr_repo_url                    = var.information_extractor_ecr_repo_url
+  image_tag                       = "latest"
+  kafka_broker_urls               = var.kafka_public_ip
+  minimized_pages_bucket_name     = var.html_minimizer_s3_bucket_name
+  minimized_html_s3_bucket_arn    = var.html_minimizer_s3_bucket_arn
+  project                         = var.project
+  rds_db_endpoint                 = var.rds_db_endpoint
+  task_execution_role_arn         = module.primary.task_execution_role_arn
+  furniture_cluster_arn           = module.primary.ecs_cluster_arn
+  security_group_ids              = [module.primary.ecs_tasks_sg_id]
+  subnet_ids                      = var.primary_public_subnet_ids
 }
 
 output "ecs_primary_tasks_sg_id" {

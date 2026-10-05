@@ -9,12 +9,12 @@ variable "database_credentials_secret_arn" {
 }
 
 variable "ecr_repo_url" {
-  description = "ECR repository URL for the page classifier container image"
+  description = "ECR repository URL for the information extractor container image"
   type        = string
 }
 
 variable "image_tag" {
-  description = "Image tag for the page classifier container"
+  description = "Image tag for the information extractor container"
   type        = string
 }
 
@@ -42,7 +42,7 @@ data "aws_region" "current" {}
 
 locals {
   container = {
-    name      = "page_classifier"
+    name      = "information_extractor"
     image     = "${var.ecr_repo_url}:${var.image_tag}"
     cpu       = 4096
     memory    = 8192
@@ -51,7 +51,7 @@ locals {
     logConfiguration = {
       logDriver = "awslogs"
       options = {
-        "awslogs-group"         = "/aws/ecs/page_classifier"
+        "awslogs-group"         = "/aws/ecs/information_extractor"
         "awslogs-region"        = data.aws_region.current.region
         "awslogs-stream-prefix" = "ecs"
       }
@@ -61,9 +61,10 @@ locals {
       { name = "AWS_REGION", value = data.aws_region.current.region },
       { name = "PG_HOST", value = var.rds_db_endpoint },
       { name = "PG_PORT", value = "5432" },
-      { name = "PAGE_RETRIEVAL_COUNT", value = "500" },
       { name = "MINIMIZED_PAGES_BUCKET_NAME", value = var.minimized_pages_bucket_name },
       { name = "KAFKA_BROKER_URLS", value = "${var.kafka_broker_urls}:9092" },
+      { name = "KAFKA_BROKER_URLS", value = "${var.kafka_broker_urls}:9092" },
+      { name = "PAGE_RETRIEVAL_COUNT", value = "500" },
     ]
 
     secrets = [
@@ -85,8 +86,8 @@ locals {
   container_definitions = [local.container]
 }
 
-resource "aws_ecs_task_definition" "page_classifier_task_definition" {
-  family                   = "page_classifier"
+resource "aws_ecs_task_definition" "information_extractor_task_definition" {
+  family                   = "information_extractor"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = 4096
@@ -98,17 +99,17 @@ resource "aws_ecs_task_definition" "page_classifier_task_definition" {
   }
 
   execution_role_arn = var.task_execution_role_arn
-  task_role_arn      = aws_iam_role.page_classifier_task_role.arn
+  task_role_arn      = aws_iam_role.information_extractor_task_role.arn
 
   container_definitions = jsonencode(local.container_definitions)
 
   tags = {
     Project = var.project
-    Name    = "page_classifier-task-definition"
+    Name    = "information_extractor-task-definition"
   }
 }
 
-output "page_classifier_task_definition_arn" {
-  value       = aws_ecs_task_definition.page_classifier_task_definition.arn
-  description = "ARN of the ECS task definition for the page classifier container"
+output "information_extractor_task_definition_arn" {
+  value       = aws_ecs_task_definition.information_extractor_task_definition.arn
+  description = "ARN of the ECS task definition for the information extractor container"
 }

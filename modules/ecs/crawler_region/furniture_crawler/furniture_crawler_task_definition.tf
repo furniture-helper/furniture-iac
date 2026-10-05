@@ -79,6 +79,8 @@ locals {
       { name = "REQUEST_HANDLER_TIMEOUT_S", value = "60" },
       { name = "KAFKA_BROKER", value = "${var.kafka_public_ip}:9092" },
       { name = "CRAWLER_EVENTS_TOPIC", value = "crawler-events" },
+      { name = "CLASSIFICATION_EVENTS_TOPIC", value = "classification-events" },
+      { name = "EXTRACTION_EVENTS_TOPIC", value = "extraction-events" },
       { name = "RUNNING_MODE", value = "ecs" },
       { name = "NAVIGATION_TIMEOUT_S", value = tostring(var.navigation_timeout_s) }
     ]
