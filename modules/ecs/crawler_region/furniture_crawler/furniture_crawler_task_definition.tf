@@ -48,7 +48,7 @@ data "aws_region" "current" {}
 locals {
   container = {
     name      = "furniture-crawler"
-    image     = "${var.ecr_repo_urls[data.aws_region.current.name]}:${var.image_tag}"
+    image     = "${var.ecr_repo_urls[data.aws_region.current.region]}:${var.image_tag}"
     cpu       = 512
     memory    = 4096
     essential = true

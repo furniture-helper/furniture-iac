@@ -57,12 +57,12 @@ resource "aws_iam_role_policy" "kafka_ebs_attach" {
         Resource = [
           aws_ebs_volume.kafka_data.arn,
           aws_eip.kafka_server.arn,
-          "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:instance/*",
-          "arn:aws:ec2:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:network-interface/*"
+          "arn:aws:ec2:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:instance/*",
+          "arn:aws:ec2:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:network-interface/*"
         ]
         Condition = {
           StringEquals = {
-            "aws:RequestedRegion" = data.aws_region.current.name
+            "aws:RequestedRegion" = data.aws_region.current.region
           }
         }
       },

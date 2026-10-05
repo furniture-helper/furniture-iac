@@ -41,7 +41,7 @@ output "furniture_crawler_ecr_repo_arn" {
 }
 
 locals {
-  all_repo_regions = setunion([data.aws_region.current.name], var.replication_regions)
+  all_repo_regions = setunion([data.aws_region.current.region], var.replication_regions)
 }
 
 output "furniture_crawler_ecr_regional_uris" {
