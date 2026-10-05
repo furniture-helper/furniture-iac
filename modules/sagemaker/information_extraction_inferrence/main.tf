@@ -73,6 +73,7 @@ resource "aws_cloudwatch_event_rule" "information_extraction_daily" {
   name                = "information-extraction-inference-pipeline-daily"
   description         = "Runs the information extraction inference pipeline once per day"
   schedule_expression = var.information_extraction_schedule_expression
+  state               = "DISABLED"
 
   tags = {
     Name    = "information-extraction-inference-pipeline-daily-schedule"
