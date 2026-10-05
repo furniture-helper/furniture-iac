@@ -33,6 +33,11 @@ variable "page_classifier_repo_arn" {
   type        = string
 }
 
+variable "information_extractor_repo_arn" {
+  description = "ECR repository ARN for the information extractor"
+  type        = string
+}
+
 data "aws_iam_policy_document" "ecr_push" {
   statement {
     sid    = "GetAuthorization"
@@ -65,7 +70,8 @@ data "aws_iam_policy_document" "ecr_push" {
       var.search_api_repo_arn,
       var.analytics_repo_arn,
       var.anchor_tree_generator_repo_arn,
-      var.page_classifier_repo_arn
+      var.page_classifier_repo_arn,
+      var.information_extractor_repo_arn
     ]
   }
 }

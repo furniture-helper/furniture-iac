@@ -48,7 +48,7 @@ data "aws_region" "current" {}
 locals {
   container = {
     name      = "furniture-crawler"
-    image     = "${var.ecr_repo_urls[data.aws_region.current.name]}:${var.image_tag}"
+    image     = "${var.ecr_repo_urls[data.aws_region.current.region]}:${var.image_tag}"
     cpu       = 512
     memory    = 4096
     essential = true
@@ -79,6 +79,8 @@ locals {
       { name = "REQUEST_HANDLER_TIMEOUT_S", value = "60" },
       { name = "KAFKA_BROKER", value = "${var.kafka_public_ip}:9092" },
       { name = "CRAWLER_EVENTS_TOPIC", value = "crawler-events" },
+      { name = "CLASSIFICATION_EVENTS_TOPIC", value = "classification-events" },
+      { name = "EXTRACTION_EVENTS_TOPIC", value = "extraction-events" },
       { name = "RUNNING_MODE", value = "ecs" },
       { name = "NAVIGATION_TIMEOUT_S", value = tostring(var.navigation_timeout_s) }
     ]
