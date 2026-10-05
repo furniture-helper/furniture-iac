@@ -1,5 +1,3 @@
-data "aws_caller_identity" "current" {}
-
 variable "subnet_ids" {
   description = "Subnet IDs where the ECS tasks will run"
   type        = list(string)
