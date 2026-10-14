@@ -13,8 +13,10 @@ variable "rds_endpoint" {
 }
 
 variable "db_iam_auth_token" {
-  description = "The IAM authentication token for the PostgreSQL database"
+  description = "Optional IAM authentication token for the PostgreSQL database. Generate it at runtime when needed for DB access."
   type        = string
+  default     = null
+  nullable    = true
 }
 
 variable "database_credentials_secret_name" {

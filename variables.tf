@@ -82,6 +82,8 @@ variable "tertiary_crawler_schedule_expression" {
 }
 
 variable "db_iam_auth_token" {
-  description = "The IAM authentication token for the PostgreSQL database"
+  description = "Optional IAM authentication token for the PostgreSQL database. Generate it at runtime when needed for DB access."
   type        = string
+  default     = null
+  nullable    = true
 }

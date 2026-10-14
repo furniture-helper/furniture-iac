@@ -41,6 +41,10 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Generate RDS IAM auth token
+        run: |
+          echo "TF_VAR_db_iam_auth_token=$(aws rds generate-db-auth-token --hostname furniture-db-instance-v2.cvu6woqssau2.eu-west-1.rds.amazonaws.com --port 5432 --region eu-west-1 --username terraform_user)" >> "$GITHUB_ENV"
+
       - name: Terraform Plan
         id: plan
         run: terraform plan -no-color -out=tfplan
@@ -109,6 +113,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: tfplan
+
+      - name: Generate RDS IAM auth token
+        run: |
+          echo "TF_VAR_db_iam_auth_token=$(aws rds generate-db-auth-token --hostname furniture-db-instance-v2.cvu6woqssau2.eu-west-1.rds.amazonaws.com --port 5432 --region eu-west-1 --username terraform_user)" >> "$GITHUB_ENV"
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
