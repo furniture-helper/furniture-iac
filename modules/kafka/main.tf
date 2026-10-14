@@ -2,10 +2,14 @@ variable "project" {
   type = string
 }
 
-variable "database_credentials_secret_arn" {
+variable "rds_db_endpoint" {
   type = string
 }
 
-variable "rds_db_endpoint" {
+variable "metabase_user" {
+  type = string
+}
+
+variable "metabase_user_db_credentials_secret_arn" {
   type = string
 }

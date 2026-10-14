@@ -136,3 +136,7 @@ output "db_endpoint_v2" {
 output "db_instance_id_v2" {
   value = aws_db_instance.db_instance_v2.id
 }
+
+output "db_resource_id_v2" {
+  value = aws_db_instance.db_instance_v2.resource_id
+}

@@ -80,3 +80,8 @@ variable "tertiary_crawler_schedule_expression" {
   type        = string
   default     = "rate(12 hours)"
 }
+
+variable "db_iam_auth_token" {
+  description = "The IAM authentication token for the PostgreSQL database"
+  type        = string
+}

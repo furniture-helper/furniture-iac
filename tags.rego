@@ -38,6 +38,9 @@ ignored_resources := {
     "aws_apigatewayv2_api_mapping",
     "aws_ecr_replication_configuration",
     "aws_autoscaling_group",
+    "aws_secretsmanager_secret_version",
+    "postgresql_grant",
+    "postgresql_role",
 }
 
 deny contains msg if {

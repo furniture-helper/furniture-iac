@@ -69,14 +69,6 @@ resource "aws_iam_role_policy" "kafka_ebs_attach" {
       {
         Effect = "Allow"
         Action = [
-          "secretsmanager:GetSecretValue",
-          "secretsmanager:DescribeSecret"
-        ]
-        Resource = var.database_credentials_secret_arn
-      },
-      {
-        Effect = "Allow"
-        Action = [
           "route53:ListHostedZones",
           "route53:ListHostedZonesByName"
         ]
@@ -96,6 +88,13 @@ resource "aws_iam_role_policy" "kafka_ebs_attach" {
           "route53:GetChange"
         ]
         Resource = "arn:aws:route53:::change/*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = var.metabase_user_db_credentials_secret_arn
       }
     ]
   })

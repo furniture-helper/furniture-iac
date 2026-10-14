@@ -101,3 +101,28 @@ SELECT cron.schedule('@daily', $$SELECT analytics.run_maintenance_proc();$$);
 
 ALTER TABLE analytics.classification_event
     ADD COLUMN source TEXT;
+
+CREATE TABLE analytics.extraction_events
+(
+    id       BIGSERIAL   NOT NULL,
+    event_ts TIMESTAMPTZ NOT NULL,
+    url      TEXT        NOT NULL,
+    domain   TEXT        NOT NULL,
+    source   TEXT        NOT NULL,
+    PRIMARY KEY (id, event_ts)
+) PARTITION BY RANGE (event_ts);
+
+DELETE FROM analytics.part_config
+WHERE parent_table = 'analytics.extraction_events';
+
+SELECT analytics.create_parent(
+               p_parent_table => 'analytics.extraction_events',
+               p_control => 'event_ts',
+               p_interval => '1 day',
+               p_premake => 3
+       );
+
+UPDATE analytics.part_config
+SET retention            = '90 days',
+    retention_keep_table = false
+WHERE parent_table = 'analytics.extraction_events';

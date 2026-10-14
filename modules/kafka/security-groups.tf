@@ -29,6 +29,76 @@ resource "aws_vpc_security_group_egress_rule" "kafka_ssm" {
   }
 }
 
+resource "aws_vpc_security_group_egress_rule" "kafka_ssm_ipv6" {
+  security_group_id = aws_security_group.kafka_sg.id
+  from_port         = 443
+  to_port           = 443
+  ip_protocol       = "tcp"
+  cidr_ipv6         = "::/0"
+  description       = "Allow HTTPS for SSM over IPv6"
+
+  tags = {
+    Name    = "${var.project}-kafka-allow-ssm-egress-ipv6"
+    Project = var.project
+  }
+}
+
+resource "aws_vpc_security_group_egress_rule" "kafka_dns_udp" {
+  security_group_id = aws_security_group.kafka_sg.id
+  from_port         = 53
+  to_port           = 53
+  ip_protocol       = "udp"
+  cidr_ipv4         = "0.0.0.0/0"
+  description       = "Allow DNS UDP traffic for endpoint resolution"
+
+  tags = {
+    Name    = "${var.project}-kafka-allow-dns-udp-egress"
+    Project = var.project
+  }
+}
+
+resource "aws_vpc_security_group_egress_rule" "kafka_dns_udp_ipv6" {
+  security_group_id = aws_security_group.kafka_sg.id
+  from_port         = 53
+  to_port           = 53
+  ip_protocol       = "udp"
+  cidr_ipv6         = "::/0"
+  description       = "Allow DNS UDP traffic for endpoint resolution over IPv6"
+
+  tags = {
+    Name    = "${var.project}-kafka-allow-dns-udp-egress-ipv6"
+    Project = var.project
+  }
+}
+
+resource "aws_vpc_security_group_egress_rule" "kafka_dns_tcp" {
+  security_group_id = aws_security_group.kafka_sg.id
+  from_port         = 53
+  to_port           = 53
+  ip_protocol       = "tcp"
+  cidr_ipv4         = "0.0.0.0/0"
+  description       = "Allow DNS TCP traffic for endpoint resolution"
+
+  tags = {
+    Name    = "${var.project}-kafka-allow-dns-tcp-egress"
+    Project = var.project
+  }
+}
+
+resource "aws_vpc_security_group_egress_rule" "kafka_dns_tcp_ipv6" {
+  security_group_id = aws_security_group.kafka_sg.id
+  from_port         = 53
+  to_port           = 53
+  ip_protocol       = "tcp"
+  cidr_ipv6         = "::/0"
+  description       = "Allow DNS TCP traffic for endpoint resolution over IPv6"
+
+  tags = {
+    Name    = "${var.project}-kafka-allow-dns-tcp-egress-ipv6"
+    Project = var.project
+  }
+}
+
 resource "aws_vpc_security_group_egress_rule" "temp_allow_5432" {
   security_group_id = aws_security_group.kafka_sg.id
   from_port         = 5432
