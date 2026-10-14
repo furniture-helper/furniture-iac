@@ -18,6 +18,3 @@ GRANT furniture TO terraform_user;
 
 GRANT CONNECT ON DATABASE metabase TO terraform_user;
 GRANT USAGE ON SCHEMA public TO terraform_user;
-
-SELECT pg_rules.tablename, pg_rules.schemaname, pg_rules.ruleowner, pg_rules.rulename, pg_rules.definition
-FROM pg_rules

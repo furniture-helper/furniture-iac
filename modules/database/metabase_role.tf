@@ -86,7 +86,6 @@ output "metabase_user" {
   value = postgresql_role.metabase_user.name
 }
 
-output "metabase_user_password" {
-  value     = random_password.metabase_user_password.result
-  sensitive = true
+output "metabase_user_db_credentials_secret_arn" {
+  value = aws_secretsmanager_secret.metabase_user_db_credentials.arn
 }

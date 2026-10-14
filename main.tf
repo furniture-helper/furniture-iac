@@ -172,13 +172,13 @@ module "api_gateway" {
 }
 
 module "kafka" {
-  source                 = "./modules/kafka"
-  project                = var.project
-  vpc_id                 = module.vpc.primary_vpc_id
-  subnet_id              = module.vpc.primary_public_subnet_ids[0]
-  rds_db_endpoint        = module.rds.db_endpoint_v2
-  metabase_user          = module.database.metabase_user
-  metabase_user_password = module.database.metabase_user_password
+  source                                  = "./modules/kafka"
+  project                                 = var.project
+  vpc_id                                  = module.vpc.primary_vpc_id
+  subnet_id                               = module.vpc.primary_public_subnet_ids[0]
+  rds_db_endpoint                         = module.rds.db_endpoint_v2
+  metabase_user                           = module.database.metabase_user
+  metabase_user_db_credentials_secret_arn = module.database.metabase_user_db_credentials_secret_arn
 }
 
 module "database" {

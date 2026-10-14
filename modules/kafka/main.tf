@@ -10,6 +10,6 @@ variable "metabase_user" {
   type = string
 }
 
-variable "metabase_user_password" {
+variable "metabase_user_db_credentials_secret_arn" {
   type = string
 }

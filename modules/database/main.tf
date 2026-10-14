@@ -34,9 +34,6 @@ locals {
   db_credentials = jsondecode(data.aws_secretsmanager_secret_version.db_credentials_version.secret_string)
 }
 
-
-data "aws_caller_identity" "current" {}
-
 provider "postgresql" {
   scheme   = "awspostgres"
   host     = var.rds_endpoint

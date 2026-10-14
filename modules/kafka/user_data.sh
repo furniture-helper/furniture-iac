@@ -283,12 +283,29 @@ fi
 MB_DB_USER="${metabase_user}"
 echo "Metabase DB User: $MB_DB_USER"
 
-MB_DB_PASS="${metabase_user_password}"
+MB_DB_SECRET_ARN="${metabase_user_db_credentials_secret_arn}"
+if [ -z "$MB_DB_SECRET_ARN" ]; then
+  echo "Error: Metabase credentials secret ARN was not provided"
+  exit 1
+fi
+
+MB_DB_SECRET_STRING=$(aws secretsmanager get-secret-value \
+  --region "$REGION" \
+  --secret-id "$MB_DB_SECRET_ARN" \
+  --query "SecretString" \
+  --output text)
+
+if [ -z "$MB_DB_SECRET_STRING" ] || [ "$MB_DB_SECRET_STRING" = "None" ]; then
+  echo "Error: unable to read Metabase credentials secret"
+  exit 1
+fi
+
+MB_DB_PASS=$(jq -r '.password // empty' <<< "$MB_DB_SECRET_STRING")
 
 MB_DB_DBNAME="metabase"
 
 if [ -z "$MB_DB_USER" ] || [ -z "$MB_DB_PASS" ] || [ -z "$MB_DB_DBNAME" ]; then
-  echo "Error: database credentials secret is missing username/password/database_name"
+  echo "Error: Metabase credentials are missing username/password/database_name"
   exit 1
 fi
 
