@@ -186,6 +186,7 @@ module "database" {
   rds_endpoint                     = module.rds.db_endpoint_v2
   db_iam_auth_token                = var.db_iam_auth_token
   database_credentials_secret_name = module.rds.database_credentials_secret_name
+  project                          = var.project
 }
 
 output "db_endpoint_v2" {

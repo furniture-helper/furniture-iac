@@ -1,3 +1,8 @@
+variable "project" {
+  description = "The name of the project"
+  type        = string
+}
+
 resource "random_password" "metabase_user_password" {
   length           = 32
   special          = true
@@ -8,6 +13,11 @@ resource "aws_secretsmanager_secret" "metabase_user_db_credentials" {
   # checkov:skip=CKV_AWS_149: "KMS key is not specified, using default AWS managed key for Secrets Manager"
   # checkov:skip=CKV2_AWS_57: "Automatic rotation is not required for this secret"
   name = "metabase_user_db_credentials"
+
+  tags = {
+    Project = var.project
+    Name    = "metabase_user_db_credentials"
+  }
 }
 
 resource "aws_secretsmanager_secret_version" "metabase_user_db_credentials" {
