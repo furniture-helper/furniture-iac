@@ -172,12 +172,20 @@ module "api_gateway" {
 }
 
 module "kafka" {
-  source                          = "./modules/kafka"
-  project                         = var.project
-  vpc_id                          = module.vpc.primary_vpc_id
-  subnet_id                       = module.vpc.primary_public_subnet_ids[0]
-  database_credentials_secret_arn = module.rds.database_credentials_secret_arn
-  rds_db_endpoint                 = module.rds.db_endpoint_v2
+  source                 = "./modules/kafka"
+  project                = var.project
+  vpc_id                 = module.vpc.primary_vpc_id
+  subnet_id              = module.vpc.primary_public_subnet_ids[0]
+  rds_db_endpoint        = module.rds.db_endpoint_v2
+  metabase_user          = module.database.metabase_user
+  metabase_user_password = module.database.metabase_user_password
+}
+
+module "database" {
+  source                           = "./modules/database"
+  rds_endpoint                     = module.rds.db_endpoint_v2
+  db_iam_auth_token                = var.db_iam_auth_token
+  database_credentials_secret_name = module.rds.database_credentials_secret_name
 }
 
 output "db_endpoint_v2" {
@@ -188,6 +196,11 @@ output "db_endpoint_v2" {
 output "furniture_kaneel_xyz_nameservers" {
   description = "Nameservers for furniture.kaneel.xyz (copy these to Namecheap Custom DNS)"
   value       = module.r53.namecheap_nameservers
+}
+
+output "rds_token_generation_command" {
+  description = "Example command to generate an auth token for RDS"
+  value       = module.rds.token_generation_command
 }
 
 output "search_api_endpoint" {

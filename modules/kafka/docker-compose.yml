@@ -23,6 +23,8 @@ services:
       MB_DB_USER: ${MB_DB_USER}
       MB_DB_PASS: ${MB_DB_PASS}
       MB_DB_HOST: ${MB_DB_HOST}
+      MB_DB_SSL: true
+      MB_DB_SSLMODE: require
     healthcheck:
       test: curl --fail -I http://localhost:3000/api/health || exit 1
       interval: 15s

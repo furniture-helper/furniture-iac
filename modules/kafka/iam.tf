@@ -69,14 +69,6 @@ resource "aws_iam_role_policy" "kafka_ebs_attach" {
       {
         Effect = "Allow"
         Action = [
-          "secretsmanager:GetSecretValue",
-          "secretsmanager:DescribeSecret"
-        ]
-        Resource = var.database_credentials_secret_arn
-      },
-      {
-        Effect = "Allow"
-        Action = [
           "route53:ListHostedZones",
           "route53:ListHostedZonesByName"
         ]

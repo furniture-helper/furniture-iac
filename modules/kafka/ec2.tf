@@ -25,13 +25,25 @@ resource "aws_launch_template" "kafka_server" {
   image_id      = data.aws_ami.amazon_linux_2023_arm64.id
   instance_type = "t4g.medium"
   user_data = base64encode(templatefile("${path.module}/user_data.sh", {
-    docker_compose_content          = file("${path.module}/docker-compose.yml")
-    database_credentials_secret_arn = var.database_credentials_secret_arn
-    rds_db_endpoint                 = var.rds_db_endpoint
+    docker_compose_content = file("${path.module}/docker-compose.yml")
+    rds_db_endpoint        = var.rds_db_endpoint
+    metabase_user          = var.metabase_user
+    metabase_user_password = var.metabase_user_password
   }))
 
   iam_instance_profile {
     name = aws_iam_instance_profile.kafka_profile.name
+  }
+
+  block_device_mappings {
+    device_name = "/dev/xvda"
+
+    ebs {
+      volume_size           = 32
+      volume_type           = "gp3"
+      delete_on_termination = true
+      encrypted             = true
+    }
   }
 
   network_interfaces {

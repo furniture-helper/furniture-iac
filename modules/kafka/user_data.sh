@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+# Ensure SSM agent is present and running before the rest of bootstrap.
+if ! rpm -q amazon-ssm-agent >/dev/null 2>&1; then
+  dnf install -y amazon-ssm-agent
+fi
+systemctl enable --now amazon-ssm-agent
+
 TOKEN=$(curl -sX PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
 INSTANCE_ID=$(curl -sH "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id)
 AVAILABILITY_ZONE=$(curl -sH "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/availability-zone)
@@ -52,6 +58,10 @@ if ! dnf install -y certbot python3-certbot-dns-route53; then
   dnf install -y python3-pip
   pip3 install certbot certbot-dns-route53
 fi
+
+# Keep root volume pressure low during long bootstrap runs.
+dnf clean all
+rm -rf /var/cache/dnf
 
 # Attach and mount persistent EBS volume
 VOLUME_ID=$(aws ec2 describe-volumes \
@@ -270,20 +280,12 @@ if ! docker compose version >/dev/null 2>&1; then
   fi
 fi
 
-DB_SECRET_JSON=$(aws secretsmanager get-secret-value \
-  --region "$REGION" \
-  --secret-id "${database_credentials_secret_arn}" \
-  --query "SecretString" \
-  --output text)
+MB_DB_USER="${metabase_user}"
+echo "Metabase DB User: $MB_DB_USER"
 
-if [ -z "$DB_SECRET_JSON" ] || [ "$DB_SECRET_JSON" = "None" ]; then
-  echo "Error: unable to fetch database credentials secret"
-  exit 1
-fi
+MB_DB_PASS="${metabase_user_password}"
 
-MB_DB_USER=$(echo "$DB_SECRET_JSON" | jq -r '.username // empty')
-MB_DB_PASS=$(echo "$DB_SECRET_JSON" | jq -r '.password // empty')
-MB_DB_DBNAME=$(echo "$DB_SECRET_JSON" | jq -r '.database_name // empty')
+MB_DB_DBNAME="metabase"
 
 if [ -z "$MB_DB_USER" ] || [ -z "$MB_DB_PASS" ] || [ -z "$MB_DB_DBNAME" ]; then
   echo "Error: database credentials secret is missing username/password/database_name"
