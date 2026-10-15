@@ -87,8 +87,18 @@ variable "database_credentials_secret_arn" {
   type        = string
 }
 
+variable "crawler_db_username" {
+  description = "Database username used by crawler workloads"
+  type        = string
+}
+
 variable "rds_db_endpoint" {
   description = "Endpoint of the RDS database"
+  type        = string
+}
+
+variable "rds_db_resource_id" {
+  description = "Resource ID of the RDS DB instance for IAM auth"
   type        = string
 }
 
@@ -182,6 +192,11 @@ variable "information_extractor_ecr_repo_url" {
   type        = string
 }
 
+variable "furniture_db_name" {
+  description = "Name of the furniture database"
+  type        = string
+}
+
 module "primary" {
   source = "./crawler_region"
 
@@ -194,14 +209,17 @@ module "primary" {
   database_credentials_secret_arn = var.database_credentials_secret_arn
   rds_db_endpoint                 = var.rds_db_endpoint
   shared_services_region          = var.shared_services_region
+  crawler_db_username             = var.crawler_db_username
   crawler_sqs_queue_url           = var.crawler_sqs_queue_url
   crawler_sqs_queue_arn           = var.crawler_sqs_queue_arn
   crawler_schedule_expression     = var.primary_crawler_schedule_expression
   crawler_ecr_repo_urls           = var.crawler_ecr_repo_urls
   rds_sg_id                       = var.rds_sg_id
+  rds_db_resource_id              = var.rds_db_resource_id
   subnet_ids                      = var.primary_public_subnet_ids
   kafka_public_ip                 = var.kafka_public_ip
   navigation_timeout_s            = 30
+  furniture_db_name               = var.furniture_db_name
 }
 
 module "secondary" {
@@ -221,11 +239,14 @@ module "secondary" {
   database_credentials_secret_arn = var.database_credentials_secret_arn
   rds_db_endpoint                 = var.rds_db_endpoint
   shared_services_region          = var.shared_services_region
+  crawler_db_username             = var.crawler_db_username
+  rds_db_resource_id              = var.rds_db_resource_id
   crawler_schedule_expression     = var.secondary_crawler_schedule_expression
   subnet_ids                      = var.secondary_public_subnet_ids
   vpc_id                          = var.secondary_vpc_id
   kafka_public_ip                 = var.kafka_public_ip
   navigation_timeout_s            = 60
+  furniture_db_name               = var.furniture_db_name
 }
 
 module "tertiary" {
@@ -245,11 +266,14 @@ module "tertiary" {
   database_credentials_secret_arn = var.database_credentials_secret_arn
   rds_db_endpoint                 = var.rds_db_endpoint
   shared_services_region          = var.shared_services_region
+  crawler_db_username             = var.crawler_db_username
+  rds_db_resource_id              = var.rds_db_resource_id
   crawler_schedule_expression     = var.tertiary_crawler_schedule_expression
   subnet_ids                      = var.tertiary_public_subnet_ids
   vpc_id                          = var.tertiary_vpc_id
   kafka_public_ip                 = var.kafka_public_ip
   navigation_timeout_s            = 90
+  furniture_db_name               = var.furniture_db_name
 }
 
 module "html_minimizer_task" {

@@ -1,8 +1,3 @@
-variable "project" {
-  description = "The name of the project"
-  type        = string
-}
-
 resource "random_password" "metabase_user_password" {
   length           = 32
   special          = true
@@ -46,7 +41,7 @@ resource "postgresql_grant" "metabase_user_metabase_db_connect" {
   database    = "metabase"
   role        = postgresql_role.metabase_user.name
   object_type = "database"
-  privileges  = ["CONNECT", "CREATE"]
+  privileges  = ["CONNECT"]
 }
 
 resource "postgresql_grant" "metabase_user_schema_usage" {
@@ -75,7 +70,7 @@ resource "postgresql_grant" "metabase_user_analytics_select" {
   privileges  = ["SELECT"]
 }
 
-resource "postgresql_grant" "metabase_user_public" {
+resource "postgresql_grant" "metabase_user_public_select" {
   database    = local.db_credentials.database_name
   role        = postgresql_role.metabase_user.name
   schema      = "public"
@@ -83,7 +78,7 @@ resource "postgresql_grant" "metabase_user_public" {
   privileges  = ["SELECT"]
 }
 
-resource "postgresql_grant" "metabase_user_metabase_db_public" {
+resource "postgresql_grant" "metabase_user_metabase_db_public_table" {
   provider    = postgresql.metabase
   database    = "metabase"
   role        = postgresql_role.metabase_user.name
