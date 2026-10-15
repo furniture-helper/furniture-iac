@@ -23,6 +23,11 @@ variable "rds_db_endpoint" {
   type        = string
 }
 
+variable "furniture_db_name" {
+  description = "Name of the furniture database"
+  type        = string
+}
+
 variable "shared_services_region" {
   description = "Region where shared dependencies like SQS, S3, and Secrets live"
   type        = string
@@ -68,6 +73,7 @@ locals {
       { name = "PAGE_STORAGE", value = "AWSStorage" },
       { name = "PG_HOST", value = var.rds_db_endpoint },
       { name = "PG_PORT", value = "5432" },
+      { name = "PG_DATABASE", value = var.furniture_db_name },
       { name = "MAX_CONCURRENCY", value = "3" },
       { name = "MAX_REQUESTS_PER_MINUTE", value = "25" },
       { name = "MAX_REQUESTS_PER_CRAWL", value = "300" },
@@ -82,21 +88,8 @@ locals {
       { name = "CLASSIFICATION_EVENTS_TOPIC", value = "classification-events" },
       { name = "EXTRACTION_EVENTS_TOPIC", value = "extraction-events" },
       { name = "RUNNING_MODE", value = "ecs" },
-      { name = "NAVIGATION_TIMEOUT_S", value = tostring(var.navigation_timeout_s) }
-    ]
-    secrets = [
-      {
-        name      = "PG_USER"
-        valueFrom = "${var.database_credentials_secret_arn}:username::"
-      },
-      {
-        name      = "PG_PASSWORD"
-        valueFrom = "${var.database_credentials_secret_arn}:password::"
-      },
-      {
-        name      = "PG_DATABASE"
-        valueFrom = "${var.database_credentials_secret_arn}:database_name::"
-      }
+      { name = "NAVIGATION_TIMEOUT_S", value = tostring(var.navigation_timeout_s) },
+      { name = "RDS_IAM_USER", value = var.crawler_db_username }
     ]
   }
 

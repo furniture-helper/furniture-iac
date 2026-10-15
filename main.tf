@@ -60,6 +60,8 @@ module "ecs" {
   crawler_ecr_repo_urls                 = module.ecr.furniture_crawler_ecr_regional_uris
   crawler_s3_bucket_arn                 = module.s3.crawler_storage_s3_bucket_arn
   rds_sg_id                             = module.rds.rds_sg_id
+  rds_db_resource_id                    = module.rds.db_resource_id_v2
+  crawler_db_username                   = module.database.crawler_db_username
   database_credentials_secret_arn       = module.rds.database_credentials_secret_arn
   rds_db_endpoint                       = module.rds.db_endpoint_v2
   shared_services_region                = var.region
@@ -89,6 +91,7 @@ module "ecs" {
   anchor_tree_generator_ecr_repo_url    = module.ecr.anchor_tree_generator_ecr_repo_uri
   page_classifier_ecr_repo_url          = module.ecr.page_classifier_ecr_repo_uri
   information_extractor_ecr_repo_url    = module.ecr.information_extractor_ecr_repo_uri
+  furniture_db_name                     = module.database.furniture_db_name
 }
 
 module "github_actions" {

@@ -13,8 +13,18 @@ variable "database_credentials_secret_arn" {
   type        = string
 }
 
+variable "crawler_db_username" {
+  description = "Database username used by crawler workloads"
+  type        = string
+}
+
 variable "crawler_sqs_queue_arn" {
   description = "ARN of the SQS queue for the crawler tasks"
+  type        = string
+}
+
+variable "rds_db_resource_id" {
+  description = "Resource ID of the RDS DB instance for IAM auth"
   type        = string
 }
 
@@ -80,6 +90,25 @@ resource "aws_iam_role_policy" "sqs_crawler_receive_policy" {
           "sqs:DeleteMessage",
         ]
         Resource = var.crawler_sqs_queue_arn
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "rds_iam_connect_policy" {
+  name = "${var.project}-crawler-rds-iam-connect"
+  role = aws_iam_role.furniture_crawler_task_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowRDSIAMConnectForCrawlerUser"
+        Effect = "Allow"
+        Action = [
+          "rds-db:connect"
+        ]
+        Resource = "arn:aws:rds-db:${var.shared_services_region}:${data.aws_caller_identity.current.account_id}:dbuser:${var.rds_db_resource_id}/${var.crawler_db_username}"
       }
     ]
   })

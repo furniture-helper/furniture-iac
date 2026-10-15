@@ -7,6 +7,11 @@ terraform {
   }
 }
 
+variable "project" {
+  description = "The name of the project"
+  type        = string
+}
+
 variable "rds_endpoint" {
   description = "The endpoint of the RDS PostgreSQL database"
   type        = string
@@ -59,3 +64,10 @@ provider "postgresql" {
   superuser = false
 }
 
+output "crawler_db_username" {
+  value = postgresql_role.crawler_ecs_user.name
+}
+
+output "furniture_db_name" {
+  value = local.db_credentials.database_name
+}
