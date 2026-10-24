@@ -23,6 +23,21 @@ variable "database_credentials_secret_arn" {
   type        = string
 }
 
+variable "rds_db_resource_id" {
+  description = "Resource ID of the RDS DB instance for IAM auth"
+  type        = string
+}
+
+variable "shared_services_region" {
+  description = "Region where the shared RDS services live"
+  type        = string
+}
+
+variable "minimizer_db_username" {
+  description = "Database username used by the HTML minimizer workload"
+  type        = string
+}
+
 resource "aws_iam_role" "html_minimizer_task_role" {
   name = "${var.project}-html-minimizer-task-role"
 
@@ -111,6 +126,25 @@ resource "aws_iam_role_policy" "anchor_tree_s3_read_policy" {
           var.anchor_tree_s3_bucket_arn,
           "${var.anchor_tree_s3_bucket_arn}/anchor_tree/*"
         ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "rds_iam_connect_policy" {
+  name = "${var.project}-html-minimizer-rds-iam-connect"
+  role = aws_iam_role.html_minimizer_task_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowRDSIAMConnectForMinimizerUser"
+        Effect = "Allow"
+        Action = [
+          "rds-db:connect"
+        ]
+        Resource = "arn:aws:rds-db:${var.shared_services_region}:${data.aws_caller_identity.current.account_id}:dbuser:${var.rds_db_resource_id}/${var.minimizer_db_username}"
       }
     ]
   })

@@ -92,6 +92,11 @@ variable "crawler_db_username" {
   type        = string
 }
 
+variable "minimizer_db_username" {
+  description = "Database username used by HTML minimizer workloads"
+  type        = string
+}
+
 variable "rds_db_endpoint" {
   description = "Endpoint of the RDS database"
   type        = string
@@ -289,6 +294,9 @@ module "html_minimizer_task" {
   raw_html_s3_bucket_arn          = var.crawler_s3_bucket_arn
   raw_html_s3_bucket_name         = var.crawler_s3_bucket_name
   rds_db_endpoint                 = var.rds_db_endpoint
+  rds_db_resource_id              = var.rds_db_resource_id
+  shared_services_region          = var.shared_services_region
+  minimizer_db_username           = var.minimizer_db_username
   task_execution_role_arn         = module.primary.task_execution_role_arn
   furniture_cluster_arn           = module.primary.ecs_cluster_arn
   security_group_ids              = [module.primary.ecs_tasks_sg_id]

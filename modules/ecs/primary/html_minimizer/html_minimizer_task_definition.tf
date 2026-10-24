@@ -71,16 +71,9 @@ locals {
       { name = "LOG_LEVEL", value = "INFO" },
       { name = "RUNNING_MODE", value = "ecs" },
       { name = "KAFKA_BROKER_URLS", value = "${var.kafka_broker_urls}:9092" },
+      { name = "RDS_IAM_USER", value = var.minimizer_db_username },
     ]
     secrets = [
-      {
-        name      = "PG_USER"
-        valueFrom = "${var.database_credentials_secret_arn}:username::"
-      },
-      {
-        name      = "PG_PASSWORD"
-        valueFrom = "${var.database_credentials_secret_arn}:password::"
-      },
       {
         name      = "PG_DATABASE"
         valueFrom = "${var.database_credentials_secret_arn}:database_name::"
