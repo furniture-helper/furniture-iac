@@ -62,6 +62,7 @@ module "ecs" {
   rds_sg_id                             = module.rds.rds_sg_id
   rds_db_resource_id                    = module.rds.db_resource_id_v2
   crawler_db_username                   = module.database.crawler_db_username
+  minimizer_db_username                 = module.database.minimizer_db_username
   database_credentials_secret_arn       = module.rds.database_credentials_secret_arn
   rds_db_endpoint                       = module.rds.db_endpoint_v2
   shared_services_region                = var.region

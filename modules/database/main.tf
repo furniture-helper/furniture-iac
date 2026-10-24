@@ -68,6 +68,10 @@ output "crawler_db_username" {
   value = postgresql_role.crawler_ecs_user.name
 }
 
+output "minimizer_db_username" {
+  value = postgresql_role.minimizer_ecs_user.name
+}
+
 output "furniture_db_name" {
   value = local.db_credentials.database_name
 }
