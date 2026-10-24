@@ -72,6 +72,10 @@ output "minimizer_db_username" {
   value = postgresql_role.minimizer_ecs_user.name
 }
 
+output "anchor_tree_generator_db_username" {
+  value = postgresql_role.anchor_tree_generator_user.name
+}
+
 output "furniture_db_name" {
   value = local.db_credentials.database_name
 }
