@@ -97,6 +97,11 @@ variable "minimizer_db_username" {
   type        = string
 }
 
+variable "anchor_tree_generator_db_username" {
+  description = "Database username used by anchor tree generator workloads"
+  type        = string
+}
+
 variable "rds_db_endpoint" {
   description = "Endpoint of the RDS database"
   type        = string
@@ -320,20 +325,23 @@ module "analytics_task" {
 }
 
 module "anchor_tree_generator_task" {
-  source                          = "./primary/anchor_tree_generator"
-  anchor_tree_s3_bucket_arn       = var.anchor_tree_s3_bucket_arn
-  anchor_tree_s3_bucket_name      = var.anchor_tree_s3_bucket_name
-  database_credentials_secret_arn = var.database_credentials_secret_arn
-  ecr_repo_url                    = var.anchor_tree_generator_ecr_repo_url
-  image_tag                       = "latest"
-  project                         = var.project
-  raw_html_s3_bucket_arn          = var.crawler_s3_bucket_arn
-  raw_html_s3_bucket_name         = var.crawler_s3_bucket_name
-  rds_db_endpoint                 = var.rds_db_endpoint
-  task_execution_role_arn         = module.primary.task_execution_role_arn
-  furniture_cluster_arn           = module.primary.ecs_cluster_arn
-  security_group_ids              = [module.primary.ecs_tasks_sg_id]
-  subnet_ids                      = var.primary_public_subnet_ids
+  source                            = "./primary/anchor_tree_generator"
+  anchor_tree_s3_bucket_arn         = var.anchor_tree_s3_bucket_arn
+  anchor_tree_s3_bucket_name        = var.anchor_tree_s3_bucket_name
+  anchor_tree_generator_db_username = var.anchor_tree_generator_db_username
+  database_credentials_secret_arn   = var.database_credentials_secret_arn
+  ecr_repo_url                      = var.anchor_tree_generator_ecr_repo_url
+  image_tag                         = "latest"
+  project                           = var.project
+  raw_html_s3_bucket_arn            = var.crawler_s3_bucket_arn
+  raw_html_s3_bucket_name           = var.crawler_s3_bucket_name
+  rds_db_endpoint                   = var.rds_db_endpoint
+  rds_db_resource_id                = var.rds_db_resource_id
+  shared_services_region            = var.shared_services_region
+  task_execution_role_arn           = module.primary.task_execution_role_arn
+  furniture_cluster_arn             = module.primary.ecs_cluster_arn
+  security_group_ids                = [module.primary.ecs_tasks_sg_id]
+  subnet_ids                        = var.primary_public_subnet_ids
 }
 
 module "page_classifier_task" {

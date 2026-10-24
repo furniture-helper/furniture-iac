@@ -51,19 +51,12 @@ locals {
       { name = "AWS_REGION", value = data.aws_region.current.region },
       { name = "PG_HOST", value = var.rds_db_endpoint },
       { name = "PG_PORT", value = "5432" },
+      { name = "RDS_IAM_USER", value = var.anchor_tree_generator_db_username },
       { name = "CRAWLED_PAGES_BUCKET_NAME", value = var.raw_html_s3_bucket_name },
       { name = "ANCHOR_TREE_BUCKET_NAME", value = var.anchor_tree_s3_bucket_name },
       { name = "LOG_LEVEL", value = "INFO" },
     ]
     secrets = [
-      {
-        name      = "PG_USER"
-        valueFrom = "${var.database_credentials_secret_arn}:username::"
-      },
-      {
-        name      = "PG_PASSWORD"
-        valueFrom = "${var.database_credentials_secret_arn}:password::"
-      },
       {
         name      = "PG_DATABASE"
         valueFrom = "${var.database_credentials_secret_arn}:database_name::"
