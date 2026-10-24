@@ -43,8 +43,18 @@ variable "database_credentials_secret_arn" {
   type        = string
 }
 
+variable "crawler_db_username" {
+  description = "Database username used by crawler workloads"
+  type        = string
+}
+
 variable "rds_db_endpoint" {
   description = "Endpoint of the RDS database"
+  type        = string
+}
+
+variable "rds_db_resource_id" {
+  description = "Resource ID of the RDS DB instance for IAM auth"
   type        = string
 }
 
