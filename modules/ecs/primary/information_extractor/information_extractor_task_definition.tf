@@ -38,6 +38,11 @@ variable "minimized_pages_bucket_name" {
   type        = string
 }
 
+variable "ecs_extractor_db_username" {
+  description = "Database username used by the information extractor workload"
+  type        = string
+}
+
 data "aws_region" "current" {}
 
 locals {
@@ -61,6 +66,7 @@ locals {
       { name = "AWS_REGION", value = data.aws_region.current.region },
       { name = "PG_HOST", value = var.rds_db_endpoint },
       { name = "PG_PORT", value = "5432" },
+      { name = "RDS_IAM_USER", value = var.ecs_extractor_db_username },
       { name = "MINIMIZED_PAGES_BUCKET_NAME", value = var.minimized_pages_bucket_name },
       { name = "KAFKA_BROKER_URLS", value = "${var.kafka_broker_urls}:9092" },
       { name = "KAFKA_BROKER_URLS", value = "${var.kafka_broker_urls}:9092" },
@@ -68,14 +74,7 @@ locals {
     ]
 
     secrets = [
-      {
-        name      = "PG_USER"
-        valueFrom = "${var.database_credentials_secret_arn}:username::"
-      },
-      {
-        name      = "PG_PASSWORD"
-        valueFrom = "${var.database_credentials_secret_arn}:password::"
-      },
+
       {
         name      = "PG_DATABASE"
         valueFrom = "${var.database_credentials_secret_arn}:database_name::"
