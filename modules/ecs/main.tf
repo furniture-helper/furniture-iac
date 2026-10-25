@@ -102,6 +102,11 @@ variable "anchor_tree_generator_db_username" {
   type        = string
 }
 
+variable "ecs_classifier_db_username" {
+  description = "Database username used by page classifier workloads"
+  type        = string
+}
+
 variable "rds_db_endpoint" {
   description = "Endpoint of the RDS database"
   type        = string
@@ -347,6 +352,7 @@ module "anchor_tree_generator_task" {
 module "page_classifier_task" {
   source                          = "./primary/page_classifier"
   database_credentials_secret_arn = var.database_credentials_secret_arn
+  ecs_classifier_db_username      = var.ecs_classifier_db_username
   ecr_repo_url                    = var.page_classifier_ecr_repo_url
   image_tag                       = "latest"
   kafka_broker_urls               = var.kafka_public_ip
@@ -354,6 +360,8 @@ module "page_classifier_task" {
   minimized_html_s3_bucket_arn    = var.html_minimizer_s3_bucket_arn
   project                         = var.project
   rds_db_endpoint                 = var.rds_db_endpoint
+  rds_db_resource_id              = var.rds_db_resource_id
+  shared_services_region          = var.shared_services_region
   task_execution_role_arn         = module.primary.task_execution_role_arn
   furniture_cluster_arn           = module.primary.ecs_cluster_arn
   security_group_ids              = [module.primary.ecs_tasks_sg_id]
