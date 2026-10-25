@@ -80,6 +80,10 @@ output "ecs_classifier_db_username" {
   value = postgresql_role.ecs_classifier_user.name
 }
 
+output "ecs_extractor_db_username" {
+  value = postgresql_role.ecs_extractor_user.name
+}
+
 output "furniture_db_name" {
   value = local.db_credentials.database_name
 }
