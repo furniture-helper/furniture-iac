@@ -73,7 +73,6 @@ locals {
     ]
 
     secrets = [
-
       {
         name      = "PG_DATABASE"
         valueFrom = "${var.database_credentials_secret_arn}:database_name::"
