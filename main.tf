@@ -66,6 +66,7 @@ module "ecs" {
   anchor_tree_generator_db_username     = module.database.anchor_tree_generator_db_username
   ecs_classifier_db_username            = module.database.ecs_classifier_db_username
   ecs_extractor_db_username             = module.database.ecs_extractor_db_username
+  ecs_analytics_db_username             = module.database.ecs_analytics_db_username
   database_credentials_secret_arn       = module.rds.database_credentials_secret_arn
   rds_db_endpoint                       = module.rds.db_endpoint_v2
   shared_services_region                = var.region

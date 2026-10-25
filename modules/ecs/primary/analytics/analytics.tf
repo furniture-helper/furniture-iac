@@ -28,6 +28,11 @@ variable "kafka_brokers" {
   type        = string
 }
 
+variable "ecs_analytics_db_username" {
+  description = "Database username used by the analytics workload"
+  type        = string
+}
+
 data "aws_region" "current" {}
 
 locals {
@@ -50,8 +55,8 @@ locals {
     environment = [
       { name = "PG_HOST", value = var.rds_db_endpoint },
       { name = "PG_PORT", value = "5432" },
-      { name = "DATABASE_CREDENTIALS_TYPE", value = "secrets_manager" },
-      { name = "DATABASE_CREDENTIALS_SECRET_NAME", value = var.database_credentials_secret_name },
+      { name = "DB_USE_RDS_IAM_AUTH", value = "true" },
+      { name = "PG_USER", value = var.ecs_analytics_db_username },
       { name = "PG_SSLMODE", value = "require" },
       { name = "PG_SSLMODE", value = "require" },
       { name = "MAXIMUM_RUNTIME_SECS", value = "60" },
