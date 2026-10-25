@@ -23,11 +23,6 @@ variable "crawler_sqs_queue_url" {
   type        = string
 }
 
-variable "database_credentials_secret_name" {
-  description = "Name of the Secrets Manager secret containing the database credentials"
-  type        = string
-}
-
 resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
   # checkov:skip=CKV_AWS_117: "Cannot deploy in VPC at the moment"
   # checkov:skip=CKV_AWS_116: "Dead letter queue not required for this use case"
@@ -41,15 +36,16 @@ resource "aws_lambda_function" "crawler_queue_manager_lambda_function" {
 
   environment {
     variables = {
-      PG_HOST                          = var.rds_db_endpoint
-      PG_PORT                          = "5432"
-      SQS_QUEUE_URL                    = var.crawler_sqs_queue_url
-      FETCH_AMOUNT                     = "40000"
-      DATABASE_CREDENTIALS_TYPE        = "secrets_manager"
-      DATABASE_CREDENTIALS_SECRET_NAME = var.database_credentials_secret_name
-      SQS_QUEUE_THRESHOLD              = "50"
-      DELETION_INTERVAL_DAYS           = "3"
-      CRAWL_INTERVAL_DAYS              = "7"
+      PG_HOST                   = var.rds_db_endpoint
+      PG_PORT                   = "5432"
+      PG_USER                   = var.crawler_queue_manager_db_username
+      PG_DATABASE               = "furniture"
+      SQS_QUEUE_URL             = var.crawler_sqs_queue_url
+      FETCH_AMOUNT              = "40000"
+      DATABASE_CREDENTIALS_TYPE = "rds_iam"
+      SQS_QUEUE_THRESHOLD       = "50"
+      DELETION_INTERVAL_DAYS    = "3"
+      CRAWL_INTERVAL_DAYS       = "7"
     }
   }
 

@@ -3,6 +3,23 @@ variable "database_credentials_secret_arn" {
   type        = string
 }
 
+variable "search_api_db_username" {
+  description = "Database username used by the search API workload"
+  type        = string
+}
+
+variable "rds_db_resource_id" {
+  description = "Resource ID of the RDS DB instance for IAM auth"
+  type        = string
+}
+
+variable "shared_services_region" {
+  description = "Region where the shared RDS services live"
+  type        = string
+}
+
+data "aws_caller_identity" "current" {}
+
 resource "aws_iam_role" "search_api_lambda_role" {
   name = "${var.project}-search-api-lambda-role"
 
@@ -86,4 +103,30 @@ resource "aws_iam_policy" "search_api_read_access_to_s3_buckets" {
 resource "aws_iam_role_policy_attachment" "search_api_attach_s3_read_access" {
   role       = aws_iam_role.search_api_lambda_role.name
   policy_arn = aws_iam_policy.search_api_read_access_to_s3_buckets.arn
+}
+
+resource "aws_iam_policy" "search_api_rds_iam_connect_policy" {
+  name = "${var.project}-search-api-rds-iam-connect"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "AllowRDSIAMConnectForSearchAPIUser"
+        Effect   = "Allow"
+        Action   = ["rds-db:connect"]
+        Resource = "arn:aws:rds-db:${var.shared_services_region}:${data.aws_caller_identity.current.account_id}:dbuser:${var.rds_db_resource_id}/${var.search_api_db_username}"
+      }
+    ]
+  })
+
+  tags = {
+    Project = var.project
+    Name    = "${var.project}-search-api-rds-iam-connect-policy"
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "search_api_attach_rds_iam_connect" {
+  role       = aws_iam_role.search_api_lambda_role.name
+  policy_arn = aws_iam_policy.search_api_rds_iam_connect_policy.arn
 }
