@@ -18,11 +18,6 @@ variable "rds_db_endpoint" {
   type        = string
 }
 
-variable "database_credentials_secret_name" {
-  description = "Name of the Secrets Manager secret containing the database credentials"
-  type        = string
-}
-
 variable "frontend_origin" {
   description = "The allowed origin for CORS configuration"
   type        = string
@@ -56,16 +51,17 @@ resource "aws_lambda_function" "search_api_lambda_function" {
 
   environment {
     variables = {
-      PG_HOST                          = var.rds_db_endpoint
-      PG_PORT                          = "5432"
-      DATABASE_CREDENTIALS_TYPE        = "secrets_manager"
-      DATABASE_CREDENTIALS_SECRET_NAME = var.database_credentials_secret_name
-      PG_SSLMODE                       = "require"
-      LOG_LEVEL                        = "DEBUG"
-      FRONTEND_ORIGIN                  = var.frontend_origin
-      CRAWLER_STORAGE_S3_BUCKET        = var.crawler_storage_s3_bucket
-      MINIMIZED_PAGES_S3_BUCKET        = var.minimized_pages_s3_bucket
-      S3_REGION                        = var.s3_region
+      PG_HOST                   = var.rds_db_endpoint
+      PG_PORT                   = "5432"
+      PG_USER                   = var.search_api_db_username
+      PG_DATABASE               = "furniture"
+      DATABASE_CREDENTIALS_TYPE = "rds_iam"
+      PG_SSLMODE                = "require"
+      LOG_LEVEL                 = "DEBUG"
+      FRONTEND_ORIGIN           = var.frontend_origin
+      CRAWLER_STORAGE_S3_BUCKET = var.crawler_storage_s3_bucket
+      MINIMIZED_PAGES_S3_BUCKET = var.minimized_pages_s3_bucket
+      S3_REGION                 = var.s3_region
     }
   }
 

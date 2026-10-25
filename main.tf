@@ -130,19 +130,22 @@ module "sqs" {
 }
 
 module "lambda" {
-  source                          = "./modules/lambda"
-  crawler_sqs_queue_arn           = module.sqs.crawler_queue_arn
-  crawler_ecr_repo_url            = module.ecr.furniture_crawler_queue_manager_ecr_repo_uri
-  search_api_ecr_repo_url         = module.ecr.furniture_search_api_ecr_repo_uri
-  project                         = var.project
-  database_credentials_secret_arn = module.rds.database_credentials_secret_arn
-  crawler_sqs_queue_url           = module.sqs.crawler_queue_url
-  database_credentials_name       = module.rds.database_credentials_secret_name
-  rds_db_endpoint                 = module.rds.db_endpoint_v2
-  frontend_origin                 = module.amplify.search_app_endpoint
-  crawler_storage_s3_bucket       = module.s3.crawler_storage_s3_bucket_name
-  minimized_pages_s3_bucket       = module.s3.minimized_html_storage_s3_bucket_name
-  s3_region                       = var.region
+  source                            = "./modules/lambda"
+  crawler_sqs_queue_arn             = module.sqs.crawler_queue_arn
+  crawler_ecr_repo_url              = module.ecr.furniture_crawler_queue_manager_ecr_repo_uri
+  search_api_ecr_repo_url           = module.ecr.furniture_search_api_ecr_repo_uri
+  project                           = var.project
+  database_credentials_secret_arn   = module.rds.database_credentials_secret_arn
+  crawler_sqs_queue_url             = module.sqs.crawler_queue_url
+  search_api_db_username            = module.database.search_api_db_username
+  crawler_queue_manager_db_username = module.database.crawler_queue_manager_db_username
+  rds_db_resource_id                = module.rds.db_resource_id_v2
+  shared_services_region            = var.region
+  rds_db_endpoint                   = module.rds.db_endpoint_v2
+  frontend_origin                   = module.amplify.search_app_endpoint
+  crawler_storage_s3_bucket         = module.s3.crawler_storage_s3_bucket_name
+  minimized_pages_s3_bucket         = module.s3.minimized_html_storage_s3_bucket_name
+  s3_region                         = var.region
 }
 
 module "r53" {

@@ -23,8 +23,8 @@ variable "crawler_sqs_queue_url" {
   type        = string
 }
 
-variable "database_credentials_name" {
-  description = "Name of the Secrets Manager secret containing the database credentials"
+variable "crawler_queue_manager_db_username" {
+  description = "Database username used by the crawler queue manager workload"
   type        = string
 }
 
@@ -34,14 +34,16 @@ variable "rds_db_endpoint" {
 }
 
 module "crawler_queue_manager" {
-  source                           = "./crawler_queue_manager"
-  crawler_sqs_queue_arn            = var.crawler_sqs_queue_arn
-  ecr_repo_url                     = var.crawler_ecr_repo_url
-  image_tag                        = "db32b403cd403f44c7017173ffd9863221317ad1"
-  project                          = var.project
-  database_credentials_secret_arn  = var.database_credentials_secret_arn
-  crawler_sqs_queue_url            = var.crawler_sqs_queue_url
-  database_credentials_secret_name = var.database_credentials_name
-  rds_db_endpoint                  = var.rds_db_endpoint
+  source                            = "./crawler_queue_manager"
+  crawler_sqs_queue_arn             = var.crawler_sqs_queue_arn
+  ecr_repo_url                      = var.crawler_ecr_repo_url
+  image_tag                         = "53ecf6d545a3f7c51aa915c92389139f449cf2b8"
+  project                           = var.project
+  database_credentials_secret_arn   = var.database_credentials_secret_arn
+  crawler_sqs_queue_url             = var.crawler_sqs_queue_url
+  crawler_queue_manager_db_username = var.crawler_queue_manager_db_username
+  rds_db_resource_id                = var.rds_db_resource_id
+  shared_services_region            = var.shared_services_region
+  rds_db_endpoint                   = var.rds_db_endpoint
 }
 

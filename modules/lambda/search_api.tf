@@ -1,3 +1,18 @@
+variable "search_api_db_username" {
+  description = "Database username used by the search API workload"
+  type        = string
+}
+
+variable "rds_db_resource_id" {
+  description = "Resource ID of the RDS DB instance for IAM auth"
+  type        = string
+}
+
+variable "shared_services_region" {
+  description = "Region where the shared RDS services live"
+  type        = string
+}
+
 variable "search_api_ecr_repo_url" {
   description = "URL of the ECR repository for the search API"
   type        = string
@@ -24,17 +39,19 @@ variable "minimized_pages_s3_bucket" {
 }
 
 module "search_api" {
-  source                           = "./search_api"
-  ecr_repo_url                     = var.search_api_ecr_repo_url
-  image_tag                        = "1f4e33c4cc0cb9b395dd5ce694956cefd1135134"
-  project                          = var.project
-  database_credentials_secret_arn  = var.database_credentials_secret_arn
-  database_credentials_secret_name = var.database_credentials_name
-  rds_db_endpoint                  = var.rds_db_endpoint
-  frontend_origin                  = var.frontend_origin
-  s3_region                        = var.s3_region
-  crawler_storage_s3_bucket        = var.crawler_storage_s3_bucket
-  minimized_pages_s3_bucket        = var.minimized_pages_s3_bucket
+  source                          = "./search_api"
+  ecr_repo_url                    = var.search_api_ecr_repo_url
+  image_tag                       = "54b1e0182921558f8dbf7aa8a4f7170e1dac71eb"
+  project                         = var.project
+  database_credentials_secret_arn = var.database_credentials_secret_arn
+  search_api_db_username          = var.search_api_db_username
+  rds_db_resource_id              = var.rds_db_resource_id
+  shared_services_region          = var.shared_services_region
+  rds_db_endpoint                 = var.rds_db_endpoint
+  frontend_origin                 = var.frontend_origin
+  s3_region                       = var.s3_region
+  crawler_storage_s3_bucket       = var.crawler_storage_s3_bucket
+  minimized_pages_s3_bucket       = var.minimized_pages_s3_bucket
 }
 
 output "search_api_lambda_invoke_arn" {

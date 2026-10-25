@@ -53,10 +53,12 @@ locals {
     }
 
     environment = [
+      { name = "AWS_REGION", value = data.aws_region.current.name },
       { name = "PG_HOST", value = var.rds_db_endpoint },
       { name = "PG_PORT", value = "5432" },
       { name = "DB_USE_RDS_IAM_AUTH", value = "true" },
       { name = "PG_USER", value = var.ecs_analytics_db_username },
+      { name = "PG_DATABASE", value = "furniture" },
       { name = "PG_SSLMODE", value = "require" },
       { name = "PG_SSLMODE", value = "require" },
       { name = "MAXIMUM_RUNTIME_SECS", value = "60" },

@@ -88,6 +88,14 @@ output "ecs_analytics_db_username" {
   value = postgresql_role.ecs_analytics_user.name
 }
 
+output "search_api_db_username" {
+  value = postgresql_role.search_api_user.name
+}
+
+output "crawler_queue_manager_db_username" {
+  value = postgresql_role.crawler_queue_manager_user.name
+}
+
 output "furniture_db_name" {
   value = local.db_credentials.database_name
 }
