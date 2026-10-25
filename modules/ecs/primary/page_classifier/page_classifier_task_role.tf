@@ -3,6 +3,16 @@ variable "minimized_html_s3_bucket_arn" {
   type        = string
 }
 
+variable "rds_db_resource_id" {
+  description = "Resource ID of the RDS DB instance for IAM auth"
+  type        = string
+}
+
+variable "shared_services_region" {
+  description = "Region where the shared RDS services live"
+  type        = string
+}
+
 resource "aws_iam_role" "page_classifier_task_role" {
   name = "${var.project}-page-classifier-task-role"
 
@@ -43,6 +53,25 @@ resource "aws_iam_role_policy" "minimized_html_s3_read_policy" {
           var.minimized_html_s3_bucket_arn,
           "${var.minimized_html_s3_bucket_arn}/*"
         ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "rds_iam_connect_policy" {
+  name = "${var.project}-page-classifier-rds-iam-connect"
+  role = aws_iam_role.page_classifier_task_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowRDSIAMConnectForPageClassifierUser"
+        Effect = "Allow"
+        Action = [
+          "rds-db:connect"
+        ]
+        Resource = "arn:aws:rds-db:${var.shared_services_region}:${data.aws_caller_identity.current.account_id}:dbuser:${var.rds_db_resource_id}/${var.ecs_classifier_db_username}"
       }
     ]
   })
