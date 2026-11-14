@@ -74,14 +74,6 @@ locals {
 
     secrets = [
       {
-        name      = "PG_USER"
-        valueFrom = "${var.database_credentials_secret_arn}:username::"
-      },
-      {
-        name      = "PG_PASSWORD"
-        valueFrom = "${var.database_credentials_secret_arn}:password::"
-      },
-      {
         name      = "PG_DATABASE"
         valueFrom = "${var.database_credentials_secret_arn}:database_name::"
       }
