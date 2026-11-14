@@ -82,7 +82,7 @@ resource "aws_iam_role_policy" "events_invoke_ecs_policy" {
 resource "aws_cloudwatch_event_rule" "information_extractor_event_rule" {
   name                = "${var.project}-information-extractor-event-rule"
   description         = "Run information extractor every 30 minutes"
-  schedule_expression = "rate(30 minutes)"
+  schedule_expression = "rate(1 hour)"
   tags = {
     Project = var.project
     Name    = "${var.project}-information-extractor-event-rule"

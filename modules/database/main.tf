@@ -96,6 +96,10 @@ output "crawler_queue_manager_db_username" {
   value = postgresql_role.crawler_queue_manager_user.name
 }
 
+output "ecs_embedder_db_username" {
+  value = postgresql_role.ecs_embedder_user.name
+}
+
 output "furniture_db_name" {
   value = local.db_credentials.database_name
 }

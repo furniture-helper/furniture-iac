@@ -69,12 +69,18 @@ locals {
       { name = "RDS_IAM_USER", value = var.ecs_extractor_db_username },
       { name = "MINIMIZED_PAGES_BUCKET_NAME", value = var.minimized_pages_bucket_name },
       { name = "KAFKA_BROKER_URLS", value = "${var.kafka_broker_urls}:9092" },
-      { name = "KAFKA_BROKER_URLS", value = "${var.kafka_broker_urls}:9092" },
       { name = "PAGE_RETRIEVAL_COUNT", value = "500" },
     ]
 
     secrets = [
-
+      {
+        name      = "PG_USER"
+        valueFrom = "${var.database_credentials_secret_arn}:username::"
+      },
+      {
+        name      = "PG_PASSWORD"
+        valueFrom = "${var.database_credentials_secret_arn}:password::"
+      },
       {
         name      = "PG_DATABASE"
         valueFrom = "${var.database_credentials_secret_arn}:database_name::"

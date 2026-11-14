@@ -117,6 +117,11 @@ variable "ecs_analytics_db_username" {
   type        = string
 }
 
+variable "ecs_embedder_db_username" {
+  description = "Database username used by product embedder workloads"
+  type        = string
+}
+
 variable "rds_db_endpoint" {
   description = "Endpoint of the RDS database"
   type        = string
@@ -214,6 +219,11 @@ variable "page_classifier_ecr_repo_url" {
 
 variable "information_extractor_ecr_repo_url" {
   description = "URL of the ECR repository for the information extractor task"
+  type        = string
+}
+
+variable "product_embedder_ecr_repo_url" {
+  description = "URL of the ECR repository for the product embedder task"
   type        = string
 }
 
@@ -390,6 +400,25 @@ module "information_extractor_task" {
   kafka_broker_urls               = var.kafka_public_ip
   minimized_pages_bucket_name     = var.html_minimizer_s3_bucket_name
   minimized_html_s3_bucket_arn    = var.html_minimizer_s3_bucket_arn
+  project                         = var.project
+  rds_db_endpoint                 = var.rds_db_endpoint
+  rds_db_resource_id              = var.rds_db_resource_id
+  shared_services_region          = var.shared_services_region
+  task_execution_role_arn         = module.primary.task_execution_role_arn
+  furniture_cluster_arn           = module.primary.ecs_cluster_arn
+  security_group_ids              = [module.primary.ecs_tasks_sg_id]
+  subnet_ids                      = var.primary_public_subnet_ids
+}
+
+module "product_embedder_task" {
+  source                          = "./primary/product_embedder"
+  database_credentials_secret_arn = var.database_credentials_secret_arn
+  ecs_embedder_db_username        = var.ecs_embedder_db_username
+  ecr_repo_url                    = var.product_embedder_ecr_repo_url
+  image_tag                       = "latest"
+  kafka_broker_urls               = var.kafka_public_ip
+  minimized_html_s3_bucket_arn    = var.html_minimizer_s3_bucket_arn
+  minimized_html_s3_bucket_name   = var.html_minimizer_s3_bucket_name
   project                         = var.project
   rds_db_endpoint                 = var.rds_db_endpoint
   rds_db_resource_id              = var.rds_db_resource_id
