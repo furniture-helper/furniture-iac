@@ -26,7 +26,8 @@ data "aws_iam_policy_document" "s3_read_policy" {
     actions = ["s3:GetObject"]
     resources = [
       "${var.sagemaker_s3_bucket_arn}/model-artifacts/*",
-      "${var.sagemaker_s3_bucket_arn}/ie-model-artifacts/*"
+      "${var.sagemaker_s3_bucket_arn}/ie-model-artifacts/*",
+      "${var.sagemaker_s3_bucket_arn}/embedding-model-artifacts/*"
     ]
   }
 }

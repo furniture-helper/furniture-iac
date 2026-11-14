@@ -96,6 +96,8 @@ module "ecs" {
   anchor_tree_generator_ecr_repo_url    = module.ecr.anchor_tree_generator_ecr_repo_uri
   page_classifier_ecr_repo_url          = module.ecr.page_classifier_ecr_repo_uri
   information_extractor_ecr_repo_url    = module.ecr.information_extractor_ecr_repo_uri
+  product_embedder_ecr_repo_url         = module.ecr.product_embedder_ecr_repo_uri
+  ecs_embedder_db_username              = module.database.ecs_embedder_db_username
   furniture_db_name                     = module.database.furniture_db_name
 }
 
@@ -111,6 +113,7 @@ module "github_actions" {
   anchor_tree_generator_repo_arn = module.ecr.anchor_tree_generator_ecr_repo_arn
   page_classifier_repo_arn       = module.ecr.page_classifier_ecr_repo_arn
   information_extractor_repo_arn = module.ecr.information_extractor_ecr_repo_arn
+  product_embedder_repo_arn      = module.ecr.product_embedder_ecr_repo_arn
   sagemaker_s3_bucket_arn        = module.sagemaker.sagemaker_storage_s3_bucket_arn
 }
 

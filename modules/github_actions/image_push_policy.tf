@@ -38,6 +38,11 @@ variable "information_extractor_repo_arn" {
   type        = string
 }
 
+variable "product_embedder_repo_arn" {
+  description = "ECR repository ARN for the product embedder"
+  type        = string
+}
+
 data "aws_iam_policy_document" "ecr_push" {
   statement {
     sid    = "GetAuthorization"
@@ -71,7 +76,8 @@ data "aws_iam_policy_document" "ecr_push" {
       var.analytics_repo_arn,
       var.anchor_tree_generator_repo_arn,
       var.page_classifier_repo_arn,
-      var.information_extractor_repo_arn
+      var.information_extractor_repo_arn,
+      var.product_embedder_repo_arn
     ]
   }
 }
