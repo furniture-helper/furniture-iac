@@ -81,8 +81,8 @@ resource "aws_iam_role_policy" "events_invoke_ecs_policy" {
 
 resource "aws_cloudwatch_event_rule" "product_embedder_event_rule" {
   name                = "${var.project}-product-embedder-event-rule"
-  description         = "Run product embedder every 30 minutes"
-  schedule_expression = "rate(30 minutes)"
+  description         = "Run product embedder every day"
+  schedule_expression = "rate(1 day)"
   tags = {
     Project = var.project
     Name    = "${var.project}-product-embedder-event-rule"
