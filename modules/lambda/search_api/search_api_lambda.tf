@@ -18,9 +18,9 @@ variable "rds_db_endpoint" {
   type        = string
 }
 
-variable "frontend_origin" {
-  description = "The allowed origin for CORS configuration"
-  type        = string
+variable "frontend_origins" {
+  description = "Allowed origins for CORS configuration"
+  type        = list(string)
 }
 
 variable "s3_region" {
@@ -58,7 +58,7 @@ resource "aws_lambda_function" "search_api_lambda_function" {
       DATABASE_CREDENTIALS_TYPE = "rds_iam"
       PG_SSLMODE                = "require"
       LOG_LEVEL                 = "DEBUG"
-      FRONTEND_ORIGIN           = var.frontend_origin
+      FRONTEND_ORIGINS          = join(",", var.frontend_origins)
       CRAWLER_STORAGE_S3_BUCKET = var.crawler_storage_s3_bucket
       MINIMIZED_PAGES_S3_BUCKET = var.minimized_pages_s3_bucket
       S3_REGION                 = var.s3_region

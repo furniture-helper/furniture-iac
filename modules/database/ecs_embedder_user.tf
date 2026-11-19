@@ -32,6 +32,15 @@ resource "postgresql_grant" "ecs_embedder_user_public_read" {
   privileges = ["SELECT"]
 }
 
+resource "postgresql_grant" "ecs_embedder_user_products_embeddings_finetuned_768_2_write" {
+  database    = local.db_credentials.database_name
+  role        = postgresql_role.ecs_embedder_user.name
+  schema      = "public"
+  object_type = "table"
+  objects     = ["products_embeddings_finetuned_768_2"]
+  privileges  = ["SELECT", "INSERT", "UPDATE", "DELETE"]
+}
+
 resource "postgresql_grant" "ecs_embedder_user_products_embeddings_finetuned_768_3_write" {
   database    = local.db_credentials.database_name
   role        = postgresql_role.ecs_embedder_user.name
