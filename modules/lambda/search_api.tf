@@ -18,9 +18,9 @@ variable "search_api_ecr_repo_url" {
   type        = string
 }
 
-variable "frontend_origin" {
-  description = "The allowed origin for CORS configuration"
-  type        = string
+variable "frontend_origins" {
+  description = "Allowed origins for CORS configuration"
+  type        = list(string)
 }
 
 variable "s3_region" {
@@ -41,14 +41,14 @@ variable "minimized_pages_s3_bucket" {
 module "search_api" {
   source                          = "./search_api"
   ecr_repo_url                    = var.search_api_ecr_repo_url
-  image_tag                       = "54b1e0182921558f8dbf7aa8a4f7170e1dac71eb"
+  image_tag                       = "ec02aceb00d52e137e4022d1912964eb268798da"
   project                         = var.project
   database_credentials_secret_arn = var.database_credentials_secret_arn
   search_api_db_username          = var.search_api_db_username
   rds_db_resource_id              = var.rds_db_resource_id
   shared_services_region          = var.shared_services_region
   rds_db_endpoint                 = var.rds_db_endpoint
-  frontend_origin                 = var.frontend_origin
+  frontend_origins                = var.frontend_origins
   s3_region                       = var.s3_region
   crawler_storage_s3_bucket       = var.crawler_storage_s3_bucket
   minimized_pages_s3_bucket       = var.minimized_pages_s3_bucket

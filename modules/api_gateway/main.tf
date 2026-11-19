@@ -13,9 +13,9 @@ variable "search_api_lambda_function_name" {
   type        = string
 }
 
-variable "search_frontend_origin" {
-  description = "The allowed origin for CORS configuration"
-  type        = string
+variable "search_frontend_origins" {
+  description = "Allowed origins for CORS configuration"
+  type        = list(string)
 }
 
 resource "aws_apigatewayv2_api" "http_api" {
@@ -28,7 +28,12 @@ resource "aws_apigatewayv2_api" "http_api" {
   }
 
   cors_configuration {
-    allow_origins = ["https://${var.search_frontend_origin}", "https://www.${var.search_frontend_origin}"]
+    allow_origins = flatten([
+      for origin in var.search_frontend_origins : [
+        "https://${origin}",
+        "https://www.${origin}"
+      ]
+    ])
     allow_methods = ["POST", "GET", "OPTIONS"]
     allow_headers = ["content-type", "authorization"]
     max_age       = 300
@@ -47,6 +52,14 @@ resource "aws_apigatewayv2_route" "search_products_route" {
   # checkov:skip=CKV_AWS_309: "No auth is required for this route"
   api_id             = aws_apigatewayv2_api.http_api.id
   route_key          = "GET /products/search"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
+  authorization_type = "NONE"
+}
+
+resource "aws_apigatewayv2_route" "search_grouped_products_route" {
+  # checkov:skip=CKV_AWS_309: "No auth is required for this route"
+  api_id             = aws_apigatewayv2_api.http_api.id
+  route_key          = "GET /products/search-grouped"
   target             = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
   authorization_type = "NONE"
 }

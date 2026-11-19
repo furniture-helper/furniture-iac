@@ -145,10 +145,13 @@ module "lambda" {
   rds_db_resource_id                = module.rds.db_resource_id_v2
   shared_services_region            = var.region
   rds_db_endpoint                   = module.rds.db_endpoint_v2
-  frontend_origin                   = module.amplify.search_app_endpoint
-  crawler_storage_s3_bucket         = module.s3.crawler_storage_s3_bucket_name
-  minimized_pages_s3_bucket         = module.s3.minimized_html_storage_s3_bucket_name
-  s3_region                         = var.region
+  frontend_origins = [
+    module.amplify.search_app_endpoint,
+    module.amplify.search_v2_app_endpoint
+  ]
+  crawler_storage_s3_bucket = module.s3.crawler_storage_s3_bucket_name
+  minimized_pages_s3_bucket = module.s3.minimized_html_storage_s3_bucket_name
+  s3_region                 = var.region
 }
 
 module "r53" {
@@ -182,7 +185,10 @@ module "api_gateway" {
   project                         = var.project
   search_api_lambda_invoke_arn    = module.lambda.search_api_lambda_invoke_arn
   search_api_lambda_function_name = module.lambda.search_api_lambda_name
-  search_frontend_origin          = module.amplify.search_app_endpoint
+  search_frontend_origins = [
+    module.amplify.search_app_endpoint,
+    module.amplify.search_v2_app_endpoint
+  ]
 }
 
 module "kafka" {
